@@ -1,19 +1,21 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { AuthFormPayload } from "../payload/authPayload"
-
+import { Gender } from "@/constants/Gender"
 
 export interface AuthFormSlice {
     username: string | null,
     email: string | null,
     password: string | null,
     validatePassword: string | null,
+    gender: Gender
 }
 
 const initialState: AuthFormSlice = {
     username: null,
     email: null,
     password: null,
-    validatePassword: null
+    validatePassword: null,
+    gender: Gender.NONE
 }
 
 //Create union type from AuthFormSlice
@@ -25,7 +27,7 @@ export const authSlice = createSlice({
     reducers: {
         setAuthFormValue(state, action: PayloadAction<AuthPayload>) {
             const { key, value } = action.payload
-            if (state[key]) state[key] = value
+            if (state[key]) (state[key] as any) = value
         }
     }
 })

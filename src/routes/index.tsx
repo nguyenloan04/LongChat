@@ -1,4 +1,5 @@
 import App from "@/App";
+import AuthComponent from "@/components/auth";
 import { createBrowserRouter } from "react-router-dom";
 
 const route = createBrowserRouter([
@@ -7,6 +8,10 @@ const route = createBrowserRouter([
         element: <App />
     },
     //Other routes here
+    {
+        path: "/login",
+        element: <AuthComponent />
+    }
 ])
 
 export default route

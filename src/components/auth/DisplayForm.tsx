@@ -2,7 +2,7 @@ import ForgetPasswordComponent from "./ForgetPassword";
 import LoginComponent from "./Login";
 import RegisterComponent from "./Register";
 
-enum FormType {
+export enum FormType {
     LOGIN = 0,
     REGISTER = 1,
     FORGET_PASSWORD = 2

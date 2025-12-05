@@ -1,12 +1,7 @@
+import { FormType } from "@/constants/AuthForm";
 import ForgetPasswordComponent from "./ForgetPassword";
 import LoginComponent from "./Login";
 import RegisterComponent from "./Register";
-
-export enum FormType {
-    LOGIN = 0,
-    REGISTER = 1,
-    FORGET_PASSWORD = 2
-}
 
 type DisplayAuthProps = {
     currentForm: FormType

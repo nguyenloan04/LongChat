@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { FormType } from "./DisplayForm";
 import LoginComponent from "./Login";
+import { useSelector } from "react-redux";
+import type { ReduxState } from "@/constants/ReduxState";
+import { FormType } from "@/constants/AuthForm";
+import RegisterComponent from "./Register";
 
 export default function AuthComponent() {
-    const [currentForm, switchForm] = useState(FormType.LOGIN)
+    const currentForm = useSelector((state: ReduxState) => state.authForm.currentForm)
 
     return (
         <div className="flex justify-center items-center relative" style={{ width: "100%", height: "100vh" }}>
@@ -16,6 +18,7 @@ export default function AuthComponent() {
             </div>
             <div className="z-2 w-full h-full">
                 {currentForm === FormType.LOGIN && <LoginComponent />}
+                {currentForm === FormType.REGISTER && <RegisterComponent />}
             </div>
         </div>
     )

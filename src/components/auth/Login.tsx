@@ -1,4 +1,37 @@
+import type { ReduxState } from "@/constants/ReduxState"
+import { useDispatch, useSelector } from "react-redux"
+import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
+import { useEffect } from "react"
+import { FormType } from "@/constants/AuthForm"
+
 export default function LoginComponent() {
+    const dispatcher = useDispatch()
+    const currentForm = useSelector((state: ReduxState) => state.authForm)
+
+    const changeForm = (type: FormType) => {
+        dispatcher(setAuthFormValue({
+            key: "currentForm",
+            value: type
+        }))
+    }
+
+    const handleLogin = () => {
+        const email = currentForm.email
+        const password = currentForm.password
+        //Check API here
+    }
+
+    const handleInputChange = (key: 'email' | 'password', value: string) => {
+        dispatcher(setAuthFormValue({
+            key: key,
+            value: value
+        }))
+    }
+
+    useEffect(() => {
+        dispatcher(resetAuthForm())
+    }, [])
+
     return (
         <div className="flex justify-center items-center h-full">
             <div className="w-100 bg-white p-8 rounded-2xl">
@@ -12,6 +45,7 @@ export default function LoginComponent() {
                         <input
                             className="w-full border border-gray-400 p-1 ps-3 rounded-md"
                             type="email" name="" id="" placeholder="email@example.com"
+                            onChange={(e) => handleInputChange("email", e.target.value)}
                         />
                     </div>
                     <div className="mb-5">
@@ -22,10 +56,16 @@ export default function LoginComponent() {
                         <input
                             className="w-full border border-gray-400 p-1 ps-3 rounded-md"
                             type="password" name="" id="" placeholder=""
+                            onChange={(e) => handleInputChange("password", e.target.value)}
                         />
                     </div>
                 </div>
-                <button className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full">Đăng nhập</button>
+                <button
+                    className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full"
+                    onClick={handleLogin}
+                >
+                    Đăng nhập
+                </button>
                 <div className="my-4 flex gap-2 items-center">
                     <div className="flex-1 bg-gray-200 h-0.5 rounded"></div>
                     <p>Hoặc đăng nhập với</p>
@@ -40,7 +80,14 @@ export default function LoginComponent() {
                     </button>
                 </div>
                 <div className="mt-5">
-                    <p className="text-center">Chưa có tài khoản? <span className="underline hover:text-gray-500 cursor-pointer">Đăng ký</span></p>
+                    <p className="text-center">Chưa có tài khoản? 
+                        <span
+                            onClick={() => changeForm(FormType.REGISTER)}
+                            className="underline hover:text-gray-500 cursor-pointer"
+                        >
+                            Đăng ký
+                        </span>
+                    </p>
                 </div>
             </div>
         </div>

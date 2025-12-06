@@ -1,6 +1,6 @@
 
 export enum FormType {
-    LOGIN = 0,
-    REGISTER = 1,
-    FORGET_PASSWORD = 2
+    LOGIN = 1,
+    REGISTER = 2,
+    FORGET_PASSWORD = 3
 }

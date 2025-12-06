@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
 import { useEffect } from "react"
 import { FormType } from "@/constants/AuthForm"
+import { validateForm } from "@/services/authService"
 
 export default function LoginComponent() {
     const dispatcher = useDispatch()
@@ -16,9 +17,10 @@ export default function LoginComponent() {
     }
 
     const handleLogin = () => {
-        const email = currentForm.email
-        const password = currentForm.password
+        const validateFormResult = validateForm(currentForm)
         //Check API here
+        //FIXME: Complete this
+        if (validateFormResult) { }
     }
 
     const handleInputChange = (key: 'email' | 'password', value: string) => {
@@ -80,12 +82,8 @@ export default function LoginComponent() {
                     </button>
                 </div>
                 <div className="mt-5">
-                    <p className="text-center">Chưa có tài khoản? 
-                        <span
-                            onClick={() => changeForm(FormType.REGISTER)}
-                            className="underline hover:text-gray-500 cursor-pointer"
-                        >
-                            Đăng ký
+                    <p className="text-center">Chưa có tài khoản?
+                        <span onClick={() => changeForm(FormType.REGISTER)} className="underline hover:text-gray-500 cursor-pointer">Đăng ký
                         </span>
                     </p>
                 </div>

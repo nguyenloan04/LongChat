@@ -1,8 +1,9 @@
 import type { ReduxState } from "@/constants/ReduxState"
 import { useDispatch, useSelector } from "react-redux"
-import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
+import { resetAuthForm, setAuthFormValue, type AuthFormSlice } from "@/redux/slices/authSlice"
 import { useEffect } from "react"
 import { FormType } from "@/constants/AuthForm"
+import { validateForm } from "@/services/authService"
 
 export default function RegisterComponent() {
     const dispatcher = useDispatch()
@@ -16,12 +17,14 @@ export default function RegisterComponent() {
     }
 
     const handleLogin = () => {
-        const email = currentForm.email
-        const password = currentForm.password
+        const validateFormResult = validateForm(currentForm)
         //Check API here
+        //FIXME: Complete this
+        if (validateFormResult) { }
     }
 
-    const handleInputChange = (key: 'email' | 'password' | 'username' | 'validatePassword', value: string) => {
+    const handleInputChange = <K extends keyof AuthFormSlice>(key: K, value: AuthFormSlice[K]) => {
+        console.log(value)
         dispatcher(setAuthFormValue({
             key: key,
             value: value
@@ -44,7 +47,7 @@ export default function RegisterComponent() {
                         <p className="font-semibold mb-1">Tên người dùng</p>
                         <input
                             className="w-full border border-gray-400 p-1 ps-3 rounded-md"
-                            type="email" name="" id="" placeholder=""
+                            type="email" name="" id="" placeholder="example"
                             onChange={(e) => handleInputChange("username", e.target.value)}
                         />
                     </div>
@@ -73,33 +76,26 @@ export default function RegisterComponent() {
                         />
                     </div>
                 </div>
+
+                <div className="flex gap-3 items-start">
+                    <input
+                        type="checkbox" name="" id=""
+                        className="mt-2 p-0"
+                        onChange={(e) => handleInputChange("isCheckboxClicked", e.target.checked)}
+                    />
+                    <p className="m-0 p-0">
+                        Bằng cách click vào, bạn đã đồng ý với <span className="underline hover:text-gray-500 cursor-pointer" onClick={() => window.location.href = "/terms-of-service"}>Điều khoản dịch vụ</span> và <span className="underline hover:text-gray-500 cursor-pointer" onClick={() => window.location.href = "/privacy-policy"}>Chính sách quyền riêng tư</span> của chúng tôi.
+                    </p>
+                </div>
+
                 <button
                     className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full"
                     onClick={handleLogin}
                 >
                     Đăng ký
                 </button>
-                <div className="my-4 flex gap-2 items-center">
-                    <div className="flex-1 bg-gray-200 h-0.5 rounded"></div>
-                    <p>Hoặc đăng nhập với</p>
-                    <div className="flex-1 bg-gray-200 h-0.5 rounded"></div>
-                </div>
-                <div className="flex gap-10">
-                    <button className="flex justify-center flex-1 border hover:bg-gray-200 border-gray-300 px-3 py-2 rounded-xl bg-gray-100">
-                        <i className="fa-brands fa-google"></i>
-                    </button>
-                    <button className="flex justify-center flex-1 border hover:bg-gray-200 border-gray-300 px-3 py-2 rounded-xl bg-gray-100">
-                        <i className="fa-brands fa-facebook-f"></i>
-                    </button>
-                </div>
                 <div className="mt-5">
-                    <p className="text-center">Đã có tài khoản?
-                        <span
-                            onClick={() => changeForm(FormType.LOGIN)}
-                            className="underline hover:text-gray-500 cursor-pointer"
-                        >
-                            Đăng nhập
-                        </span>
+                    <p className="text-center">Đã có tài khoản? <span onClick={() => changeForm(FormType.LOGIN)} className="underline hover:text-gray-500 cursor-pointer">Đăng nhập</span>
                     </p>
                 </div>
             </div>

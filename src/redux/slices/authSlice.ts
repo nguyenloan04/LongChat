@@ -9,7 +9,8 @@ export interface AuthFormSlice {
     password: string,
     validatePassword: string,
     gender: Gender,
-    currentForm: FormType
+    currentForm: FormType,
+    isCheckboxClicked: boolean
 }
 
 const initialState: AuthFormSlice = {
@@ -18,19 +19,17 @@ const initialState: AuthFormSlice = {
     password: "",
     validatePassword: "",
     gender: Gender.NONE,
-    currentForm: FormType.LOGIN
+    currentForm: FormType.LOGIN,
+    isCheckboxClicked: false
 }
-
-//Create union type from AuthFormSlice
-type AuthPayload = { [K in keyof AuthFormSlice]: AuthFormPayload<K> }[keyof AuthFormSlice]
 
 export const authSlice = createSlice({
     name: 'authForm',
     initialState,
     reducers: {
-        setAuthFormValue(state, action: PayloadAction<AuthPayload>) {
-            const { key, value } = action.payload
-            if (state[key]) (state[key] as any) = value
+        setAuthFormValue(state, action: PayloadAction<AuthFormPayload<keyof AuthFormSlice>>) {
+            const { key, value } = action.payload;
+            (state[key] as any) = value;
         },
 
         resetAuthForm(state) {
@@ -39,7 +38,7 @@ export const authSlice = createSlice({
             state.password = initialState.password;
             state.validatePassword = initialState.validatePassword;
             state.gender = initialState.gender;
-        }
+        },
     }
 })
 

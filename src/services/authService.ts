@@ -26,9 +26,21 @@ export function validateForm(formData: AuthFormSlice): { result: boolean, messag
         }
         case FormType.REGISTER: {
             //Check email existance
-            const doesEmailValid = false
+            const doesEmailValid = false    //FIXME: Implement method for fiding exist email
             return {
                 result: validatePassword === password && (emailRegex.test(email) && doesEmailValid),
+                message: "" //FIXME: Add message
+            }
+        }
+        case FormType.FORGET_PASSWORD: {
+            return {
+                result: emailRegex.test(email),
+                message: "" //FIXME: Add message
+            }
+        }
+        case FormType.RESET_PASSWORD: {
+            return {
+                result: validatePassword === password,
                 message: "" //FIXME: Add message
             }
         }

@@ -1,8 +1,6 @@
-import LoginComponent from "./Login";
 import { useSelector } from "react-redux";
 import type { ReduxState } from "@/constants/ReduxState";
-import { FormType } from "@/constants/AuthForm";
-import RegisterComponent from "./Register";
+import { DisplayAuthForm } from "./DisplayForm";
 
 export default function AuthComponent() {
     const currentForm = useSelector((state: ReduxState) => state.authForm.currentForm)
@@ -17,8 +15,7 @@ export default function AuthComponent() {
                 <div className="absolute w-full h-full bg-black z-1 opacity-40"></div>
             </div>
             <div className="z-2 w-full h-full">
-                {currentForm === FormType.LOGIN && <LoginComponent />}
-                {currentForm === FormType.REGISTER && <RegisterComponent />}
+                <DisplayAuthForm currentForm={currentForm} />
             </div>
         </div>
     )

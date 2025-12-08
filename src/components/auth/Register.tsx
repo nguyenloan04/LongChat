@@ -24,7 +24,6 @@ export default function RegisterComponent() {
     }
 
     const handleInputChange = <K extends keyof AuthFormSlice>(key: K, value: AuthFormSlice[K]) => {
-        console.log(value)
         dispatcher(setAuthFormValue({
             key: key,
             value: value

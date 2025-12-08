@@ -1,14 +1,14 @@
 import type { ReduxState } from "@/constants/ReduxState"
 import { useDispatch, useSelector } from "react-redux"
-import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
+import { resetAuthForm, setAuthFormValue, type AuthFormSlice } from "@/redux/slices/authSlice"
 import { useEffect } from "react"
 import { FormType } from "@/constants/AuthForm"
 import { validateForm } from "@/services/authService"
 import { ChevronLeft } from "lucide-react"
 
-export default function ForgetPasswordComponent() {
+export default function ResetPasswordComponent() {
     const dispatcher = useDispatch()
-    // const currentForm = useSelector((state: ReduxState) => state.authForm)
+    const currentForm = useSelector((state: ReduxState) => state.authForm)
 
     const changeForm = (type: FormType) => {
         dispatcher(setAuthFormValue({
@@ -18,15 +18,13 @@ export default function ForgetPasswordComponent() {
     }
 
     const handleLogin = () => {
+        const validateFormResult = validateForm(currentForm)
         //Check API here
-        // const validateFormResult = validateForm(currentForm)
         //FIXME: Complete this
-        // if (validateFormResult) { 
-        changeForm(FormType.RESET_PASSWORD)
-        // }
+        if (validateFormResult) { }
     }
 
-    const handleInputChange = (key: 'email' | 'password', value: string) => {
+    const handleInputChange = <K extends keyof AuthFormSlice>(key: K, value: AuthFormSlice[K]) => {
         dispatcher(setAuthFormValue({
             key: key,
             value: value
@@ -41,22 +39,33 @@ export default function ForgetPasswordComponent() {
         <div className="flex justify-center items-center h-full">
             <div className="w-100 bg-white p-8 rounded-2xl">
                 <div className="text-center mb-8">
-                    <h4 className="text-2xl font-semibold mb-1">Quên mật khẩu</h4>
-                    <p>Nhập email đã đăng ký cho tài khoản của bạn để khôi phục mật khẩu</p>
+                    <h4 className="text-2xl font-semibold mb-1">Reset mật khẩu</h4>
+                    <p>Nhập mật khẩu mới cho tài khoản của bạn</p>
                 </div>
                 <div className="w-full">
-                    <p className="font-semibold mb-1">Email</p>
-                    <input
-                        className="w-full border border-gray-400 p-1 ps-3 rounded-md"
-                        type="email" name="" id="" placeholder="email@example.com"
-                        onChange={(e) => handleInputChange("email", e.target.value)}
-                    />
+                    <div className="mb-5">
+                        <p className="font-semibold">Mật khẩu mới</p>
+                        <input
+                            className="w-full border border-gray-400 p-1 ps-3 rounded-md"
+                            type="password" name="" id="" placeholder=""
+                            onChange={(e) => handleInputChange("password", e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-5">
+                        <p className="font-semibold">Nhập lại mật khẩu mới</p>
+                        <input
+                            className="w-full border border-gray-400 p-1 ps-3 rounded-md"
+                            type="password" name="" id="" placeholder=""
+                            onChange={(e) => handleInputChange("validatePassword", e.target.value)}
+                        />
+                    </div>
                 </div>
+
                 <button
                     className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full"
                     onClick={handleLogin}
                 >
-                    Gửi email xác thực
+                    Xác nhận
                 </button>
                 <div className="mt-5">
                     <div
@@ -71,6 +80,6 @@ export default function ForgetPasswordComponent() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

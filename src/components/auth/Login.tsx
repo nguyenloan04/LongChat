@@ -53,7 +53,7 @@ export default function LoginComponent() {
                     <div className="mb-5">
                         <div className="flex justify-between mb-1">
                             <p className="font-semibold">Mật khẩu</p>
-                            <p className="hover:text-gray-500 cursor-pointer">Quên mật khẩu?</p>
+                            <p className="hover:text-gray-500 cursor-pointer" onClick={() => changeForm(FormType.FORGET_PASSWORD)}>Quên mật khẩu?</p>
                         </div>
                         <input
                             className="w-full border border-gray-400 p-1 ps-3 rounded-md"
@@ -82,9 +82,7 @@ export default function LoginComponent() {
                     </button>
                 </div>
                 <div className="mt-5">
-                    <p className="text-center">Chưa có tài khoản?
-                        <span onClick={() => changeForm(FormType.REGISTER)} className="underline hover:text-gray-500 cursor-pointer">Đăng ký
-                        </span>
+                    <p className="text-center">Chưa có tài khoản? <span onClick={() => changeForm(FormType.REGISTER)} className="underline hover:text-gray-500 cursor-pointer">Đăng ký</span>
                     </p>
                 </div>
             </div>

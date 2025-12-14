@@ -1,4 +1,6 @@
-
+/**
+ * @deprecated
+ */
 export enum FormType {
     LOGIN = 1,
     REGISTER = 2,

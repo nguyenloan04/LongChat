@@ -17,7 +17,7 @@ export default function LoginComponent() {
         if (validateFormResult) { }
     }
 
-    const handleInputChange = (key: 'email' | 'password', value: string) => {
+    const handleInputChange = (key: 'username' | 'password', value: string) => {
         dispatcher(setAuthFormValue({
             key: key,
             value: value
@@ -38,11 +38,11 @@ export default function LoginComponent() {
                     </div>
                     <div className="w-full">
                         <div className="mb-5">
-                            <p className="font-semibold mb-1 text-sm">Email</p>
+                            <p className="font-semibold mb-1 text-sm">Tên người dùng</p>
                             <input
                                 className="w-full border border-gray-400 p-1 ps-3 rounded-md"
-                                type="email" name="" id="" placeholder="email@example.com"
-                                onChange={(e) => handleInputChange("email", e.target.value)}
+                                type="email" name="" id="" placeholder=""
+                                onChange={(e) => handleInputChange("username", e.target.value)}
                             />
                         </div>
                         <div className="mb-5">

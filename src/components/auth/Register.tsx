@@ -46,14 +46,6 @@ export default function RegisterComponent() {
                             />
                         </div>
                         <div className="mb-5">
-                            <p className="font-semibold mb-1 text-sm pb-1">Email</p>
-                            <input
-                                className="w-full border border-gray-400 p-1 ps-3 rounded-md"
-                                type="email" name="" id="" placeholder="Email của bạn"
-                                onChange={(e) => handleInputChange("email", e.target.value)}
-                            />
-                        </div>
-                        <div className="mb-5">
                             <p className="font-semibold text-sm pb-1">Mật khẩu</p>
                             <input
                                 className="w-full border border-gray-400 p-1 ps-3 rounded-md"

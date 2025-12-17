@@ -5,8 +5,6 @@ export interface ReceiveMsgLoginPayload {
 
 export interface ReceiveMsgReLoginPayload { }
 
-export interface ReceiveMsgLogOutPayload { }
-
 
 // FIXME: Complete this
 export interface ReceiveMsgRoomManagementPayload {

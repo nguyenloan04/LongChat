@@ -4,17 +4,26 @@ import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
 import { useEffect } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
+import { WebsocketInstance } from "@/socket/configWebsocket"
+import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
+import { FormType } from "@/constants/AuthForm"
 
 export default function LoginComponent() {
     const dispatcher = useDispatch()
     const currentForm = useSelector((state: ReduxState) => state.authForm)
     const navigate = useNavigate()
 
+    const wsInstance = WebsocketInstance.getInstance()
+
     const handleForm = () => {
-        const validateFormResult = validateForm(currentForm)
-        //Check API here
-        //FIXME: Complete this
-        if (validateFormResult) { }
+        const validateFormResult = validateForm(currentForm, FormType.LOGIN)
+        console.log(validateFormResult)
+        if (validateFormResult) {
+            wsInstance.send(WebSocketEvent.LOGIN, {
+                user: currentForm.username,
+                pass: currentForm.password
+            })
+        }
     }
 
     const handleInputChange = (key: 'username' | 'password', value: string) => {
@@ -27,6 +36,25 @@ export default function LoginComponent() {
     useEffect(() => {
         dispatcher(resetAuthForm())
     }, [])
+
+    useEffect(() => {
+        const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, (response) => {
+            if (response.status === "success") {
+                const reloginCode = response.data.RE_LOGIN_CODE
+                localStorage.setItem("RE_LOGIN_CODE", reloginCode)
+                // Save current user into a slice
+                // setTimeout(() => {
+                    navigate("/")
+                // }, 1000)
+            }
+            else {
+                console.log(response.mes)
+                //Send a message here
+            }
+        })
+
+        return () => unsubscribe()
+    }, [navigate, wsInstance])
 
     return (
         <div className="flex justify-center relative" style={{ width: "100%", height: "100vh" }}>
@@ -41,7 +69,7 @@ export default function LoginComponent() {
                             <p className="font-semibold mb-1 text-sm">Tên người dùng</p>
                             <input
                                 className="w-full border border-gray-400 p-1 ps-3 rounded-md"
-                                type="email" name="" id="" placeholder=""
+                                type="text" name="" id="" placeholder=""
                                 onChange={(e) => handleInputChange("username", e.target.value)}
                             />
                         </div>

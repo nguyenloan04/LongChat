@@ -4,17 +4,27 @@ import { resetAuthForm, setAuthFormValue, type AuthFormSlice } from "@/redux/sli
 import { useEffect } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
+import { WebsocketInstance } from "@/socket/configWebsocket"
+import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
+import { FormType } from "@/constants/AuthForm"
 
 export default function RegisterComponent() {
     const dispatcher = useDispatch()
     const currentForm = useSelector((state: ReduxState) => state.authForm)
     const navigate = useNavigate()
 
+    const wsInstance = WebsocketInstance.getInstance()
+
     const handleForm = () => {
-        const validateFormResult = validateForm(currentForm)
+        const validateFormResult = validateForm(currentForm, FormType.REGISTER)
         //Check API here
         //FIXME: Complete this
-        if (validateFormResult) { }
+        if (validateFormResult) {
+            wsInstance.send(WebSocketEvent.REGISTER, {
+                user: currentForm.username,
+                pass: currentForm.password
+            })
+        }
     }
 
     const handleInputChange = <K extends keyof AuthFormSlice>(key: K, value: AuthFormSlice[K]) => {
@@ -27,6 +37,22 @@ export default function RegisterComponent() {
     useEffect(() => {
         dispatcher(resetAuthForm())
     }, [])
+
+    useEffect(() => {
+        const unsubscribe = wsInstance.subscribe(WebSocketEvent.REGISTER, (response) => {
+            if (response.status === "success") {
+                //Navigate back to login
+                // setTimeout(() => {
+                navigate("/login")
+                // }, 1000)
+            }
+            else {
+                //Send a message here
+            }
+        })
+
+        return () => unsubscribe()
+    }, [navigate, wsInstance])
 
     return (
         <div className="flex flex-col items-center relative w-screen h-screen">
@@ -41,7 +67,7 @@ export default function RegisterComponent() {
                             <p className="font-semibold mb-1 text-sm pb-1">Tên người dùng</p>
                             <input
                                 className="w-full border border-gray-400 p-1 ps-3 rounded-md"
-                                type="email" name="" id="" placeholder="Tên người dùng của bạn"
+                                type="text" name="" id="" placeholder="Tên người dùng của bạn"
                                 onChange={(e) => handleInputChange("username", e.target.value)}
                             />
                         </div>

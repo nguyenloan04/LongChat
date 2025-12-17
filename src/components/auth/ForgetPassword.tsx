@@ -5,6 +5,9 @@ import { useEffect } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
 
+/**
+ * @deprecated
+ */
 export default function ForgetPasswordComponent() {
     const dispatcher = useDispatch()
     const currentForm = useSelector((state: ReduxState) => state.authForm)
@@ -19,7 +22,7 @@ export default function ForgetPasswordComponent() {
         navigate('/reset-password')
     }
 
-    const handleInputChange = (key: 'email' | 'password', value: string) => {
+    const handleInputChange = (key: 'username' | 'password', value: string) => {
         dispatcher(setAuthFormValue({
             key: key,
             value: value
@@ -36,14 +39,14 @@ export default function ForgetPasswordComponent() {
                 <div>
                     <div className="text-center mb-8">
                         <h4 className="text-2xl font-semibold mb-1">Quên mật khẩu</h4>
-                        <p>Nhập email đã đăng ký cho tài khoản của bạn để khôi phục mật khẩu</p>
+                        <p>Nhập tên tài khoản đã đăng ký cho tài khoản của bạn để khôi phục mật khẩu</p>
                     </div>
                     <div className="w-full">
-                        <p className="font-semibold mb-1">Email</p>
+                        <p className="font-semibold mb-1">Tên tài khoản</p>
                         <input
                             className="w-full border border-gray-400 p-1 ps-3 rounded-md"
-                            type="email" name="" id="" placeholder="email@example.com"
-                            onChange={(e) => handleInputChange("email", e.target.value)}
+                            type="text" name="" id="" placeholder=""
+                            onChange={(e) => handleInputChange("username", e.target.value)}
                         />
                     </div>
                     <button

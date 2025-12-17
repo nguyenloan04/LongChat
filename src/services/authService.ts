@@ -1,54 +1,28 @@
 import { FormType } from "@/constants/AuthForm";
 import type { AuthFormSlice } from "@/redux/slices/authSlice";
 
-export function validateForm(formData: AuthFormSlice): { result: boolean, message: string } {
-    const { username, email, password, validatePassword } = formData
-    //General validate
-    if (!username || !email) return {
-        result: false,
-        message: "" //FIXME: Add message
+export function validateForm(formData: AuthFormSlice, formType: FormType): { result: boolean, message: string } {
+    const { username, password, validatePassword } = formData
+
+    const requiredFields = formType === FormType.REGISTER
+        ? [username, password, validatePassword]
+        : [username, password];
+
+    if (requiredFields.some(field => !field?.trim())) {
+        return { result: false, message: "Vui lòng nhập đầy đủ thông tin" };
     }
 
     if (password.length < 8 || password.length > 32) return {
         result: false,
-        message: "" //FIXME: Add message
+        message: "Mật khẩu phải chứa từ 8 - 32 ký tự"
     }
 
-    const emailRegex = new RegExp(/^[^@]+@[^@]+\.[^@]+$/)
-    const type = formData.currentForm
+    if (formType === FormType.REGISTER && password !== validatePassword) {
+        return { result: false, message: "Xác nhận mật khẩu không khớp" };
+    }
 
-    switch (type) {
-        case FormType.LOGIN: {
-            return {
-                result: emailRegex.test(email),
-                message: ""
-            }
-        }
-        case FormType.REGISTER: {
-            //Check email existance
-            const doesEmailValid = false    //FIXME: Implement method for fiding exist email
-            return {
-                result: validatePassword === password && (emailRegex.test(email) && doesEmailValid),
-                message: "" //FIXME: Add message
-            }
-        }
-        case FormType.FORGET_PASSWORD: {
-            return {
-                result: emailRegex.test(email),
-                message: "" //FIXME: Add message
-            }
-        }
-        case FormType.RESET_PASSWORD: {
-            return {
-                result: validatePassword === password,
-                message: "" //FIXME: Add message
-            }
-        }
-        default: {
-            return {
-                result: false,
-                message: ""
-            }
-        }
+    return {
+        result: true,
+        message: ""
     }
 }

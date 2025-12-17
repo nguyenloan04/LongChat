@@ -13,20 +13,19 @@ export class WebsocketInstance {
     private subscriber: Map<string, Function[]> = new Map()
 
     private constructor() {
-        WebsocketInstance.instance = new WebsocketInstance()
         this.socket = new WebSocket(WebsocketInstance.BASE_URL)
+        this.connect()
     }
 
     public static getInstance() {
         if (!WebsocketInstance.instance) {
-            new WebsocketInstance()
+            WebsocketInstance.instance = new WebsocketInstance()
         }
         return WebsocketInstance.instance
     }
 
     public connect(url: string = WebsocketInstance.BASE_URL) {
         this.socket = new WebSocket(url)
-
         this.socket.onopen = () => {
             //Temp msg
             console.log("Connected to server successfully!")
@@ -34,12 +33,14 @@ export class WebsocketInstance {
 
         this.socket.onmessage = (event: MessageEvent) => {
             try {
+                console.log(event.data)
                 const response = JSON.parse(event.data)
                 const messageEvent = response.event as WebSocketEvent
                 this.emit(messageEvent, response)
             }
             catch (error) {
                 //Msg here
+                console.log(error)
             }
         }
 

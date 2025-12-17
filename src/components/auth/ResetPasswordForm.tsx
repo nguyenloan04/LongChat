@@ -4,6 +4,9 @@ import { resetAuthForm, setAuthFormValue, type AuthFormSlice } from "@/redux/sli
 import { useEffect } from "react"
 import { validateForm } from "@/services/authService"
 
+/**
+ * @deprecated 
+ */
 export default function ResetPasswordComponent() {
     const dispatcher = useDispatch()
     const currentForm = useSelector((state: ReduxState) => state.authForm)

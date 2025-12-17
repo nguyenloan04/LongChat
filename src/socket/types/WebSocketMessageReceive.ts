@@ -8,7 +8,7 @@ import type {
     ReceiveMsgRoomManagementPayload,
     ReceiveMsgSendChatPayload
 } from "./WebsocketReceivePayload"
-import type { WebSocketEvent } from "./WebSoketMessage"
+import type { WebSocketEvent } from "./WebSoketMessage" 
 
 interface ReceiveSuccessMessage<K extends WebSocketEvent, V> {
     event: K,

@@ -1,4 +1,13 @@
-import type { ReceiveMsgCheckUserPayload, ReceiveMsgGetChatPayload, ReceiveMsgGetUserListPayload, ReceiveMsgLoginPayload, ReceiveMsgReLoginPayload, ReceiveMsgRoomManagementPayload } from "./WebsocketReceivePayload"
+import type {
+    ReceiveMsgCheckUserPayload,
+    ReceiveMsgGetChatRoomPayload,
+    ReceiveMsgGetChatPeoplePayload,
+    ReceiveMsgGetUserListPayload,
+    ReceiveMsgLoginPayload,
+    ReceiveMsgReLoginPayload,
+    ReceiveMsgRoomManagementPayload,
+    ReceiveMsgSendChatPayload
+} from "./WebsocketReceivePayload"
 import type { WebSocketEvent } from "./WebSoketMessage"
 
 interface ReceiveSuccessMessage<K extends WebSocketEvent, V> {
@@ -24,8 +33,10 @@ export interface WsReceiveMsgPayloadMap {
     [WebSocketEvent.LOGOUT]: string,
     [WebSocketEvent.CREATE_ROOM]: ReceiveMsgRoomManagementPayload,
     [WebSocketEvent.JOIN_ROOM]: ReceiveMsgRoomManagementPayload,
-    [WebSocketEvent.GET_ROOM_CHAT_MES]: ReceiveMsgGetChatPayload,
-    [WebSocketEvent.GET_PEOPLE_CHAT_MES]: ReceiveMsgGetChatPayload,
+    [WebSocketEvent.GET_ROOM_CHAT_MES]: ReceiveMsgGetChatRoomPayload,
+    [WebSocketEvent.GET_PEOPLE_CHAT_MES]: ReceiveMsgGetChatPeoplePayload[],
+    [WebSocketEvent.SEND_CHAT_TO_ROOM]: ReceiveMsgSendChatPayload,
+    [WebSocketEvent.SEND_CHAT_TO_PEOPLE]: ReceiveMsgSendChatPayload,
     [WebSocketEvent.CHECK_USER]: ReceiveMsgCheckUserPayload,
     [WebSocketEvent.GET_USER_LIST]: ReceiveMsgGetUserListPayload
 }

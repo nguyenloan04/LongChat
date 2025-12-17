@@ -16,21 +16,3 @@ export enum WebSocketEvent {
     CHECK_USER = "CHECK_USER",
     GET_USER_LIST = "GET_USER_LIST"
 }
-
-export interface MessageData {
-    event: string //Define later
-    data: {
-        //Auth
-        user?: string,
-        pass?: string,
-        //Relogin
-        code?: string
-        //Room
-        name?: string
-        page: number
-        //Message
-        type?: string,
-        to?: string
-        mes: string
-    }
-}

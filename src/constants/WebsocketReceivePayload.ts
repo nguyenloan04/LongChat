@@ -8,9 +8,28 @@ export interface ReceiveMsgReLoginPayload { }
 
 // FIXME: Complete this
 export interface ReceiveMsgRoomManagementPayload {
+    id: number,
+    name: string,
+    own: string,
+    userList: {id: number, name: string}[],
+    chatData: {id: number, name: string, type: number, to: string, mes: string, createAt: string}[]
 }
 
-export interface ReceiveMsgGetChatPayload {
+export interface ReceiveMsgGetChatRoomPayload {
+    id: number,
+    name: string,
+    own: string,
+    userList: {id: number, name: string}[],
+    chatData: {id: number, name: string, type: number, to: string, mes: string, createAt: string}[]
+}
+
+export interface ReceiveMsgGetChatPeoplePayload {
+    id: number,
+    name: string,
+    type: number,
+    to: string,
+    mes: string,
+    createAt: string
 }
 
 export interface ReceiveMsgSendChatPayload {

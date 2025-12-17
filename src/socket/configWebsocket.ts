@@ -1,6 +1,6 @@
-import type { WsReceiveMessage, WsReceiveMsgPayloadMap } from "@/constants/WebSocketMessageReceive"
-import type { WsSendMessage, WsSendMsgPayloadMap } from "@/constants/WebsocketMessageSend";
-import type { WebSocketEvent } from "@/constants/WebSoketMessage"
+import type { WsReceiveMessage, WsReceiveMsgPayloadMap } from "@/socket/types/WebSocketMessageReceive"
+import type { WsSendMessage, WsSendMsgPayloadMap } from "@/socket/types/WebsocketMessageSend";
+import type { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 
 type WsCallback<K extends keyof WsReceiveMsgPayloadMap> = (
     data: WsReceiveMessage<K>

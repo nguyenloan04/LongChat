@@ -1,21 +1,21 @@
-import type { ReduxState } from "@/constants/ReduxState"
-import { useDispatch, useSelector } from "react-redux"
+// import type { ReduxState } from "@/constants/ReduxState"
+import { useDispatch } from "react-redux"
 import { resetAuthForm, setAuthFormValue, type AuthFormSlice } from "@/redux/slices/authSlice"
 import { useEffect } from "react"
-import { validateForm } from "@/services/authService"
+// import { validateForm } from "@/services/authService"
 
 /**
  * @deprecated 
  */
 export default function ResetPasswordComponent() {
     const dispatcher = useDispatch()
-    const currentForm = useSelector((state: ReduxState) => state.authForm)
+    // const currentForm = useSelector((state: ReduxState) => state.authForm)
 
     const handleForm = () => {
-        const validateFormResult = validateForm(currentForm)
-        //Check API here
-        //FIXME: Complete this
-        if (validateFormResult) { }
+        // const validateFormResult = validateForm(currentForm)
+        // //Check API here
+        // //FIXME: Complete this
+        // if (validateFormResult) { }
     }
 
     const handleInputChange = <K extends keyof AuthFormSlice>(key: K, value: AuthFormSlice[K]) => {

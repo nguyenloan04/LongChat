@@ -1,28 +1,37 @@
 import type { ReduxState } from "@/constants/ReduxState"
 import { useDispatch, useSelector } from "react-redux"
 import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
 import { WebsocketInstance } from "@/socket/configWebsocket"
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 import { FormType } from "@/constants/AuthForm"
 
+//Handle loading when connect() is not completed
+
 export default function LoginComponent() {
     const dispatcher = useDispatch()
     const currentForm = useSelector((state: ReduxState) => state.authForm)
     const navigate = useNavigate()
+
+    const [loading, isLoading] = useState(false)
+    const [message, setMessage] = useState("")
 
     const wsInstance = WebsocketInstance.getInstance()
 
     const handleForm = () => {
         const validateFormResult = validateForm(currentForm, FormType.LOGIN)
         console.log(validateFormResult)
-        if (validateFormResult) {
+        if (validateFormResult.result) {
+            isLoading(true)
             wsInstance.send(WebSocketEvent.LOGIN, {
                 user: currentForm.username,
                 pass: currentForm.password
             })
+        }
+        else {
+            setMessage(validateFormResult.message)
         }
     }
 
@@ -43,11 +52,14 @@ export default function LoginComponent() {
                 const reloginCode = response.data.RE_LOGIN_CODE
                 localStorage.setItem("RE_LOGIN_CODE", reloginCode)
                 // Save current user into a slice
-                // setTimeout(() => {
+                setMessage("Đăng nhập thành công")
+                setTimeout(() => {
                     navigate("/")
-                // }, 1000)
+                }, 500)
             }
             else {
+                isLoading(false)
+                setMessage("Tên tài khoản hoặc mật khẩu sai")
                 console.log(response.mes)
                 //Send a message here
             }
@@ -84,12 +96,14 @@ export default function LoginComponent() {
                                 onChange={(e) => handleInputChange("password", e.target.value)}
                             />
                         </div>
+                        <p className="text-center text-red-500">{message}</p>
                     </div>
                     <button
-                        className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full"
+                        className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full disabled:bg-blue-900/70"
+                        disabled={loading}
                         onClick={handleForm}
                     >
-                        Đăng nhập
+                        {loading ? "Đang đăng nhập" : "Đăng nhập"}
                     </button>
                     <div className="my-4 flex gap-2 items-center">
                         <div className="flex-1 bg-gray-200 h-0.5 rounded"></div>
@@ -97,10 +111,10 @@ export default function LoginComponent() {
                         <div className="flex-1 bg-gray-200 h-0.5 rounded"></div>
                     </div>
                     <div className="flex gap-10">
-                        <button className="flex justify-center flex-1 border hover:bg-gray-200 border-gray-300 px-3 py-2 rounded-xl bg-gray-100">
+                        <button disabled={loading} className="flex justify-center flex-1 border hover:bg-gray-200 border-gray-300 px-3 py-2 rounded-xl bg-gray-100">
                             <i className="fa-brands fa-google"></i>
                         </button>
-                        <button className="flex justify-center flex-1 border hover:bg-gray-200 border-gray-300 px-3 py-2 rounded-xl bg-gray-100">
+                        <button disabled={loading} className="flex justify-center flex-1 border hover:bg-gray-200 border-gray-300 px-3 py-2 rounded-xl bg-gray-100">
                             <i className="fa-brands fa-facebook-f"></i>
                         </button>
                     </div>

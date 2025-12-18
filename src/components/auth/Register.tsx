@@ -1,17 +1,22 @@
 import type { ReduxState } from "@/constants/ReduxState"
 import { useDispatch, useSelector } from "react-redux"
 import { resetAuthForm, setAuthFormValue, type AuthFormSlice } from "@/redux/slices/authSlice"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
 import { WebsocketInstance } from "@/socket/configWebsocket"
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 import { FormType } from "@/constants/AuthForm"
 
+//Handle loading when connect() is not completed
+
 export default function RegisterComponent() {
     const dispatcher = useDispatch()
     const currentForm = useSelector((state: ReduxState) => state.authForm)
     const navigate = useNavigate()
+
+    const [loading, isLoading] = useState(false)
+    const [message, setMessage] = useState("")
 
     const wsInstance = WebsocketInstance.getInstance()
 
@@ -19,11 +24,15 @@ export default function RegisterComponent() {
         const validateFormResult = validateForm(currentForm, FormType.REGISTER)
         //Check API here
         //FIXME: Complete this
-        if (validateFormResult) {
+        if (validateFormResult.result) {
+            isLoading(true)
             wsInstance.send(WebSocketEvent.REGISTER, {
                 user: currentForm.username,
                 pass: currentForm.password
             })
+        }
+        else {
+            setMessage(validateFormResult.message)
         }
     }
 
@@ -42,11 +51,15 @@ export default function RegisterComponent() {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.REGISTER, (response) => {
             if (response.status === "success") {
                 //Navigate back to login
-                // setTimeout(() => {
-                navigate("/login")
-                // }, 1000)
+                setMessage("Đăng ký thành công. Đang chuyển về trang đăng nhập")
+                setTimeout(() => {
+                    navigate("/login")
+                }, 500)
             }
             else {
+                isLoading(false)
+                setMessage("Tên người dùng này đã đăng ký")
+                console.log(response.mes)
                 //Send a message here
             }
         })
@@ -87,14 +100,16 @@ export default function RegisterComponent() {
                                 onChange={(e) => handleInputChange("validatePassword", e.target.value)}
                             />
                         </div>
+                        <p className="text-center text-red-500">{message}</p>
                     </div>
 
 
                     <button
-                        className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full"
+                        className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full disabled:bg-blue-900/70"
+                        disabled={loading}
                         onClick={handleForm}
                     >
-                        Đăng ký
+                        {loading ? "Đang đăng ký" : "Đăng ký"}
                     </button>
                     <div className="flex gap-3 items-start mt-5 text-center">
                         <p className="m-0 p-0 text-sm text-neutral-700 dark:text-neutral-400">

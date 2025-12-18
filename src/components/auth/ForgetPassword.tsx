@@ -1,25 +1,25 @@
-import type { ReduxState } from "@/constants/ReduxState"
-import { useDispatch, useSelector } from "react-redux"
+// import type { ReduxState } from "@/constants/ReduxState"
+import { useDispatch } from "react-redux"
 import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
 import { useEffect } from "react"
-import { validateForm } from "@/services/authService"
-import { useNavigate } from "react-router-dom"
+// import { validateForm } from "@/services/authService"
+// import { useNavigate } from "react-router-dom"
 
 /**
  * @deprecated
  */
 export default function ForgetPasswordComponent() {
     const dispatcher = useDispatch()
-    const currentForm = useSelector((state: ReduxState) => state.authForm)
-    const navigate = useNavigate()
+    // const currentForm = useSelector((state: ReduxState) => state.authForm)
+    // const navigate = useNavigate()
 
     const handleForm = () => {
-        //Check API here
-        const validateFormResult = validateForm(currentForm)
-        //FIXME: Complete this
-        if (validateFormResult) { }
-        //Temp line for testing
-        navigate('/reset-password')
+        // //Check API here
+        // const validateFormResult = validateForm(currentForm)
+        // //FIXME: Complete this
+        // if (validateFormResult) { }
+        // //Temp line for testing
+        // navigate('/reset-password')
     }
 
     const handleInputChange = (key: 'username' | 'password', value: string) => {

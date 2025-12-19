@@ -38,7 +38,7 @@ export interface WsReceiveMsgPayloadMap {
     [WebSocketEvent.SEND_CHAT_TO_ROOM]: ReceiveMsgSendChatPayload,
     [WebSocketEvent.SEND_CHAT_TO_PEOPLE]: ReceiveMsgSendChatPayload,
     [WebSocketEvent.CHECK_USER]: ReceiveMsgCheckUserPayload,
-    [WebSocketEvent.GET_USER_LIST]: ReceiveMsgGetUserListPayload
+    [WebSocketEvent.GET_USER_LIST]: ReceiveMsgGetUserListPayload[]
 }
 
 export type WsReceiveMessage<K extends keyof WsReceiveMsgPayloadMap> = WsEventResponse<K, WsReceiveMsgPayloadMap[K]>

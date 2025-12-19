@@ -33,9 +33,18 @@ export interface ReceiveMsgGetChatPeoplePayload {
 }
 
 export interface ReceiveMsgSendChatPayload {
+    // Empty
 }
 
 export interface ReceiveMsgCheckUserPayload {
+        status: boolean
 }
 
-export interface ReceiveMsgGetUserListPayload { }
+export interface ReceiveMsgGetUserListPayload {
+    //             "name": "Nhóm 77 Test API Frontend",
+    //             "type": 1,
+    //             "actionTime": "2025-12-17 09:17:07"
+    name: string,
+    type: number,
+    actionTime: string
+}

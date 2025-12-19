@@ -4,7 +4,7 @@ import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
 import { useEffect, useState } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
-import { WebsocketInstance } from "@/socket/configWebsocket"
+import { WebsocketInstance } from "@/socket/WebsocketInstance"
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 import { FormType } from "@/constants/AuthForm"
 
@@ -19,6 +19,8 @@ export default function LoginComponent() {
     const [message, setMessage] = useState("")
 
     const wsInstance = WebsocketInstance.getInstance()
+
+
 
     const handleForm = () => {
         const validateFormResult = validateForm(currentForm, FormType.LOGIN)
@@ -45,6 +47,7 @@ export default function LoginComponent() {
     useEffect(() => {
         dispatcher(resetAuthForm())
     }, [])
+
 
     useEffect(() => {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, (response) => {

@@ -4,9 +4,9 @@ import { resetAuthForm, setAuthFormValue, type AuthFormSlice } from "@/redux/sli
 import { useEffect, useState } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
-import { WebsocketInstance } from "@/socket/configWebsocket"
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 import { FormType } from "@/constants/AuthForm"
+import { WebsocketInstance } from "@/socket/WebsocketInstance"
 
 //Handle loading when connect() is not completed
 

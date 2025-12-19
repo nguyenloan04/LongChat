@@ -2,6 +2,10 @@ import type { WsReceiveMessage, WsReceiveMsgPayloadMap } from "@/socket/types/We
 import type { WsSendMessage, WsSendMsgPayloadMap } from "@/socket/types/WebsocketMessageSend";
 import type { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 
+/**
+ * Handle WebSocket response
+ * @param data Message data received from a WebSocket event
+ */
 type WsCallback<K extends keyof WsReceiveMsgPayloadMap> = (
     data: WsReceiveMessage<K>
 ) => void;
@@ -11,6 +15,9 @@ export class WebsocketInstance {
     private static BASE_URL = "wss://chat.longapp.site/chat/chat"
     private socket: WebSocket | null = null
     private subscriber: Map<string, Function[]> = new Map()
+
+    public onConnectionLost?: (code: number) => void
+    public onServerError?: () => void
 
     private constructor() {
         this.socket = new WebSocket(WebsocketInstance.BASE_URL)
@@ -46,14 +53,17 @@ export class WebsocketInstance {
 
         this.socket.onclose = (event: CloseEvent) => {
             console.log("Connection closed", event.code, event.reason)
-            // Temp here
-            if (event.code === 1006) {
-                // setTimeout(() => this.connect(), 3000)
+            //Let middleware handle
+            if (this.onConnectionLost) {
+                this.onConnectionLost(event.code)
             }
         }
 
         this.socket.onerror = (error: Event) => {
             console.log("Server error", error)
+            if (this.onServerError) {
+                this.onServerError()
+            }
         }
     }
 
@@ -75,6 +85,14 @@ export class WebsocketInstance {
     }
 
     //Impl pub/sub
+    /**
+     * Subscribe an event from a component or from a middleware
+     * @param event - Event subcribed from subscriber
+     * @param callback - A callback to handle message response from `event`
+     * @returns A function to unsubscribe current event
+     * @see `unsubscribe()` for return function
+     * @see `WsCallback` for response handler
+     */
     public subscribe<K extends WebSocketEvent>(
         event: K,
         callback: WsCallback<K>
@@ -87,6 +105,11 @@ export class WebsocketInstance {
         return () => this.unsubscribe(event, callback)
     }
 
+    /**
+     * Unsubscribe an event from subscriber
+     * @param event - Event subscriber want to unsubscribed
+     * @param callback - Callback definied when call `subscribe()` function
+     */
     private unsubscribe<K extends WebSocketEvent>(
         event: K,
         callback: WsCallback<K>
@@ -106,5 +129,9 @@ export class WebsocketInstance {
         if (listener) {
             listener.forEach(cb => cb(data))
         }
+    }
+
+    get getSocket() {
+        return this.socket
     }
 }

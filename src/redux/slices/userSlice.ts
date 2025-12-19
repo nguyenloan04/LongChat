@@ -2,11 +2,11 @@ import type { User } from "@/constants/User";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserSlice {
-    user: User | null
+    user: User | null,
 }
 
 const initialState: UserSlice = {
-    user: null
+    user: null,
 }
 
 export const userSlice = createSlice({

@@ -1,4 +1,4 @@
-import { socketMiddleware } from "@/middlewares/websocketMiddleware";
+import { socketMiddleware } from "@/middlewares/webSocketMiddleware";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({

@@ -1,14 +1,16 @@
-import { WebsocketInstance } from "@/socket/configWebsocket";
+import { WebsocketInstance } from "@/socket/WebsocketInstance";
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage";
 import type { Middleware } from "@reduxjs/toolkit";
 
 export const socketMiddleware: Middleware = (store) => {
     const ws = WebsocketInstance.getInstance()
 
+    //Global state
+
     ws.subscribe(WebSocketEvent.GET_ROOM_CHAT_MES, (response) => {
         if (response.status === "success") {
             const data = response.data
-            //Check does message come from owner here
+            //Insert action into store.dispatch()
             // store.dispatch()
         }
     })
@@ -17,6 +19,7 @@ export const socketMiddleware: Middleware = (store) => {
         if (response.status === "success") {
             const data = response.data
             //Check does message come from owner here
+            //Insert action into store.dispatch()
             // store.dispatch()
         }
     })
@@ -25,6 +28,7 @@ export const socketMiddleware: Middleware = (store) => {
         if (response.status === "success") {
             const data = response.data
             //Check does message come from owner here
+            //Insert action into store.dispatch()
             // store.dispatch()
         }
     })
@@ -39,7 +43,16 @@ export const socketMiddleware: Middleware = (store) => {
         }
     })
 
-    return (next) => (action) => {
+    return (next) => (action: any) => {
+        switch(action.type) {
+            //Example code
+            case 'something/example': {
+                const actionData = action.payload
+                // ws.send()
+                break
+            }
+        }
+
         return next(action)
     }
 }

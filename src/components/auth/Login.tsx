@@ -13,14 +13,15 @@ export default function LoginComponent() {
     const dispatcher = useDispatch()
     const currentForm = useSelector((state: ReduxState) => state.authForm)
     const socketState = useSelector((state: ReduxState) => state.socketState)
+    const currentUser = useSelector((state: ReduxState) => state.currentUser)
+    //Redux state
     const pageLoading = socketState.isConnected
-    
+
     //Local state
     const [loading, isLoading] = useState(false)
     const [message, setMessage] = useState("")
 
     const navigate = useNavigate()
-
     const wsInstance = WebsocketInstance.getInstance()
 
     const handleForm = () => {
@@ -47,6 +48,8 @@ export default function LoginComponent() {
 
     useEffect(() => {
         dispatcher(resetAuthForm())
+        //Redirect to home page if logged in
+        if (currentUser) navigate("/")
     }, [])
 
 
@@ -130,7 +133,7 @@ export default function LoginComponent() {
                         </div>
                     </div>
                     :
-                    <ConnectionLoading  />
+                    <ConnectionLoading />
                 }
             </div>
         </div >

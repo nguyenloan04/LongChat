@@ -16,6 +16,7 @@ export class WebsocketInstance {
     private socket: WebSocket | null = null
     private subscriber: Map<string, Function[]> = new Map()
 
+    public onInitConnection?: () => void
     public onConnectionLost?: (code: number) => void
     public onServerError?: () => void
 
@@ -36,6 +37,10 @@ export class WebsocketInstance {
         this.socket.onopen = () => {
             //Temp msg
             console.log("Connected to server successfully!")
+            
+            if (this.onInitConnection) {
+                this.onInitConnection()
+            }
         }
 
         this.socket.onmessage = (event: MessageEvent) => {

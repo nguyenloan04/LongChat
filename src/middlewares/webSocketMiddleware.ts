@@ -1,5 +1,5 @@
 import type { User } from "@/constants/User";
-import { setErrorMessage } from "@/redux/slices/socketSlice";
+import { setConnected, setErrorMessage } from "@/redux/slices/socketSlice";
 import { setCurrentUser } from "@/redux/slices/userSlice";
 import { WebsocketInstance } from "@/socket/WebsocketInstance";
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage";
@@ -12,6 +12,10 @@ const RECONNECT_INTERVAL = 500 //Reconnect every 0.5s
 export const socketMiddleware: Middleware = (store) => {
     const ws = WebsocketInstance.getInstance()
     let serverErrorState = false
+
+    ws.onInitConnection = () => {
+        store.dispatch(setConnected(true))
+    }
 
     ws.onConnectionLost = (code) => {
         switch (code) {
@@ -31,7 +35,9 @@ export const socketMiddleware: Middleware = (store) => {
 
     ws.onServerError = () => {
         store.dispatch(setErrorMessage("Server đang gặp lỗi, hãy quay lại sau"))
-        serverErrorState = true
+        if (!serverErrorState) {
+            serverErrorState = true
+        }
     }
 
     //For relogin when disconnect
@@ -77,6 +83,8 @@ export const socketMiddleware: Middleware = (store) => {
         switch (action.type) {
             case 'socket/requestRelogin': {
                 try {
+                    serverErrorState = false
+                    
                     const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
                     const state = store.getState()
                     const currentUser: User = state.currentUser.currentUser as User

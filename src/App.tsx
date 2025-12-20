@@ -7,6 +7,7 @@ import router from './routes/index.tsx'
 import './App.css'
 
 function App() {
+    //FIXME: Implement a dialog to display websocket error
     // const socketState = useSelector((state: ReduxState) => state.socketState)
     // useEffect(() => {
     //     if (socketState.errorMessage) {

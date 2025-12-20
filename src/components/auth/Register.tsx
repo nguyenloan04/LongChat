@@ -53,7 +53,7 @@ export default function RegisterComponent() {
     useEffect(() => {
         dispatcher(resetAuthForm())
         //Redirect to home page if logged in
-        if (currentUser) navigate("/")
+        if (currentUser.user) navigate("/")
     }, [])
 
     useEffect(() => {

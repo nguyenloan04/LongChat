@@ -49,7 +49,7 @@ export default function LoginComponent() {
     useEffect(() => {
         dispatcher(resetAuthForm())
         //Redirect to home page if logged in
-        if (currentUser) navigate("/")
+        if (currentUser.user) navigate("/")
     }, [])
 
 

@@ -1,8 +1,8 @@
 export default function Privacy() {
     return (
         <div className="bg-white-700">
-            <div className="max-w-4xl mx-auto px-3 py-10">
-                <h1 className="text-4xl font-bold mb-2">Chính sách quyền riêng tư</h1>
+            <div className="lg:max-w-4xl mx-auto lg:px-3 py-10 px-10">
+                <h1 className="lg:text-4xl font-bold mb-2 text-2xl">Chính sách quyền riêng tư</h1>
                 <p className="text-sm text-gray-500 mb-3">
                     Cập nhật lần cuối: <span className="italic">23/12/2025</span>
                 </p>
@@ -29,7 +29,7 @@ export default function Privacy() {
                 </nav>
 
                 <div id="collect-user-data">
-                    <h2 className="text-xl font-semibold mb-2">1. Thông tin chúng tôi thu thập</h2>
+                    <h2 className="lg:text-xl text-lg font-semibold mb-2">1. Thông tin chúng tôi thu thập</h2>
                     <h3 className="font-medium mt-3">1.1. Thông tin bạn cung cấp</h3>
                     <ul className="list-disc list-inside ml-4">
                         <li>Tên người dùng (username)</li>
@@ -47,7 +47,7 @@ export default function Privacy() {
                 </div>
 
                 <div id="use-user-data">
-                    <h2 className="text-xl font-semibold mb-2 mt-3">2. Cách chúng tôi sử dụng thông tin</h2>
+                    <h2 className="text-lg lg:text-xl font-semibold mb-2 mt-3">2. Cách chúng tôi sử dụng thông tin</h2>
                     <ul className="list-disc list-inside ml-4">
                         <li>Cung cấp và duy trì chức năng chat</li>
                         <li>Xác thực tài khoản và bảo mật hệ thống</li>
@@ -57,7 +57,7 @@ export default function Privacy() {
                 </div>
 
                 <div id="security-user-data">
-                    <h2 className="text-xl font-semibold mb-2 mt-3">3. Bảo mật thông tin</h2>
+                    <h2 className="text-lg lg:text-xl font-semibold mb-2 mt-3">3. Bảo mật thông tin</h2>
                     <p>
                         Chúng tôi áp dụng các biện pháp kỹ thuật và tổ chức hợp lý để bảo vệ dữ liệu,
                         bao gồm mã hóa khi truyền tải và kiểm soát truy cập hệ thống. Tuy nhiên,
@@ -66,7 +66,7 @@ export default function Privacy() {
                 </div>
 
                 <div id="share-user-date">
-                    <h2 className="text-xl font-semibold mb-2 mt-3">4. Chia sẻ thông tin</h2>
+                    <h2 className="text-lg lg:text-xl font-semibold mb-2 mt-3">4. Chia sẻ thông tin</h2>
                     <p>
                         Chúng tôi không bán, cho thuê hoặc chia sẻ thông tin cá nhân cho bên thứ ba,
                         trừ khi có yêu cầu hợp pháp từ cơ quan chức năng hoặc nhằm bảo vệ quyền lợi
@@ -75,7 +75,7 @@ export default function Privacy() {
                 </div>
 
                 <div id="permission-user">
-                    <h2 className="text-xl font-semibold mb-2 mt-3">5. Quyền của người dùng</h2>
+                    <h2 className="text-lg lg:text-xl font-semibold mb-2 mt-3">5. Quyền của người dùng</h2>
                     <ul className="list-disc list-inside ml-4">
                         <li>Xem, chỉnh sửa hoặc xóa thông tin cá nhân</li>
                         <li>Yêu cầu xóa tài khoản và dữ liệu liên quan</li>
@@ -84,7 +84,7 @@ export default function Privacy() {
                 </div>
 
                 <div id="minor-user">
-                    <h2 className="text-xl font-semibold mb-2 mt-3">6. Dữ liệu của trẻ vị thành niên</h2>
+                    <h2 className="text-lg lg:text-xl font-semibold mb-2 mt-3">6. Dữ liệu của trẻ vị thành niên</h2>
                     <p>
                         Ứng dụng không chủ đích thu thập dữ liệu cá nhân của trẻ em dưới 13 tuổi.
                         Nếu phát hiện, chúng tôi sẽ xóa dữ liệu ngay khi có yêu cầu.
@@ -92,7 +92,7 @@ export default function Privacy() {
                 </div>
 
                 <div id="change-policy">
-                    <h2 className="text-xl font-semibold mb-2 mt-3">7. Thay đổi chính sách</h2>
+                    <h2 className="text-lg lg:text-xl font-semibold mb-2 mt-3">7. Thay đổi chính sách</h2>
                     <p>
                         Chính sách này có thể được cập nhật theo thời gian. Mọi thay đổi sẽ được
                         thông báo trong ứng dụng hoặc trên website chính thức.
@@ -100,7 +100,7 @@ export default function Privacy() {
                 </div>
 
                 <div id="contact-us">
-                    <h2 className="text-xl font-semibold mb-2 mt-3">8. Liên hệ</h2>
+                    <h2 className="text-lg lg:text-xl font-semibold mb-2 mt-3">8. Liên hệ</h2>
                     <p>Nếu bạn có câu hỏi, vui lòng liên hệ:</p>
                     <ul className="list-none mt-2">
                         <li>Email: <span className="italic">laptrinhfrontend@gmail.com</span></li>

@@ -10,5 +10,5 @@ export const store = configureStore({
         currentUser: userReducer,
         socketState: socketReducer
     },
-    middleware: (getDefault) => getDefault().concat(socketMiddleware)
+    // middleware: (getDefault) => getDefault().concat(socketMiddleware)
 })

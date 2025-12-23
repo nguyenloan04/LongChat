@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { authRouter } from "./authRouter";
+import Privacy from "@/components/policy/Privacy.tsx";
 
 const route = createBrowserRouter([
     {
@@ -7,7 +8,11 @@ const route = createBrowserRouter([
         // element: <App />
     },
     //Other routes here
-    ...authRouter
+    ...authRouter,
+    {
+        path: "/privacy-policy",
+        element: <Privacy />
+    }
 ])
 
 export default route

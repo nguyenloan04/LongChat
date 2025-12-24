@@ -77,7 +77,7 @@ const UserPopup = () => {
         <div>
             <div className="flex gap-2 mb-2">
                 <img
-                    className="rounded-lg w-12 h-12"
+                    className="rounded-2xl w-12 h-12"
                     src="https://avatars.githubusercontent.com/u/124552069" alt=""
                 />
                 <div>

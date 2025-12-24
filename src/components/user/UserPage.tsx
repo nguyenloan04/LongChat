@@ -14,11 +14,10 @@ export function UserPage() {
         {key: undefined, value: null}
     ].map(ele => [ele.key, ele.value]))
     return (
-        <div className="mx-auto flex justify-center h-[100vh]">
+        <div className="mx-auto flex justify-center h-[100vh] dark:bg-gray-900 dark:text-white">
             <div className="flex-2">
                 <MenuUser text={params.key ?? ""} />
             </div>
-
             
             <div className="flex-10">
                 {map.get(params.key) ?? <Navigate to="/user/user-profile" replace />}

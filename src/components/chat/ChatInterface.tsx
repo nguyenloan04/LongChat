@@ -17,7 +17,8 @@ const msg = [
     "Làm bài cũ chưa mà học???"
 ]
 
-export function ChatInterface() {
+//Temp props, just used for display purpose
+export function ChatInterface(props: { onCloseTab: () => void }) {
     const SendMessageComponent = () => {
         const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -57,7 +58,7 @@ export function ChatInterface() {
                         <Smile size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
                     </div>
                     <div className="pt-0.5">
-                    <SendHorizonal size={"2.25rem"} className="bg-blue-500 hover:bg-blue-400 active:bg-blue-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />
+                        <SendHorizonal size={"2.25rem"} className="bg-blue-500 hover:bg-blue-400 active:bg-blue-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />
                     </div>
                 </div>
             </div>
@@ -80,7 +81,11 @@ export function ChatInterface() {
                 <div className="flex gap-4">
                     <Search size={"1.25rem"} className="cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
                     <Phone size={"1.25rem"} className="cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
-                    <PanelRight size={"1.25rem"} className="cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
+                    <PanelRight
+                        size={"1.25rem"}
+                        className="cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400"
+                        onClick={props.onCloseTab}
+                    />
                 </div>
             </div>
             {/* Main UI */}

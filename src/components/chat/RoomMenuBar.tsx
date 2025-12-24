@@ -1,79 +1,90 @@
-import { Link, User, Users } from "lucide-react";
+import { ChevronDown, FileX2, ImageOff, Link, Settings, User, UserPlus, Users } from "lucide-react";
 
 export function RoomMenuBar() {
+
+    const headerFeature = [
+        {
+            //Used room type in redux to decide
+            name: "Thêm thành viên",
+            icon: <UserPlus strokeWidth={1.5} size={"1.25rem"} />
+        },
+        {
+            name: "Cài đặt",
+            icon: <Settings strokeWidth={1.5} size={"1.25rem"} />
+        }
+    ]
+
     return (
         <div>
             {/* Header */}
             <div className="flex items-center justify-center flex-col gap-1 p-4">
-                <div className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
-                    <User size={'1.5rem'} />
+                <div className="w-18 h-18 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
+                    <User size={'2.5rem'} />
                 </div>
                 <p className="text-lg font-semibold">Group 77</p>
+
+                <div className="mt-4 flex gap-1 justify-center items-start">
+                    {headerFeature.map(ele => (
+                        <div className="flex flex-col items-center w-24">
+                            <div className="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 p-2.5 rounded-full border flex justify-center items-center">
+                                {ele.icon}
+                            </div>
+                            <p className="text-xs text-center mt-1">
+                                {ele.name}
+                            </p>
+                        </div>
+                    ))}
+                </div>
             </div>
             {/* Temp */}
             {/* Member */}
-            <hr />
-            <div className="p-2 py-4">
-                <div className="flex flex-col gap-3">
-                    <div className="flex gap-2 items-center">
-                        <Link />
-                        <div>
-                            <p className="mb-1">Link tham gia nhóm</p>
-                            <a href="https://localhost:5713/g/group77">
-                                <p className="underline text-blue-500 text-sm">https://localhost:5713/g/group77</p>
-                            </a>
-                        </div>
+            <div className="px-2">
+                <div className="my-1">
+                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                        <h5 className="font-semibold">Thành viên trong nhóm</h5>
+                        <ChevronDown />
+                    </div>
+                    <div className="flex flex-col gap-3">
                     </div>
                 </div>
-            </div>
-            <hr />
-            <div className="p-2 py-4">
-                <h5 className="font-semibold mb-4">Ảnh & Video</h5>
-                <div className="flex flex-col gap-3">
-
-                </div>
-            </div>
-            <hr />
-            <div className="p-2 py-4">
-                <h5 className="font-semibold mb-4">Thành viên nhóm</h5>
-                <div className="flex flex-col gap-3">
-                    <div className="flex gap-2">
-                        <Users />
-                        3 thành viên
+                <div className="my-1">
+                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                        <h5 className="font-semibold">Ảnh & Video</h5>
+                        <ChevronDown />
                     </div>
-                    <div className="flex flex-col gap-2">
-                        <div className="flex gap-2 items-center">
-                            <div className="w-8 h-8 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
-                                <User size={'1rem'} />
-                            </div>
-                            <p>Người dùng 0</p>
+                    {/* <div className="gap-3">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                            <ImageOff size={"2rem"} className="text-neutral-500" />
+                            <p className="text-center text-neutral-500 text-sm">Không có ảnh & video được gửi</p>
                         </div>
-
-                        <div className="flex gap-2 items-center">
-                            <div className="w-8 h-8 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
-                                <User size={'1rem'} />
-                            </div>
-                            <p>Người dùng 1</p>
+                    </div> */}
+                </div>
+                <div className="my-1">
+                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                        <h5 className="font-semibold">File</h5>
+                        <ChevronDown />
+                    </div>
+                    {/* <div className="gap-3">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                            <FileX2 size={"2rem"} className="text-neutral-500" />
+                            <p className="text-center text-neutral-500 text-sm">Không có file được gửi</p>
                         </div>
-
-                        <div className="flex gap-2 items-center">
-                            <div className="w-8 h-8 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
-                                <User size={'1rem'} />
-                            </div>
-                            <p>Người dùng 2</p>
-                        </div>
-                        <div className="flex gap-2 items-center">
-                            <div className="w-8 h-8 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
-                                <User size={'1rem'} />
-                            </div>
-                            <p>Người dùng 3</p>
-                        </div>
-                        <div className="flex justify-center mt-4 mb-2">
-                            <button className="border px-3 py-2 bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 rounded">Xem thêm</button>
-                        </div>
+                    </div> */}
+                </div>
+                <div className="my-1">
+                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                        <h5 className="font-semibold">Quyền riêng tư & hỗ trợ</h5>
+                        <ChevronDown />
                     </div>
                 </div>
-                <hr />
+                <div className="my-1 p-2">
+                    <h5 className="font-semibold">Link tham gia nhóm</h5>
+                    <div className="flex items-center gap-1">
+                        <a href="https://localhost:5713/g/group77">
+                            <p className="underline text-blue-500 text-sm">https://localhost:5713/g/group77</p>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     )

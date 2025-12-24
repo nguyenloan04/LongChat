@@ -1,4 +1,4 @@
-import { ChevronDown, FileX2, ImageOff, Link, Settings, User, UserPlus, Users } from "lucide-react";
+import { ChevronDown, Copy, FileX2, ImageOff, Link, Settings, Share, User, UserPlus, Users } from "lucide-react";
 
 export function RoomMenuBar() {
 
@@ -26,7 +26,7 @@ export function RoomMenuBar() {
                 <div className="mt-4 flex gap-1 justify-center items-start">
                     {headerFeature.map(ele => (
                         <div className="flex flex-col items-center w-24">
-                            <div className="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 p-2.5 rounded-full border flex justify-center items-center">
+                            <div className="cursor-pointer bg-gray-200 hover:bg-gray-300 active:bg-gray-400 p-2.5 rounded-full border flex justify-center items-center">
                                 {ele.icon}
                             </div>
                             <p className="text-xs text-center mt-1">
@@ -79,10 +79,30 @@ export function RoomMenuBar() {
                 </div>
                 <div className="my-1 p-2">
                     <h5 className="font-semibold">Link tham gia nhóm</h5>
-                    <div className="flex items-center gap-1">
-                        <a href="https://localhost:5713/g/group77">
-                            <p className="underline text-blue-500 text-sm">https://localhost:5713/g/group77</p>
+                    <div className="flex flex-1 truncate justify-between items-center gap-4">
+                        <a
+                            href="https://localhost:5713/g/group77"
+                            className="underline text-blue-500 hover:text-blue-400 active:text-blue-300 text-sm min-w-0"
+                        >
+                            <p className="truncate">
+                                https://localhost:5713/g/group77
+                            </p>
                         </a>
+
+                        <div className="flex gap-2 justify-end shrink-0">
+                            <div
+                                className="cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 w-10 h-10 flex justify-center items-center"
+                                title="Sao chép"
+                            >
+                                <Copy size={'1.25rem'} />
+                            </div>
+                            <div
+                                className="cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 w-10 h-10 flex justify-center items-center"
+                                title="Chia sẻ"
+                            >
+                                <Share size={'1.25rem'} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -49,7 +49,7 @@ export function ChatSideBar() {
                     </div>
                 ))}
                 <Popover open={popupState} onOpenChange={setPopupState}>
-                    <PopoverTrigger>
+                    <PopoverTrigger className="cursor-pointer">
                         <img
                             className="rounded-2xl p-1"
                             src="https://avatars.githubusercontent.com/u/124552069" alt=""

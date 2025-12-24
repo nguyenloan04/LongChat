@@ -2,6 +2,7 @@
 
 import { Image, PanelRight, Paperclip, Phone, Search, Send, SendHorizonal, Smile, Sticker, User } from "lucide-react";
 import { Message } from "./Message";
+import { useRef } from "react";
 
 
 //Mock data
@@ -17,10 +18,56 @@ const msg = [
 ]
 
 export function ChatInterface() {
+    const SendMessageComponent = () => {
+        const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+        const handleInput = (_: React.ChangeEvent<HTMLTextAreaElement>) => {
+            const textarea = textareaRef.current;
+            if (textarea) {
+                textarea.style.height = 'auto';
+
+                const maxHeight = 200;
+                const nextHeight = Math.min(textarea.scrollHeight, maxHeight);
+
+                textarea.style.height = `${nextHeight}px`;
+
+                textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
+            }
+        };
+
+
+        return (
+            <div className="min-h-4 border-t border-gray-200 flex p-2">
+                <textarea
+                    className="bg-neutral-200 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
+                    onChange={handleInput}
+                    ref={textareaRef}
+                    name=""
+                    id=""
+                    rows={1}
+                    placeholder="Nhập tin nhắn tới Group 77">
+                </textarea>
+                <div
+                    className="flex items-start px-3 justify-end gap-3"
+                >
+                    <div className="flex items-start justify-end gap-3 pt-2">
+                        <Paperclip size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
+                        <Image size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
+                        <Sticker size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
+                        <Smile size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
+                    </div>
+                    <div className="pt-0.5">
+                    <SendHorizonal size={"2.25rem"} className="bg-blue-500 hover:bg-blue-400 active:bg-blue-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="p-2 py-0 flex flex-col h-full">
             {/* Header */}
-            <div className="flex justify-between items-center p-1 px-3 border border-gray-200">
+            <div className="flex justify-between items-center p-1 px-3 border-b border-gray-200">
                 <div className="flex gap-3 items-center">
                     <div className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
                         <User />
@@ -37,7 +84,7 @@ export function ChatInterface() {
                 </div>
             </div>
             {/* Main UI */}
-            <div className="bg-gray-200 flex-1 overflow-y-auto flex flex-col gap-1 w-full p-2">
+            <div className="flex-1 overflow-y-auto flex flex-col gap-1 w-full p-2">
                 {msg.map(ele => (
                     <Message
                         text={ele}
@@ -47,21 +94,7 @@ export function ChatInterface() {
                 ))}
             </div>
             {/* Message */}
-            <div className="h-[8%] border border-gray-200 flex p-2">
-                <textarea
-                    className="p-2 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
-                    name=""
-                    id=""
-                    placeholder="Nhập tin nhắn tới Group 77">
-                </textarea>
-                <div className="flex items-center px-3 justify-end gap-3">
-                    <Paperclip size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                    <Image size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                    <Sticker size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                    <Smile size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                    <SendHorizonal size={"1.5rem"} className="ms-2 cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"/>
-                </div>
-            </div>
+            <SendMessageComponent />
         </div>
     )
 }

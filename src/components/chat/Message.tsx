@@ -10,7 +10,7 @@ export function Message({ text = "", isOwner = true, username = "" }) {
                     </div>
                 }
                 <div className="max-w-[50%]">
-                    <div className={`mt-1 p-2 px-3 rounded-2xl ${isOwner ? "bg-blue-300" : "bg-white"}`}>
+                    <div className={`mt-1 p-2 px-3 rounded-2xl ${isOwner ? "bg-blue-300" : "bg-gray-200"}`}>
                         {!isOwner &&
                             <p className="text-gray-500 text-sm">
                                 {username}

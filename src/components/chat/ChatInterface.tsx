@@ -1,6 +1,6 @@
 //Props later
 
-import { Image, PanelRight, Paperclip, Phone, Search, Send, SendHorizonal, Smile, Sticker, User } from "lucide-react";
+import { Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User } from "lucide-react";
 import { Message } from "./Message";
 import { useRef } from "react";
 
@@ -65,9 +65,9 @@ export function ChatInterface() {
     }
 
     return (
-        <div className="p-2 py-0 flex flex-col h-full">
+        <div className="py-0 flex flex-col h-full">
             {/* Header */}
-            <div className="flex justify-between items-center p-1 px-3 border-b border-gray-200">
+            <div className="flex justify-between items-center p-1 px-3 border border-gray-200 h-16">
                 <div className="flex gap-3 items-center">
                     <div className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
                         <User />
@@ -84,7 +84,7 @@ export function ChatInterface() {
                 </div>
             </div>
             {/* Main UI */}
-            <div className="flex-1 overflow-y-auto flex flex-col gap-1 w-full p-2">
+            <div className="flex-1 overflow-y-auto flex flex-col gap-1 w-full bg-neutral-50">
                 {msg.map(ele => (
                     <Message
                         text={ele}

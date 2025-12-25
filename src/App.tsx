@@ -17,7 +17,7 @@ function App() {
     //         alert(socketState.errorMessage)
     //     }
     // }, [socketState.errorMessage])
-    const theme = useSelector((state: ReduxState) => state.themeState.theme)
+    const theme = useSelector((state: ReduxState) => state.userPageState.theme)
 
     useEffect(() => {
         const root = window.document.documentElement;

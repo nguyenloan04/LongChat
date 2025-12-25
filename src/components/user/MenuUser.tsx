@@ -65,7 +65,7 @@ export default function MenuUser(props: {text: string}) {
             <div>
                 <div className="flex items-center p-2 justify-center shadow dark:shadow-gray-300">
                     <div className="w-[4rem] h-[4rem] me-3 border-[4px] border-gray-300 rounded-[60%]">
-                        <img src="https://avatars.githubusercontent.com/u/124800719?v=4"
+                        <img src="https://res.cloudinary.com/dcyo10lft/image/upload/v1766681918/6226b4af190a9a2cdf80de5b3652d437_wj7wt8.jpg"
                              className="object-contain rounded-[60%] p-1 w-full h-full"/>
                     </div>
                     <div>

@@ -28,9 +28,9 @@ export default function Theme() {
                         Cài đặt giao diện
                     </div>
                     <div className="flex items-center px-4 gap-8">
-                        <div className={`block rounded-xl overflow-hidden border-2 cursor-pointer w-[18rem] ${theme === "light" ? "border-blue-500 shadow-xl shadow-blue-500/30" : ""}`}
+                        <div className={`block rounded-xl overflow-hidden border-2 cursor-pointer w-[18rem] ${theme === "light" ? "border-indigo-500 shadow-xl shadow-indigo-500/30" : ""}`}
                              onClick={() => handleTheme("light")}>
-                            <div className="flex gap-2 p-3 bg-blue-400 text-white font-medium">
+                            <div className="flex gap-2 p-3 bg-indigo-400 text-white font-medium">
                                 <SunIcon/> Chế độ sáng
                             </div>
                             <div className="w-full h-[12rem] bg-gray-100">
@@ -42,7 +42,7 @@ export default function Theme() {
                             </div>
                         </div>
 
-                        <div className={`block rounded-xl overflow-hidden border-2 cursor-pointer w-[18rem] ${theme === "dark" ? "border-blue-500 shadow-lg shadow-blue-500/30" : ""}`}
+                        <div className={`block rounded-xl overflow-hidden border-2 cursor-pointer w-[18rem] ${theme === "dark" ? "border-indigo-500 shadow-lg shadow-indigo-500/30" : ""}`}
                              onClick={() => handleTheme("dark")}>
                             <div className="flex gap-2 p-3 bg-neutral-700 text-white font-medium">
                                 <MoonIcon/> Chế độ tối

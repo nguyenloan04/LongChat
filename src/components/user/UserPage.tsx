@@ -19,7 +19,7 @@ export function UserPage() {
                 <MenuUser text={params.key ?? ""} />
             </div>
             
-            <div className="flex-10">
+            <div className="flex-10 overflow-y-auto">
                 {map.get(params.key) ?? <Navigate to="/user/user-profile" replace />}
             </div>
         </div>

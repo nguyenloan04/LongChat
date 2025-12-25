@@ -1,10 +1,33 @@
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+
+// Animation list for FeatureSection
+const animationVariants = {
+    fadeUp: {
+        initial: { opacity: 0, y: 200 },
+        whileInView: { opacity: 1, y: 0 },
+    },
+    fadeLeft: {
+        initial: { opacity: 0, x: -60 },
+        whileInView: { opacity: 1, x: 0 },
+    },
+    fadeRight: {
+        initial: { opacity: 0, x: 60 },
+        whileInView: { opacity: 1, x: 0 },
+    },
+    zoomIn: {
+        initial: { opacity: 0, scale: 0.8 },
+        whileInView: { opacity: 1, scale: 1 },
+    },
+};
+type AnimationType = keyof typeof animationVariants;
 
 interface FeatureSectionProps {
     title: string;
     description: string;
     imageSrc: string;
     reversed?: boolean;
+    animationType?: AnimationType;
 }
 
 export default function FeatureSection({
@@ -12,9 +35,15 @@ export default function FeatureSection({
                                            description,
                                            imageSrc,
                                            reversed = false,
+                                           animationType = "fadeUp"
                                        }: FeatureSectionProps) {
+    const selectedVariant = animationVariants[animationType];
     return (
-        <section className={cn("mx-auto w-3/4 py-10 md:py-25")}>
+        <motion.section className={cn("mx-auto w-3/4 h-screen py-10 md:py-25")}
+                        initial={selectedVariant.initial}
+                        whileInView={selectedVariant.whileInView}
+                        viewport={{ once: false, margin: "-100px" }}
+                        transition={{ duration: 0.7 , ease: "easeOut" }}>
             <div className="container px-5 rounded-[40px] bg-white/5 backdrop-blur-2xl border border-white/20 shadow-2xl">
                 <div className={cn(
                     "flex flex-col gap-12 p-5 items-center",
@@ -28,16 +57,16 @@ export default function FeatureSection({
                     </div>
 
                     <div className="w-full md:w-2/5">
-                        <h2 className=" text-white text-3xl md:text-5xl font-extrabold text-discord-text mb-6 leading-[1.2]">
+                        <h2 className=" text-appchat-bluesky text-3xl md:text-5xl font-extrabold text-discord-text mb-6 leading-[1.2]">
                             {title}
                         </h2>
-                        <p className="text-lg md:text-[1.1rem] text-white">
+                        <p className="text-lg md:text-[1.1rem] leading-relaxed text-appchat-bluesky">
                             {description}
                         </p>
                     </div>
 
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }

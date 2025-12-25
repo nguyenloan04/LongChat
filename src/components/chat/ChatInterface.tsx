@@ -18,7 +18,7 @@ const msg = [
 ]
 
 //Temp props, just used for display purpose
-export function ChatInterface(props: { onCloseTab: () => void }) {
+export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
     const SendMessageComponent = () => {
         const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -40,7 +40,7 @@ export function ChatInterface(props: { onCloseTab: () => void }) {
         return (
             <div className="min-h-4 border-t border-gray-200 flex p-2">
                 <textarea
-                    className="bg-neutral-200 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
+                    className="bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
                     onChange={handleInput}
                     ref={textareaRef}
                     name=""
@@ -58,7 +58,7 @@ export function ChatInterface(props: { onCloseTab: () => void }) {
                         <Smile size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
                     </div>
                     <div className="pt-0.5">
-                        <SendHorizonal size={"2.25rem"} className="bg-blue-500 hover:bg-blue-400 active:bg-blue-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />
+                        <SendHorizonal size={"2.25rem"} className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />
                     </div>
                 </div>
             </div>
@@ -78,18 +78,18 @@ export function ChatInterface(props: { onCloseTab: () => void }) {
                         <p>3 thành viên</p>
                     </div>
                 </div>
-                <div className="flex gap-4">
-                    <Search size={"1.25rem"} className="cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
-                    <Phone size={"1.25rem"} className="cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
+                <div className="flex gap-1">
+                    <Search size={"2.25rem"} className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
+                    <Phone size={"2.25rem"} className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
                     <PanelRight
-                        size={"1.25rem"}
-                        className="cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400"
+                        size={"2.25rem"}
+                        className={`rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400 ${props.closeTabState && "bg-indigo-200 text-indigo-700"}`}
                         onClick={props.onCloseTab}
                     />
                 </div>
             </div>
             {/* Main UI */}
-            <div className="flex-1 overflow-y-auto flex flex-col gap-1 w-full bg-neutral-50">
+            <div className="flex-1 overflow-y-auto flex flex-col gap-1 w-full bg-gray-300/50 p-2">
                 {msg.map(ele => (
                     <Message
                         text={ele}

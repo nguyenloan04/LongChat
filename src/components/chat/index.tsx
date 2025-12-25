@@ -10,10 +10,9 @@ export function MainChatUIComponent() {
     const closeTab = () => {
         setRoomMenuState(!roomMenuState)
     }
-
     return (
         <div className="flex w-full h-screen overflow-hidden">
-            <div className="w-[25rem] flex">
+            <div className="w-100 flex">
                 <div className="w-[15%]">
                     <ChatSideBar />
                 </div>
@@ -22,9 +21,9 @@ export function MainChatUIComponent() {
                 </div>
             </div>
             <div className="flex-1">
-                <ChatInterface onCloseTab={closeTab} />
+                <ChatInterface closeTabState={roomMenuState} onCloseTab={closeTab} />
             </div>
-            <div className={`transition-all duration-300 ease-in-out ${roomMenuState ? `w-[25rem]` : 'w-0 opacity-0 pointer-events-none'}`}>
+            <div className={`transition-all duration-300 ease-in-out ${roomMenuState ? `w-100` : 'w-0 opacity-0 pointer-events-none'}`}>
                 <RoomMenuBar />
             </div>
         </div>

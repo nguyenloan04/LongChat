@@ -24,7 +24,7 @@ const features = [
         imageSrc: "src/assets/img/feature_1.jpg",
     }
 ]
-export default function Feature() {
+export default function FeatureOld() {
     const [activeIndex, setActiveIndex] = useState(0)
     // Change index to go to next feature
     const nextSlide = () => {
@@ -47,7 +47,7 @@ export default function Feature() {
     }
     // const visibleCards = getVisibleCards();
     return (
-        <section className="feature h-screen">
+        <section className="feature min-h-screen">
             <div className="relative flex items-center justify-center gap-6 md:gap-10 h-[500px]">
 
                 <Button

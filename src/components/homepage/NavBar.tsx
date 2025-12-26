@@ -1,6 +1,5 @@
 import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
-import {cn} from "@/lib/utils.ts";
 import {useNavigate} from "react-router-dom";
 
 export default function NavBar() {
@@ -22,10 +21,15 @@ export default function NavBar() {
     return (
         <nav className="w-full py-4 sticky top-0 z-50">
             <div className="container mx-auto px-6 flex justify-between items-center">
-                <a href="/" className={cn("text-appchat-bluesky font-black p-3 text-2xl tracking-tighter flex items-center gap-2",
-                    isScrolled ? "text-white rounded-sm bg-appchat-bluesky" : "")}>
-                    <i className="fa-solid fa-comment"></i> LongChat - Long connected chat
-                </a>
+                {isScrolled ? (
+                    <a href="/" className="text-white font-black p-3 text-2xl tracking-tighter flex items-center gap-2 rounded-sm bg-appchat-bluesky">
+                        <i className="fa-solid fa-comment"></i> LongChat
+                    </a>
+                ): (
+                    <a href="/" className="text-appchat-bluesky font-black p-3 text-2xl tracking-tighter flex items-center gap-2 rounded-sm">
+                        <i className="fa-solid fa-comment"></i> LongChat - Long connected chat
+                    </a>
+                )}
                 <div className="flex items-center gap-5">
                     <Button
                         className="bg-appchat-bluesky text-lg text-white hover:shadow-lg hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all" onClick={()=> navigate("login")}

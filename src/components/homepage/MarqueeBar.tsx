@@ -8,7 +8,7 @@ const MARQUEE_ITEMS = [
 ];
 export default function MarqueeBar() {
     return (
-        <section className="h-screen">
+        <section className="min-h-screen">
             <div className="overflow-hidden py-10 border-y border-white/10">
                 <div className="flex w-max">
                     <MarqueeGroup/>

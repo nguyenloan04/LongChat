@@ -41,11 +41,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --animate-marquee: marquee 20s linear infinite; /* Hiệu ứng di chuyển ngang 1 component vô tận */
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-100%); }
-  }
+  /*--animate-marquee: marquee 20s linear infinite; !* Hiệu ứng di chuyển ngang 1 component vô tận *!*/
+  /*@keyframes marquee {*/
+  /*  from { transform: translateX(0); }*/
+  /*  to { transform: translateX(-100%); }*/
+  /*}*/
 }
 
 :root {

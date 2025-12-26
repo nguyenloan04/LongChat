@@ -87,14 +87,16 @@ export default function UserProfile() {
                         <div
                             className="shadow border rounded-lg overflow-hidden w-[20rem] mx-auto">
                             <div className="relative h-[9rem]">
-                                <div className="relative h-[6rem] w-full bg-indigo-300">
-                                    <img src={bannerType === "image" ? bannerContent : ""}
-                                         className="object-cover w-full h-full"/>
+                                <div className="relative h-[6rem] w-full" style={{
+                                    backgroundColor: bannerType === "color" ? bannerContent : undefined,
+                                }}>
+                                    <img src={bannerType === "image" ? bannerContent : undefined}
+                                         className={`${bannerType === "color" ? "hidden" : ""} object-cover w-full h-full`}/>
                                 </div>
                                 <div
                                     className="absolute top-12 left-4 w-[5.5rem] h-[5.5rem] me-3 border-[4px] border-gray-300 rounded-[60%]">
-                                    <img src={avatar}
-                                         className="object-contain rounded-[60%] p-1 w-full h-full"/>
+                                    <img src={avatar || undefined}
+                                         className="object-cover rounded-[60%] p-1 w-full h-full"/>
                                 </div>
                             </div>
                             <div className="px-4 pb-4">
@@ -105,7 +107,7 @@ export default function UserProfile() {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <p className="pb-2 font-semibold">Tên hiển thị</p>
+                    <p className="pb-2 font-semibold">Tên hiển thị</p>
                         <input type="text" className="p-2 w-full lg:w-[24rem] rounded-lg h-[3rem] border"
                                placeholder="Tên hiển thị" value={displayName}
                                onChange={(e) => dispatch(setDisplayNameEditUserForm(e.target.value))}/>
@@ -145,12 +147,12 @@ export default function UserProfile() {
                                 <div className="relative h-[6rem] w-full" style={{
                                     backgroundColor: bannerType === "color" ? bannerContent : undefined,
                                 }}>
-                                    <img src={bannerType === "image" ? bannerContent : ""}
+                                    <img src={bannerType === "image" ? bannerContent : undefined}
                                          className={`${bannerType === "color" ? "hidden" : ""} object-cover w-full h-full`}/>
                                 </div>
                                 <div
                                     className="absolute top-12 left-4 w-[5.5rem] h-[5.5rem] me-3 border-[4px] border-gray-300 rounded-[60%]">
-                                    <img src={avatar}
+                                    <img src={avatar || undefined}
                                          className="object-cover rounded-[60%] p-1 w-full h-full"/>
                                 </div>
                             </div>

@@ -31,7 +31,7 @@ export default function MenuUser(props: {text: string}) {
             icon: <ShieldIcon/>,
             content: "Quyền riêng tư",
             action: () => {
-                navigate("/user/privacy");
+                navigate("/privacy-policy");
             }
         },
         {   

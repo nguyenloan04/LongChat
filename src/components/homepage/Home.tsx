@@ -2,10 +2,10 @@
 
 import NavBar from "@/components/homepage/NavBar.tsx";
 import MainPage from "@/components/homepage/MainPage.tsx";
-import FeatureSection from "@/components/homepage/FeatureSection.tsx";
 import MarqueeBar from "@/components/homepage/MarqueeBar.tsx";
 import Footer from "@/components/homepage/Footer.tsx";
 import {motion} from "framer-motion";
+import Feature from "@/components/homepage/Feature.tsx";
 
 const imgTop= "src/assets/img/image_1.webp"
 const imgBottom= "src/assets/img/image_2.webp"
@@ -61,9 +61,7 @@ export default function Home(){
             />
             <NavBar />
             <MainPage/>
-            <FeatureSection title={"Chit chat w ur besties"} description={"Create an invite-only place"} imageSrc={"./src/assets/react.svg"} animationType="zoomIn"/>
-            <FeatureSection title={"Make a real community"} description={"Create a real world belongs to you"} imageSrc={"./src/assets/react.svg"}/>
-            <FeatureSection title={"Chit chat w ur besties"} description={"Create an invite-only place"} imageSrc={"./src/assets/react.svg"} animationType="fadeLeft"/>
+            <Feature/>
             <MarqueeBar/>
             <Footer/>
         </div>

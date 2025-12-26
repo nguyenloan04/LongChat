@@ -1,11 +1,11 @@
 // import {useDispatch} from "react-redux";
 
-import NavBar from "@/components/homepage/NavBar.tsx";
-import MainPage from "@/components/homepage/MainPage.tsx";
-// import MarqueeBar from "@/components/homepage/MarqueeBar.tsx";
-import Footer from "@/components/homepage/Footer.tsx";
+import NavBar from "@/components/home/NavBar.tsx";
+import MainPage from "@/components/home/MainPage.tsx";
+// import MarqueeBar from "@/components/home/MarqueeBar.tsx";
+import Footer from "@/components/home/Footer.tsx";
 // import {motion} from "framer-motion";
-import FeatureOld from "@/components/homepage/FeatureOld.tsx";
+import FeatureOld from "@/components/home/FeatureOld.tsx";
 
 // const imgTop= "src/assets/img/image_1.webp"
 // const imgBottom= "src/assets/img/image_2.webp"
@@ -16,7 +16,7 @@ export default function Home(){
     // const transitionSettings = { duration: 0.8, ease: "easeOut" as "easeOut" }
     // const viewportSettings = { once: false, amount: 0.3 }
     return (
-        <div className="min-h-screen w-full flex flex-col font-sans antialiased bg-appchat-bluesky/15 ">
+        <div className="min-h-screen w-full flex flex-col font-sans antialiased bg-white ">
             {/*<motion.img*/}
             {/*    src={imgTop}*/}
             {/*    alt="Decorative Top"*/}

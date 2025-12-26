@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import {createBrowserRouter, Navigate} from "react-router-dom";
 import { authRouter } from "./authRouter";
 import {UserPage} from "@/components/user/UserPage.tsx";
 
@@ -11,11 +11,11 @@ const route = createBrowserRouter([
     ...authRouter,
     {
         path: "/user",
-        element: <UserPage />
-    },
-    {
-        path: "/user/:key",
-        element: <UserPage />
+        element: <UserPage />,
+        children: [
+            { index: true, element: <Navigate to="user-profile" replace /> },
+            { path: ":key", element: <UserPage /> }
+        ]
     }
 ])
 

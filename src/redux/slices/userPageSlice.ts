@@ -4,12 +4,18 @@ export interface UserPageSlice {
     theme: string,
     changePasswordCheckbox: boolean,
     chooseViewMenuUser: boolean,
+    openChangeBanner: boolean,
+    flagRefreshEditUserForm: number,
+    chooseBannerType: string,
 }
 
 const initialState: UserPageSlice = {
     theme: localStorage.getItem("theme") || "light",
     changePasswordCheckbox: false,
     chooseViewMenuUser: false,
+    openChangeBanner: false,
+    flagRefreshEditUserForm: 0,
+    chooseBannerType: "color",
 }
 
 export const userPageSlice = createSlice({
@@ -24,9 +30,21 @@ export const userPageSlice = createSlice({
         },
         setChooseViewMenuUser: (state, action: PayloadAction<boolean>) => {
             state.chooseViewMenuUser = action.payload
+        },
+        setOpenChangeBanner: (state, action: PayloadAction<boolean>) => {
+            state.openChangeBanner = action.payload
+        },
+        needRefreshEditUserForm: (state) => {
+            state.flagRefreshEditUserForm++;
+        },
+        setChooseBannerType: (state, action: PayloadAction<string>) => {
+            state.chooseBannerType = action.payload
         }
     }
 })
 
 export default userPageSlice.reducer
-export const {setTheme, setChangePasswordCheckbox, setChooseViewMenuUser} = userPageSlice.actions
+export const {
+    setTheme, setChangePasswordCheckbox, setChooseViewMenuUser, setOpenChangeBanner,
+    needRefreshEditUserForm, setChooseBannerType
+} = userPageSlice.actions

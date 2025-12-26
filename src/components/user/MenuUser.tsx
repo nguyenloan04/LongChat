@@ -1,7 +1,10 @@
 import {HeadsetIcon, InfoIcon, LogOutIcon, PaletteIcon, ShieldIcon, UserIcon} from "lucide-react";
-import {useNavigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
+import type {ReduxState} from "@/constants/ReduxState.ts";
 
 export default function MenuUser(props: {text: string}) {
+    const user = useSelector((state: ReduxState) => state.currentUser.user)
     const navigate = useNavigate();
     const setting = [
         {   
@@ -59,17 +62,18 @@ export default function MenuUser(props: {text: string}) {
             }
         }
     ]
+    if(!user) return <Navigate to="/" replace />;
 
     return (
         <div className="flex h-[100%] flex-col justify-between shadow dark:shadow-gray-300">
             <div>
                 <div className="flex items-center p-2 justify-center shadow dark:shadow-gray-300">
                     <div className="w-[4rem] h-[4rem] me-3 border-[4px] border-gray-300 rounded-[60%]">
-                        <img src="https://res.cloudinary.com/dcyo10lft/image/upload/v1766681918/6226b4af190a9a2cdf80de5b3652d437_wj7wt8.jpg"
-                             className="object-contain rounded-[60%] p-1 w-full h-full"/>
+                        <img src={user.avatar}
+                             className="object-cover rounded-[60%] p-1 w-full h-full"/>
                     </div>
                     <div>
-                        <div>group77_testuser</div>
+                        <div className="truncate max-w-[8rem]">{user.username}</div>
                         <div className="text-sm flex gap-1 text-gray-500 dark:text-neutral-300 items-center">
                             <span className="rounded-full h-2 w-2 bg-green-500"></span>
                             <span>Đang hoạt động</span>

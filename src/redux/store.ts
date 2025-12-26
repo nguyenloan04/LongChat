@@ -14,5 +14,5 @@ export const store = configureStore({
         userPageState: userPageReducer,
         editUserState: editUserReducer,
     },
-    middleware: (getDefault) => getDefault().concat(socketMiddleware)
+    // middleware: (getDefault) => getDefault().concat(socketMiddleware)
 })

@@ -7,7 +7,7 @@ import {
     setChooseBannerType,
     setOpenChangeBanner
 } from "@/redux/slices/userPageSlice.ts";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {
     setAvatarEditUserForm, setBannerEditUserForm,
     setDescriptionEditUserForm,
@@ -15,6 +15,7 @@ import {
     setEditUserForm
 } from "@/redux/slices/editUserFormSlice.ts";
 import {Navigate} from "react-router-dom";
+import {setCurrentUser} from "@/redux/slices/userSlice.ts";
 
 export default function UserProfile() {
     const changePasswordCheckbox = useSelector((state: ReduxState) => state.userPageState.changePasswordCheckbox)
@@ -28,10 +29,10 @@ export default function UserProfile() {
     const bannerType = useSelector((state: ReduxState) => state.editUserState.banner.type)
     const bannerContent = useSelector((state: ReduxState) => state.editUserState.banner.content)
     const description = useSelector((state: ReduxState) => state.editUserState.description)
-    
+    const [isUpdate, setIsUpdate] = useState(false);
+
     useEffect(() => {
         if (!user) return;
-        
         dispatch(
             setEditUserForm({
                 avatar: user.avatar,
@@ -63,6 +64,29 @@ export default function UserProfile() {
         dispatch(setBannerEditUserForm({
             type: "image", content: previewUrl
         }));
+    }
+
+    const submitEditUserForm = () => {
+        setIsUpdate(true);
+        //Update db (optional)
+        
+        dispatch(setCurrentUser(
+            {
+                user: {
+                    username: user.username,
+                    avatar: avatar,
+                    displayName: displayName,
+                    banner: {
+                        type: bannerType,
+                        content: bannerContent,
+                    },
+                    description: description,
+                    reloginCode: user.reloginCode,
+                }
+            }
+        ));
+        setIsUpdate(false);
+        window.alert("Bạn đã cập nhật thành công!")
     }
 
     return (
@@ -100,16 +124,16 @@ export default function UserProfile() {
                                 </div>
                             </div>
                             <div className="px-4 pb-4">
-                                <p className="font-semibold">{displayName}</p>
-                                <p className="text-sm">{user.username}</p>
+                                <p className="font-semibold w-full break-all">{displayName}</p>
+                                <p className="text-sm w-full break-all">{user.username}</p>
                                 <p className="mt-4 w-full break-all">{description}</p>
                             </div>
                         </div>
                     </div>
                     <div className="mb-4">
-                    <p className="pb-2 font-semibold">Tên hiển thị</p>
+                        <p className="pb-2 font-semibold">Tên hiển thị</p>
                         <input type="text" className="p-2 w-full lg:w-[24rem] rounded-lg h-[3rem] border"
-                               placeholder="Tên hiển thị" value={displayName}
+                               placeholder="Tên hiển thị" value={displayName} maxLength={50}
                                onChange={(e) => dispatch(setDisplayNameEditUserForm(e.target.value))}/>
                     </div>
                     <hr/>
@@ -127,7 +151,8 @@ export default function UserProfile() {
                         <p className="pb-2 font-semibold">Biểu ngữ</p>
                         <button className="h-[2.5rem] cursor-pointer p-2 rounded-lg 
                         bg-indigo-500 text-white
-                        hover:bg-indigo-400 flex gap-2 items-center" onClick={() => dispatch(setOpenChangeBanner(true))}>Đổi biểu ngữ<PenTool
+                        hover:bg-indigo-400 flex gap-2 items-center"
+                                onClick={() => dispatch(setOpenChangeBanner(true))}>Đổi biểu ngữ<PenTool
                             className="h-[1rem] w-[1rem]"/></button>
                     </div>
                     <hr/>
@@ -157,20 +182,22 @@ export default function UserProfile() {
                                 </div>
                             </div>
                             <div className="px-4 pb-4">
-                                <p className="font-semibold">{displayName}</p>
-                                <p className="text-sm">{user.username}</p>
+                                <p className="font-semibold w-full break-all">{displayName}</p>
+                                <p className="text-sm w-full break-all">{user.username}</p>
                                 <p className="mt-4 w-full break-all">{description}</p>
                             </div>
                         </div>
                     </div>
                     <div className="lg:ps-0 ps-4 flex gap-2 my-4">
-                        <button className="h-[2.5rem] cursor-pointer p-2 rounded-lg 
+                        <button className={`h-[2.5rem] cursor-pointer p-2 rounded-lg 
                         bg-green-600 text-white
-                        hover:bg-green-500 flex gap-2 items-center">Lưu cập nhật<PenLine
+                        hover:bg-green-500 flex gap-2 items-center ${isUpdate && "bg-green-400"}`} disabled={isUpdate} 
+                                onClick={submitEditUserForm}>{isUpdate ? "Đang cập nhật" : "Lưu cập nhật"}<PenLine
                             className="h-[1rem] w-[1rem]"/></button>
                         <button className="h-[2.5rem] cursor-pointer p-2 rounded-lg 
                         bg-neutral-500 text-white
-                        hover:bg-neutral-400 flex gap-2 items-center" onClick={() => dispatch(needRefreshEditUserForm())}>Đặt lại
+                        hover:bg-neutral-400 flex gap-2 items-center"
+                                onClick={() => dispatch(needRefreshEditUserForm())}>Đặt lại
                         </button>
                     </div>
                 </div>
@@ -235,38 +262,45 @@ export default function UserProfile() {
             {openChangeBanner && (
                 <div className="flex justify-center items-center fixed dark:bg-black/60 bg-black/40 z-200 inset-0"
                      onClick={() => dispatch(setOpenChangeBanner(false))}>
-                    <div className="border bg-white dark:bg-gray-700 w-80 h-50 rounded-lg" onClick={(e) => e.stopPropagation()}>
+                    <div className="border bg-white dark:bg-gray-700 w-80 h-50 rounded-lg"
+                         onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-between p-3">
                             <p className="ps-1 font-semibold text-lg">Chọn một biểu ngữ</p>
-                            <X className="w-8 h-8 p-1 hover:bg-neutral-300/50 rounded cursor-pointer" 
+                            <X className="w-8 h-8 p-1 hover:bg-neutral-300/50 rounded cursor-pointer"
                                onClick={() => dispatch(setOpenChangeBanner(false))}/>
                         </div>
                         <div className="flex justify-center gap-18">
-                            <div className="text-center cursor-pointer" onClick={() => dispatch(setChooseBannerType("color"))}>
+                            <div className="text-center cursor-pointer"
+                                 onClick={() => dispatch(setChooseBannerType("color"))}>
                                 <p className={`${chooseBannerType === "color" && "font-semibold"} px-4`}>Màu sắc</p>
-                                <div className={`transform transition-transform duration-300 ease-in-out ${chooseBannerType === "color" ? "scale-x-100" : "scale-x-0"} w-full h-0.5 border border-indigo-400 shadow shadow-indigo-300 
+                                <div
+                                    className={`transform transition-transform duration-300 ease-in-out ${chooseBannerType === "color" ? "scale-x-100" : "scale-x-0"} w-full h-0.5 border border-indigo-400 shadow shadow-indigo-300 
                                         rounded-lg bg-indigo-400`}></div>
                             </div>
-                            <div className="text-center cursor-pointer" onClick={() => dispatch(setChooseBannerType("image"))}>
+                            <div className="text-center cursor-pointer"
+                                 onClick={() => dispatch(setChooseBannerType("image"))}>
                                 <p className={`${chooseBannerType === "image" && "font-semibold"} px-4`}>Hình ảnh</p>
-                                <div className={`transform transition-transform duration-300 ease-in-out ${chooseBannerType === "image" ? "scale-x-100" : "scale-x-0"} w-full h-0.5 border border-indigo-400 shadow shadow-indigo-300 
+                                <div
+                                    className={`transform transition-transform duration-300 ease-in-out ${chooseBannerType === "image" ? "scale-x-100" : "scale-x-0"} w-full h-0.5 border border-indigo-400 shadow shadow-indigo-300 
                                         rounded-lg bg-indigo-400`}></div>
                             </div>
                         </div>
                         <div className="w-full text-center p-5">
                             {chooseBannerType === "color" ? (
-                                    <input type="color" value={bannerType === "color" ? bannerContent : "#6366f1"} className="cursor-pointer w-30 h-15"
-                                    onChange={(e) => dispatch(setBannerEditUserForm({
-                                        type: "color", content: e.target.value,
-                                    }))}/>
+                                    <input type="color" value={bannerType === "color" ? bannerContent : "#6366f1"}
+                                           className="cursor-pointer w-30 h-15"
+                                           onChange={(e) => dispatch(setBannerEditUserForm({
+                                               type: "color", content: e.target.value,
+                                           }))}/>
                                 ) :
                                 (
                                     <div>
-                                    <label htmlFor="choose-banner">
+                                        <label htmlFor="choose-banner">
                                             <ImagePlus className="border bg-neutral-300 text-neutral-600 hover:bg-neutral-200 cursor-pointer mx-auto rounded-lg 
-                                    w-30 h-15 p-3.5 hover:text-neutral-600/40 hover:scale-x-110 hover:scale-y-110" />
+                                    w-30 h-15 p-3.5 hover:text-neutral-600/40 hover:scale-x-110 hover:scale-y-110"/>
                                         </label>
-                                        <input id="choose-banner" type="file" className="hidden" accept="image/*" onChange={handleChangeBannerImage}/>
+                                        <input id="choose-banner" type="file" className="hidden" accept="image/*"
+                                               onChange={handleChangeBannerImage}/>
                                     </div>
                                 )}
                         </div>

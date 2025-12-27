@@ -25,7 +25,7 @@ export function ChatSideBar() {
     ]
 
     return (
-        <div className="p-1 gap-2 flex flex-col justify-between h-full bg-indigo-500">
+        <div className="p-1 gap-2 flex flex-col justify-between h-full bg-indigo-500 dark:bg-gray-900/40">
             <div>
                 {listFeature.map((ele, index) => (
                     <div

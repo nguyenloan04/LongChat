@@ -9,6 +9,7 @@ import Theme from "@/components/user/Theme.tsx";
 import {useEffect, useState} from "react";
 import {setCurrentUser} from "@/redux/slices/userSlice.ts";
 import {ConnectionLoading} from "@/components/common/ConnectionLoading.tsx";
+import {ChatSideBar} from "@/components/chat/ChatSideBar.tsx";
 
 export function UserPage() {
     const chooseViewMenuUser = useSelector((state: ReduxState) => state.userPageState.chooseViewMenuUser);
@@ -44,6 +45,7 @@ export function UserPage() {
     }
     return (
         <div className="mx-auto lg:flex justify-center h-full lg:h-[100vh] dark:bg-gray-900 dark:text-white">
+            <div className="hidden lg:block w-[60px]"><ChatSideBar /></div>
             <div className="lg:hidden">
                 <div className={`${chooseViewMenuUser ? "hidden" : "block"} p-2`}
                      onClick={() => {

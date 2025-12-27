@@ -1,11 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 import { authRouter } from "./authRouter";
+import Home from '@/components/home/Home';
 import { MainChatUIComponent } from "@/components/chat";
 
 const route = createBrowserRouter([
     {
         path: "/",
-        // element: <App />
+        element: <Home />
     },
     {
         path: "/chat",

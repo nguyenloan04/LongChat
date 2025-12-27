@@ -12,7 +12,7 @@ export default function MainPage() {
     const {scrollYProgress} = useScroll({
         target: containerRef,
         offset: ["start end", "end start"],
-    });
+    })
     const cloudY = useTransform(scrollYProgress, [0, 1], ["0%", "-5%"])
     const chattingY = useTransform(scrollYProgress, [0, 1], ["0%", "-80%"])
     const grassY = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"])
@@ -47,7 +47,7 @@ export default function MainPage() {
                     </motion.div>
                 </div>
                 <div
-                    className="relative min-h-screen w-full bg-appchat-bluesky/20 rounded-[40px] lg:rounded-none lg:rounded-l-[60px] overflow-hidden shadow-inner">
+                    className="relative h-[70vh] max-h-screen w-full bg-appchat-bluesky/20 rounded-[40px] lg:rounded-none lg:rounded-l-[60px] overflow-hidden shadow-inner">
                     <motion.div
                         style={{y: cloudY}}
                         className="absolute top-[10%] left-[5%] w-40 md:w-48 opacity-90 z-0"
@@ -118,20 +118,6 @@ export default function MainPage() {
                         />
                     </motion.div>
                 </div>
-                {/*Introduction*/}
-                {/*<motion.div*/}
-                {/*    style={{y: textY}}*/}
-                {/*    className="relative z-20 w-full max-w-6xl mt-20 md:mt-5 justify-center text-center items-center">*/}
-                {/*    <h1 className="text-appchat-bluesky mt-90 text-5xl md:text-[2rem] font-black mb-6 uppercase tracking-wide font-sans">*/}
-                {/*        The environment that you can connect to everyone*/}
-                {/*    </h1>*/}
-
-                {/*    <p className="text-base px-4 mx-10 text-center md:text-xl mb-10 max-w-6xl leading-relaxed text-appchat-bluesky/90">*/}
-                {/*        Where you can belong to a club, a group, or a worldwide community.*/}
-                {/*        Where just you and a handful of friends can spend time together. A place that makes it easy*/}
-                {/*        to talk every day and hang out more often.*/}
-                {/*    </p>*/}
-                {/*</motion.div>*/}
             </div>
         </section>
     )

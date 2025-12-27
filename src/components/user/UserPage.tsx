@@ -64,10 +64,10 @@ export function UserPage() {
                     {renderContent()}
                 </div>
             </div>
-            <div className="hidden flex-2 lg:block h-full">
+            <div className="hidden flex-1 lg:block h-full">
                 <MenuUser text={params.key ?? ""}/>
             </div>
-            <div className="hidden flex-10 lg:block overflow-y-auto">
+            <div className="hidden flex-5 lg:block overflow-y-auto">
                 {renderContent()}
             </div>
         </div>

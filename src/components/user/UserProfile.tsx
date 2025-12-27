@@ -105,8 +105,8 @@ export default function UserProfile() {
                     </div>
                 </div>
             </div>
-            <div className="lg:flex justify-center items-start gap-24 mt-5">
-                <div className="lg:p-0 px-4">
+            <div className="lg:flex justify-center items-start gap-20 mt-5">
+                <div className="lg:p-0 px-4 lg:w-[30rem]">
                     <div className="lg:hidden w-full h-full mb-4">
                         <div
                             className="shadow border rounded-lg overflow-hidden w-[20rem] mx-auto">
@@ -130,9 +130,9 @@ export default function UserProfile() {
                             </div>
                         </div>
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-4 w-full">
                         <p className="pb-2 font-semibold">Tên hiển thị</p>
-                        <input type="text" className="p-2 w-full lg:w-[24rem] rounded-lg h-[3rem] border"
+                        <input type="text" className="p-2 w-full rounded-lg border"
                                placeholder="Tên hiển thị" value={displayName} maxLength={50}
                                onChange={(e) => dispatch(setDisplayNameEditUserForm(e.target.value))}/>
                     </div>
@@ -142,32 +142,32 @@ export default function UserProfile() {
                         <input id="change-avatar" type="file" accept="image/*" className="hidden"
                                onChange={handleChangeAvatar}/>
                         <label htmlFor="change-avatar" className="h-[2.5rem] cursor-pointer rounded-lg 
-                        bg-indigo-500 text-white w-[10rem] px-2
-                        hover:bg-indigo-400 flex gap-2 items-center">Đổi ảnh đại diện<PenTool
+                        border border-[2px] text-indigo-800 border-indigo-500 w-[10rem] px-2 hover:bg-indigo-100/40 dark:border-gray-500/40 dark:text-white
+                        flex gap-2 items-center">Đổi ảnh đại diện<PenTool
                             className="h-[1rem] w-[1rem]"/></label>
                     </div>
                     <hr/>
-                    <div className="my-4">
+                    <div className="my-4 w-full">
                         <p className="pb-2 font-semibold">Biểu ngữ</p>
-                        <button className="h-[2.5rem] cursor-pointer p-2 rounded-lg 
-                        bg-indigo-500 text-white
-                        hover:bg-indigo-400 flex gap-2 items-center"
+                        <button className="h-[2.5rem] cursor-pointer rounded-lg 
+                        border border-[2px] text-indigo-800 border-indigo-500 px-2 hover:bg-indigo-100/40 dark:border-gray-500/40 dark:text-white
+                        flex gap-2 items-center"
                                 onClick={() => dispatch(setOpenChangeBanner(true))}>Đổi biểu ngữ<PenTool
                             className="h-[1rem] w-[1rem]"/></button>
                     </div>
                     <hr/>
                     <div className="my-4">
                         <p className="pb-2 font-semibold">Giới thiệu</p>
-                        <textarea className="p-2 w-full lg:w-[24rem] rounded-lg resize-none border"
+                        <textarea className="p-2 w-full rounded-lg resize-none border"
                                   placeholder="Mô tả" maxLength={100} rows={5} value={description}
                                   onChange={(e) => dispatch(setDescriptionEditUserForm(e.target.value))}/>
                     </div>
                 </div>
                 <div className="sticky top-5 self-start">
-                    <div className="hidden lg:block w-full h-full">
+                    <div className="hidden lg:block w-90 h-full">
                         <p className="pb-2 font-semibold">Xem trước</p>
                         <div
-                            className="shadow border rounded-lg overflow-hidden w-[20rem]">
+                            className="shadow border rounded-lg overflow-hidden w-full">
                             <div className="relative h-[9rem]">
                                 <div className="relative h-[6rem] w-full" style={{
                                     backgroundColor: bannerType === "color" ? bannerContent : undefined,
@@ -194,23 +194,22 @@ export default function UserProfile() {
                         hover:bg-green-500 flex gap-2 items-center ${isUpdate && "bg-green-400"}`} disabled={isUpdate} 
                                 onClick={submitEditUserForm}>{isUpdate ? "Đang cập nhật" : "Lưu cập nhật"}<PenLine
                             className="h-[1rem] w-[1rem]"/></button>
-                        <button className="h-[2.5rem] cursor-pointer p-2 rounded-lg 
-                        bg-neutral-500 text-white
-                        hover:bg-neutral-400 flex gap-2 items-center"
+                        <button className="h-[2.5rem] cursor-pointer p-2 rounded-lg dark:bg-neutral-700/40 dark:hover:text-neutral-300
+                        bg-gray-100 hover:bg-gray-100/50 hover:text-neutral-500 flex gap-2 items-center"
                                 onClick={() => dispatch(needRefreshEditUserForm())}>Đặt lại
                         </button>
                     </div>
                 </div>
             </div>
             <div className="pb-15">
-                <div className=" py-8 border-indigo-300 mt-4 rounded-xl w-full lg:w-[50rem] mx-auto">
+                <div className=" py-8 border-indigo-300 mt-4 rounded-xl w-full lg:w-[57rem] mx-auto">
                     <p className="font-semibold ps-4 lg:ps-0">Cài đặt tài khoản</p>
                     <div className="lg:flex lg:flex-col px-12 items-between justify-center">
                         <div className="lg:flex gap-4 mb-4">
                             <p className="lg:py-8 py-4 w-full lg:w-[10rem]">Đổi mật khẩu</p>
                             <div className="lg:mt-8 mb-4">
-                                <div className="flex justify-between gap-2 items-center px-4 w-50 h-[2.5rem] cursor-pointer rounded-lg hover:bg-indigo-400
-                        bg-indigo-500 text-white" onClick={() => {
+                                <div className="flex justify-between gap-2 items-center px-4 w-50 h-[2.5rem] cursor-pointer rounded-lg 
+                        border border-[2px] text-indigo-800 border-indigo-500 hover:bg-indigo-100/40 dark:border-gray-500/40 dark:text-white" onClick={() => {
                                     dispatch(setChangePasswordCheckbox(!changePasswordCheckbox))
                                 }}>
                                     <div className="flex gap-2 items-center">
@@ -251,9 +250,9 @@ export default function UserProfile() {
                         </div>
                         <div className="lg:flex gap-4">
                             <p className="w-full lg:w-[10rem] pb-4 lg:pb-0">Vô hiệu hóa tài khoản</p>
-                            <button className="h-[2.5rem] cursor-pointer p-2 rounded-lg 
-                        bg-red-600 text-white
-                        hover:bg-red-400 flex gap-2 items-center">Vô hiệu hóa <LockKeyhole
+                            <button className="h-[2.5rem] cursor-pointer rounded-lg 
+                        border border-[2px] text-indigo-800 border-indigo-500 px-2 hover:bg-indigo-100/40 dark:border-gray-500/40 dark:text-white
+                        flex gap-2 items-center">Vô hiệu hóa <LockKeyhole
                                 className="h-[1rem] w-[1rem]"/></button>
                         </div>
                     </div>

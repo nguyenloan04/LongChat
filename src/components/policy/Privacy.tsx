@@ -9,7 +9,7 @@ export default function Privacy() {
                 <hr className="border-gray-300 mb-8"/>
 
                 <p>
-                    Ứng dụng <strong>App Chat</strong> (“chúng tôi”) cam kết tôn trọng và bảo vệ
+                    Ứng dụng <strong>LongChat</strong> (“chúng tôi”) cam kết tôn trọng và bảo vệ
                     quyền riêng tư của người dùng. Chính sách này mô tả cách chúng tôi thu thập,
                     sử dụng và bảo vệ thông tin cá nhân khi bạn sử dụng ứng dụng.
                 </p>

@@ -8,5 +8,4 @@ export interface User {
         content: string,
     },
     description: string,
-    reloginCode: string
 }

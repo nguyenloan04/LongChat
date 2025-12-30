@@ -6,46 +6,28 @@ import type {ReduxState} from "@/constants/ReduxState.ts";
 import {setChooseViewMenuUser} from "@/redux/slices/userPageSlice.ts";
 import UserProfile from "@/components/user/UserProfile.tsx";
 import Theme from "@/components/user/Theme.tsx";
-import {useEffect, useState} from "react";
-import {setCurrentUser} from "@/redux/slices/userSlice.ts";
 import {ConnectionLoading} from "@/components/common/ConnectionLoading.tsx";
 import {ChatSideBar} from "@/components/chat/ChatSideBar.tsx";
+import {AboutUs} from "@/components/user/AboutUs.tsx";
 
 export function UserPage() {
     const chooseViewMenuUser = useSelector((state: ReduxState) => state.userPageState.chooseViewMenuUser);
     const dispatch = useDispatch();
     const params = useParams();
-    const [isLoading, setIsLoading] = useState(true);
-    //Test data. Delete later.
-    useEffect(() => {
-        dispatch(setCurrentUser({
-            user: {
-                username: "22130276",
-                avatar: "https://res.cloudinary.com/dcyo10lft/image/upload/v1766681918/6226b4af190a9a2cdf80de5b3652d437_wj7wt8.jpg",
-                displayName: "Trần Minh Thư",
-                banner: {
-                    type: "color",
-                    content: "#6366f1",
-                },
-                description: "",
-                reloginCode: ""
-            }
-        }));
-        setIsLoading(false);
-    }, []);
+    const isLoading = useSelector((state: ReduxState) => state.currentUser.isLoading)
     if (isLoading) return <ConnectionLoading message="Đang tải dữ liệu..." />
     
     const renderContent = () => {
         switch (params.key) {
-            case 'user-profile': return <UserProfile />;
-            case 'theme': return <Theme />;
-            
+            case 'user-profile': return <UserProfile />
+            case 'theme': return <Theme />
+            case 'about-us': return <AboutUs />
             default: return <Navigate to={"/user/user-profile"} replace /> ;
         }
     }
     return (
         <div className="mx-auto lg:flex justify-center h-full lg:h-[100vh] dark:bg-gray-900 dark:text-white">
-            <div className="hidden lg:block w-[60px]"><ChatSideBar /></div>
+            <div className="lg:w-[60px] w-full"><ChatSideBar /></div>
             <div className="lg:hidden">
                 <div className={`${chooseViewMenuUser ? "hidden" : "block"} p-2`}
                      onClick={() => {

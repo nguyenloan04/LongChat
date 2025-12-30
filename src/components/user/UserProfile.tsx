@@ -71,20 +71,17 @@ export default function UserProfile() {
     const submitEditUserForm = () => {
         setIsUpdate(true);
         //Update db (optional)
-
+        
         dispatch(setCurrentUser(
             {
-                user: {
-                    username: user.username,
-                    avatar: avatar,
-                    displayName: displayName,
-                    banner: {
-                        type: bannerType,
-                        content: bannerContent,
-                    },
-                    description: description,
-                    reloginCode: user.reloginCode,
-                }
+                username: user.username,
+                avatar: avatar,
+                displayName: displayName,
+                banner: {
+                    type: bannerType,
+                    content: bannerContent,
+                },
+                description: description
             }
         ));
         setIsUpdate(false);
@@ -97,19 +94,19 @@ export default function UserProfile() {
                 Hồ sơ cá nhân
             </div>
             <div className="px-4">
-                <div className="text-gray-700 font-light dark:text-neutral-300 py-4">
+                <div className="text-gray-700 font-light dark:text-neutral-300 py-4 hidden lg:block">
                     Tùy chỉnh hồ sơ cá nhân để thể hiện phong cách riêng của bạn.
                     Bạn có thể cập nhật ảnh đại diện, thay đổi biểu ngữ hoặc viết lời giới thiệu bản thân.
                     Mọi chỉnh sửa sẽ được cập nhật tức thì và hiển thị trực tiếp trên trang cá nhân của bạn.
                 </div>
-                <div className="text-lg flex gap-2">
+                <div className="text-lg gap-2 hidden lg:flex">
                     <InfoIcon/>Thông tin cá nhân
                 </div>
                 <div className="lg:flex justify-center items-start gap-20 mt-5">
-                    <div className="lg:p-0 px-4 lg:w-[30rem]">
+                    <div className="lg:p-0 lg:px-4 lg:w-[30rem]">
                         <div className="lg:hidden w-full h-full mb-4">
                             <div
-                                className="shadow border rounded-lg overflow-hidden w-[20rem] mx-auto">
+                                className="shadow border rounded-lg overflow-hidden w-full">
                                 <div className="relative h-[9rem]">
                                     <div className="relative h-[6rem] w-full" style={{
                                         backgroundColor: bannerType === "color" ? bannerContent : undefined,
@@ -158,7 +155,7 @@ export default function UserProfile() {
                         <hr/>
                         <div className="my-4">
                             <p className="pb-2 font-semibold">Giới thiệu</p>
-                            <textarea className="p-2 w-full rounded-lg resize-none border"
+                            <textarea className="p-2 w-full rounded-lg resize-none border text-gap"
                                       placeholder="Mô tả" maxLength={100} rows={5} value={description}
                                       onChange={(e) => dispatch(setDescriptionEditUserForm(e.target.value))}/>
                         </div>
@@ -184,7 +181,7 @@ export default function UserProfile() {
                                 <div className="px-4 pb-4">
                                     <p className="font-semibold w-full break-all">{displayName}</p>
                                     <p className="text-sm w-full break-all">{user.username}</p>
-                                    <p className="mt-4 w-full break-all">{description}</p>
+                                    <p className="mt-4 w-full break-all whitespace-pre-line break-words">{description}</p>
                                 </div>
                             </div>
                         </div>

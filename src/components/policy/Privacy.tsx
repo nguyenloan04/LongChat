@@ -1,7 +1,14 @@
+import {ArrowLeft} from "lucide-react";
+import {useNavigate} from "react-router-dom";
+import Footer from "@/components/home/Footer.tsx";
+
 export default function Privacy() {
+    const navigate = useNavigate();
     return (
         <div className="bg-white-700">
-            <div className="lg:max-w-4xl mx-auto lg:px-3 py-10 px-10">
+            <ArrowLeft className="mx-4 mt-2 p-2 w-10 h-10 lg:w-12 lg:h-12 rounded cursor-pointer hover:bg-neutral-300"
+            onClick={() => {navigate(-1)}}/>
+            <div className="lg:max-w-4xl mx-auto lg:px-3 pb-10 px-10">
                 <h1 className="lg:text-4xl font-bold mb-2 text-2xl">Chính sách quyền riêng tư</h1>
                 <p className="text-sm text-gray-500 mb-3">
                     Cập nhật lần cuối: <span className="italic">23/12/2025</span>
@@ -9,11 +16,11 @@ export default function Privacy() {
                 <hr className="border-gray-300 mb-8"/>
 
                 <p>
-                    Ứng dụng <strong>App Chat</strong> (“chúng tôi”) cam kết tôn trọng và bảo vệ
+                    Ứng dụng <strong>LongChat</strong> (“chúng tôi”) cam kết tôn trọng và bảo vệ
                     quyền riêng tư của người dùng. Chính sách này mô tả cách chúng tôi thu thập,
                     sử dụng và bảo vệ thông tin cá nhân khi bạn sử dụng ứng dụng.
                 </p>
-                <nav className="bg-white border rounded-lg p-4 my-8 shadow-sm">
+                <nav className="border rounded-lg p-4 my-8 shadow-sm">
                     <h2 className="font-semibold mb-2">Mục lục</h2>
                     <ul className="space-y-1 text-blue-700">
                         <li><a href="#collect-user-data" className="hover:underline">1. Thông tin chúng tôi thu thập</a></li>
@@ -108,6 +115,7 @@ export default function Privacy() {
                     </ul>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

@@ -2,5 +2,10 @@
 export interface User {
     username: string,
     avatar: string,
-    reloginCode: string
+    displayName: string,
+    banner: {
+        type: string,
+        content: string,
+    },
+    description: string,
 }

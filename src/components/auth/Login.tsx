@@ -58,7 +58,7 @@ export default function LoginComponent() {
             if (response.status === "success") {
                 const reloginCode = response.data.RE_LOGIN_CODE
                 localStorage.setItem("RE_LOGIN_CODE", reloginCode)
-                // Save current user into a slice
+                localStorage.setItem("username", currentForm.username)
                 setMessage("Đăng nhập thành công")
                 setTimeout(() => {
                     navigate("/")

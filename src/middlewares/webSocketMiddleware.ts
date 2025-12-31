@@ -48,7 +48,7 @@ export const socketMiddleware: Middleware = (store) => {
         else {
             //Re login failed, end session and require login
             localStorage.removeItem("RE_LOGIN_CODE")
-            store.dispatch(setCurrentUser({ user: null }))
+            store.dispatch(setCurrentUser(null))
         }
     })
 

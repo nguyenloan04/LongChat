@@ -1,7 +1,7 @@
 import {useRef} from "react"
 import {motion, useScroll, useTransform} from "framer-motion"
-import {Button} from "@/components/ui/button.tsx";
-import {useNavigate} from "react-router-dom";
+import {Button} from "@/components/ui/button.tsx"
+import {useNavigate} from "react-router-dom"
 
 // Image for parallax
 const chatting_img = "src/assets/img/landing-main.webp"

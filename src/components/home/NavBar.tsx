@@ -32,7 +32,7 @@ export default function NavBar() {
                 )}
                 <div className="flex items-center gap-5">
                     <Button
-                        className="bg-appchat-bluesky text-lg text-white hover:shadow-lg hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all" onClick={()=> navigate("login")}
+                        className="bg-appchat-bluesky text-lg text-white hover:bg-white hover:border hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all" onClick={()=> navigate("login")}
                     >
                         Login
                     </Button>

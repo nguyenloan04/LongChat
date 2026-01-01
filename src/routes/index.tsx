@@ -5,6 +5,7 @@ import { MainChatUIComponent } from "@/components/chat";
 import Privacy from "@/components/policy/Privacy.tsx";
 import {UserPage} from "@/components/user/UserPage.tsx";
 import Error from "@/components/error/Error.tsx";
+import ComingSoon from "@/components/comingsoon/ComingSoon.tsx";
 
 const route = createBrowserRouter([
     {
@@ -32,8 +33,11 @@ const route = createBrowserRouter([
     {
         path:"*",
         element: <Error></Error>
+    },
+    {
+        path:"/comingsoon",
+        element:<ComingSoon></ComingSoon>
     }
-    
 ])
 
 export default route

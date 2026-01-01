@@ -55,9 +55,9 @@ export default function Error() {
                     4
                 </motion.span>
             </div>
-            <div className="mt-10 font-semibold text-lg">Rất tiếc, chúng tôi không thể tìm thấy trang bạn muốn...</div>
+            <div className="mt-15 font-semibold text-lg">Rất tiếc, chúng tôi không thể tìm thấy trang bạn muốn...</div>
             <Button
-                className="bg-appchat-bluesky mt-10 text-lg text-white hover:shadow-lg hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all" onClick={()=> navigate("/")}
+                className="mt-10 bg-appchat-bluesky text-lg text-white hover:bg-white hover:border hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all" onClick={()=> navigate("/")}
             >
                 Go Home
             </Button>

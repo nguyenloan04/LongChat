@@ -4,11 +4,14 @@ import Home from '@/components/home/Home';
 import { MainChatUIComponent } from "@/components/chat";
 import Privacy from "@/components/policy/Privacy.tsx";
 import {UserPage} from "@/components/user/UserPage.tsx";
+import Error from "@/components/error/Error.tsx";
+import ComingSoon from "@/components/comingsoon/ComingSoon.tsx";
 
 const route = createBrowserRouter([
     {
         path: "/",
-        element: <Home />
+        element: <Home />,
+        // errorElement: <Error/>
     },
     {
         path: "/chat",
@@ -28,7 +31,14 @@ const route = createBrowserRouter([
         path: "/user/:key",
         element: <UserPage />,
     },
-    
+    {
+        path:"*",
+        element: <Error/>
+    },
+    {
+        path:"/comingsoon",
+        element:<ComingSoon/>
+    }
 ])
 
 export default route

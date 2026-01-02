@@ -1,7 +1,7 @@
 import {useRef} from "react"
 import {motion, useScroll, useTransform} from "framer-motion"
-import {Button} from "@/components/ui/button.tsx";
-import {useNavigate} from "react-router-dom";
+import {Button} from "@/components/ui/button.tsx"
+import {useNavigate} from "react-router-dom"
 
 // Image for parallax
 const chatting_img = "src/assets/img/landing-main.webp"
@@ -40,7 +40,7 @@ export default function MainPage() {
                         style={{y: textY}}
                         className="absolute top-[60%] left-[15%] justify-center flex items-center gap-5">
                         <Button
-                            className="bg-appchat-bluesky text-lg text-white hover:shadow-lg hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all" onClick={()=> navigate("login")}
+                            className="bg-appchat-bluesky text-lg text-white hover:bg-white hover:border hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all" onClick={()=> navigate("login")}
                         >
                             Login
                         </Button>

@@ -24,7 +24,7 @@ export default function ComingSoon() {
                 </h1>
 
                 <motion.p
-                    className="text-gray-400 text-lg md:text-xl mb-8 max-w-lg mx-auto"
+                    className="text-gray-400 mt-10 text-2xl md:text-2xl mb-8 max-w-xl mx-auto"
                     initial={{opacity: 0}}
                     animate={{opacity: 1}}
                     transition={{delay: 2.5, duration: 1}}
@@ -38,7 +38,7 @@ export default function ComingSoon() {
                 >
                     <Button
 
-                        className="mt-10 bg-appchat-bluesky text-lg text-white hover:bg-white hover:border hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all"
+                        className="mt-5 bg-appchat-bluesky text-lg text-white hover:bg-white hover:border hover:text-appchat-bluesky/80 rounded-b-md px-4 h-12 w-50 font-semibold transition-all"
                         onClick={() => navigate("/")}
                     >
                         Go Home

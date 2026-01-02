@@ -10,7 +10,8 @@ import ComingSoon from "@/components/comingsoon/ComingSoon.tsx";
 const route = createBrowserRouter([
     {
         path: "/",
-        element: <Home />
+        element: <Home />,
+        // errorElement: <Error/>
     },
     {
         path: "/chat",
@@ -32,11 +33,11 @@ const route = createBrowserRouter([
     },
     {
         path:"*",
-        element: <Error></Error>
+        element: <Error/>
     },
     {
         path:"/comingsoon",
-        element:<ComingSoon></ComingSoon>
+        element:<ComingSoon/>
     }
 ])
 

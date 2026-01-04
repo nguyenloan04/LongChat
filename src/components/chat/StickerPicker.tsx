@@ -106,7 +106,11 @@ export default function StickerPicker() {
                     className={`border w-30 bg-indigo-500 text-white rounded-lg cursor-pointer hover:bg-indigo-500/50`}
                     disabled={loading}
                     onClick={() => {
-                        handleChangePage("search")
+                        if(key === "search" && page === 1) {
+                            handleSearch(search)
+                        } else {
+                            handleChangePage("search")
+                        }
                     }}>Tìm kiếm
                 </button>
             </div>

@@ -9,7 +9,7 @@ export default function EmojiCustomPicker() {
     const [message, setMessage] = useState("");
     
     function encoderEmoji(emoji: any) {
-        return " :emoji:"+encodeURIComponent(emoji)+" "
+        return `:${encodeURIComponent(emoji)}:`
     }
     //Test. Delete later
     useEffect(() => {

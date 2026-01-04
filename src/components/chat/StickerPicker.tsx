@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
 import {stickerService} from "@/services/stickerService.ts";
-import {ChevronLeft, ChevronRight, Clock4, Flame, Frown, Heart, Search, Smile} from "lucide-react";
+import {ChevronLeft, ChevronRight, Clock4, Flame, Frown, Heart, Search, Smile, X} from "lucide-react";
 import {StickerPreview} from "@/components/chat/StickerPreview.tsx";
+import {useDispatch} from "react-redux";
+import {setOpenStickerPicker} from "@/redux/slices/chatPickerSlice.ts";
 
 export default function StickerPicker() {
     const [stickers, setStickers] = useState<{ src: string, preview: string }[]>([]);
@@ -10,6 +12,8 @@ export default function StickerPicker() {
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState<string>("");
     const [key, setKey] = useState<string>("trending");
+    const dispatch = useDispatch()
+    
     const selectSticker = [
         {
             key: 'history',
@@ -57,7 +61,11 @@ export default function StickerPicker() {
             setNext(res.data.has_next);
         }).catch()
     }
-
+    const handleChangePage = (key: string) => {
+        setPage(1);
+        setKey(key)
+    }
+    
     useEffect(() => {
         setLoading(true);
         switch (key) {
@@ -83,16 +91,13 @@ export default function StickerPicker() {
         }
         setLoading(false);
     }, [page, key]);
-
-    const handleChangePage = (key: string) => {
-        setPage(1);
-        setKey(key)
-    }
-
-
+    
     return (
         <div className="fixed overflow-hidden rounded-lg shadow border bottom-14 index-99 bg-white border w-90">
-            <p className="shadow text-lg p-2 font-semibold text-center">Sticker</p>
+            <div className="relative">
+                <p className="shadow text-lg p-2 font-semibold text-center">Sticker</p>
+                <X className="absolute right-2 top-3 hover:bg-neutral-300/30 rounded" onClick={() => dispatch(setOpenStickerPicker(false))}/>
+            </div>
             <hr/>
             <div className="flex gap-2 justify-between px-3 mb-2 pt-2">
                 <input type="search" placeholder="Tìm kiếm..." maxLength={50} className="p-2 w-full border rounded-lg"

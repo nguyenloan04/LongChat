@@ -8,7 +8,7 @@ import {setOpenStickerPicker} from "@/redux/slices/chatPickerSlice.ts";
 export default function StickerPicker() {
     const [stickers, setStickers] = useState<{ src: string, preview: string }[]>([]);
     const [page, setPage] = useState(1);
-    const [next, setNext] = useState(true);
+    const [next, setNext] = useState(false);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState<string>("");
     const [key, setKey] = useState<string>("trending");
@@ -87,13 +87,14 @@ export default function StickerPicker() {
             case 'history':
                 const history = JSON.parse(localStorage.getItem("stickerHistory") || "[]")
                 setStickers(history)
+                setNext(false)
                 break;
         }
         setLoading(false);
     }, [page, key]);
     
     return (
-        <div className="fixed overflow-hidden rounded-lg shadow border bottom-14 index-99 bg-white border w-90">
+        <div className="fixed overflow-hidden rounded-lg shadow border bottom-14 index-99 bg-white dark:bg-gray-800 border w-90">
             <div className="relative">
                 <p className="shadow text-lg p-2 font-semibold text-center">Sticker</p>
                 <X className="absolute right-2 top-3 hover:bg-neutral-300/30 rounded" onClick={() => dispatch(setOpenStickerPicker(false))}/>
@@ -103,7 +104,7 @@ export default function StickerPicker() {
                 <input type="search" placeholder="Tìm kiếm..." maxLength={50} className="p-2 w-full border rounded-lg"
                        onChange={(e) => setSearch(e.target.value)}/>
                 <button
-                    className={`border w-30 bg-indigo-500 text-white rounded-lg cursor-pointer hover:bg-indigo-500/50`}
+                    className={`border w-30 bg-indigo-500 text-white rounded-lg cursor-pointer dark:bg-neutral-400/30 dark:hover:bg-neutral-300/30 hover:bg-indigo-500/50`}
                     disabled={loading}
                     onClick={() => {
                         if(key === "search" && page === 1) {
@@ -124,7 +125,7 @@ export default function StickerPicker() {
 
             <div className="flex justify-between">
                 <button
-                    className={`p-2 ${!loading && (page - 1 > 0) ? "text-neutral-500 cursor-pointer hover:bg-neutral-300/30" : "text-neutral-300"}`}
+                    className={`p-2 ${!loading && (page - 1 > 0) ? "text-neutral-500 dark:text-neutral-100 cursor-pointer hover:bg-neutral-300/30" : "text-neutral-300 dark:text-neutral-500"}`}
                     disabled={loading || (page - 1 <= 0)} onClick={() => setPage(page - 1)}>
                     <ChevronLeft size={"1.5rem"}/>
                 </button>
@@ -132,14 +133,14 @@ export default function StickerPicker() {
                 <div className="flex justify-center">
                     {selectSticker.map(select => (
                         <button
-                            className={`p-2 text-neutral-500 cursor-pointer ${key === select.key ? "text-yellow-700 bg-neutral-300/30" : "hover:bg-neutral-300/30"}`}
+                            className={`p-2 dark:text-neutral-100 text-neutral-500 cursor-pointer ${key === select.key ? "text-yellow-700 bg-neutral-300/30" : "hover:bg-neutral-300/30"}`}
                             onClick={() => handleChangePage(select.key)}>
                             {select.icon}
                         </button>
                     ))}
                 </div>
                 <button
-                    className={`p-2 ${!loading && next ? "text-neutral-500 cursor-pointer hover:bg-neutral-300/30" : "text-neutral-300"}`}
+                    className={`p-2 ${!loading && next ? "text-neutral-500 dark:text-neutral-100 cursor-pointer hover:bg-neutral-300/30" : "text-neutral-300 dark:text-neutral-500"}`}
                     disabled={loading || !next} onClick={() => setPage(page + 1)}>
                     <ChevronRight size={"1.5rem"}/>
                 </button>

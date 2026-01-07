@@ -38,10 +38,10 @@ export function CreateRoom() {
 
     return (
         <div className="fixed content-center inset-0 bg-neutral-700/50" onClick={() => dispatch(setOpenCreateRoom(false))}>
-            <div className="p-4 border bg-white mx-auto w-100 rounded-lg" onClick={(event) => event.stopPropagation()}>
-                <div className="p-4">
-                    <p className="text-lg text-center font-semibold">Thêm nhóm mới</p>
-                    <p className="text-red-500 text-sm text-center">{error}</p>
+            <div className="p-4 border bg-white dark:bg-gray-800 mx-auto w-100 rounded-lg" onClick={(event) => event.stopPropagation()}>
+                <div className="px-4 text-center pb-4">
+                    <p className="text-lg font-semibold">Thêm nhóm mới</p>
+                    <p className="text-red-500 text-sm">{error}</p>
                 </div>
 
                 <div className="flex justify-center items-center pb-4">
@@ -58,7 +58,7 @@ export function CreateRoom() {
                         bg-gray-100 hover:bg-gray-100/50 hover:text-neutral-500 me-2" onClick={() => dispatch(setOpenCreateRoom(false))}>Hủy
                     </button>
                     <button className={`h-[2.5rem] p-2 rounded-lg
-                        ${loading ? "bg-indigo-400" : "bg-indigo-500 cursor-pointer hover:bg-indigo-400"} text-white`} disabled={loading} 
+                        ${loading ? "bg-indigo-400 dark:bg-neutral-300/30" : "dark:bg-neutral-400/30 dark:hover:bg-neutral-300/30 bg-indigo-500 cursor-pointer hover:bg-indigo-400"} text-white`} disabled={loading} 
                         onClick={handleCreateRoom}
                     >{loading ? "Đang tạo nhóm" : "Tạo nhóm"}
                     </button>

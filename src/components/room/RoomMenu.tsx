@@ -16,7 +16,7 @@ export default function RoomMenu() {
             <div className={`${openMenuItem && "bg-neutral-300/30"} p-2 rounded-lg`}
                  onMouseEnter={() => setOpenMenuItem(true)} onMouseLeave={() => setOpenMenuItem(false)}>
                 <Group/>
-                <div className={`top-13 absolute bg-white overflow-hidden rounded shadow ${!openMenuItem && "hidden"}`}>
+                <div className={`top-13 absolute bg-white dark:bg-gray-800 overflow-hidden rounded shadow ${!openMenuItem && "hidden"}`}>
                     <ul className="w-40">
                         <li className="transition-all duration-300 hover:px-5 cursor-pointer hover:bg-neutral-300/40 py-2 px-4" onClick={() => dispatch(setOpenCreateRoom(true))}>Tạo nhóm</li>
                         <li className="transition-all duration-300 hover:px-5 cursor-pointer hover:bg-neutral-300/40 py-2 px-4" onClick={() => dispatch(setOpenJoinRoom(true))}>Tham gia nhóm</li>

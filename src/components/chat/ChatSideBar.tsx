@@ -1,20 +1,36 @@
-import { Contact, LogOut, MessageCircleMore, Settings, User } from "lucide-react"
+import {Contact, Group, LogOut, MessageCircleMore, Settings, User} from "lucide-react"
 import { useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import {useNavigate} from "react-router-dom";
+import {CreateRoom} from "@/components/room/CreateRoom.tsx";
+import {useDispatch, useSelector} from "react-redux";
+import {setOpenCreateRoom} from "@/redux/slices/chatTriggerSlice.ts";
+import type {ReduxState} from "@/constants/ReduxState.ts";
 
 export function ChatSideBar() {
     const [activeIndex, changeActiveIndex] = useState(-1)
     const [popupState, setPopupState] = useState(false)
+    const dispatch = useDispatch();
+    const openCreateRoom = useSelector((state:ReduxState) => state.chatTriggerSlice.openCreateRoom)
 
     const listFeature = [
         {
             name: 'Tin nhắn',
-            icon: <MessageCircleMore />
+            icon: <MessageCircleMore />,
+            action: (index:number) => changeActiveIndex(index)
         },
         {
             name: 'Liên lạc',
-            icon: <Contact />
+            icon: <Contact />,
+            action: (index:number) => changeActiveIndex(index)
+        },
+        {
+            name: 'Tạo nhóm chat',
+            icon: <Group />,
+            action: (index:number) => {
+                changeActiveIndex(index)
+                dispatch(setOpenCreateRoom(true))
+            }
         }
     ]
 
@@ -33,11 +49,12 @@ export function ChatSideBar() {
                         <div
                             className={`p-3 my-1 rounded-md flex flex-col items-center justify-center hover:bg-indigo-800/50 text-neutral-50 ${activeIndex === index && "bg-indigo-900 hover:bg-indigo-800"}`}
                             title={ele.name}
-                            onClick={() => changeActiveIndex(index)}
+                            onClick={() => ele.action(index)}
                         >
                             {ele.icon}
                         </div>
                     ))}
+                    {openCreateRoom && <CreateRoom />}
                 </div>
 
                 <div className="">

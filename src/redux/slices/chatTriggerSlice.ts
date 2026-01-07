@@ -1,16 +1,18 @@
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 
-export interface ChatPickerSlice {
+export interface ChatTriggerSlice {
     openStickerPicker: boolean,
-    openEmojiPicker: boolean
+    openEmojiPicker: boolean,
+    openCreateRoom: boolean
 }
 
-const initialState: ChatPickerSlice = {
+const initialState: ChatTriggerSlice = {
     openStickerPicker: false,
-    openEmojiPicker: false
+    openEmojiPicker: false,
+    openCreateRoom: false
 }
 
-export const chatPickerSlice = createSlice({
+export const chatTriggerSlice = createSlice({
     name: "chatPickerSlice",
     initialState,
     reducers: {
@@ -21,9 +23,12 @@ export const chatPickerSlice = createSlice({
         setOpenEmojiPicker(state, action: PayloadAction<boolean>) {
             state.openStickerPicker = false
             state.openEmojiPicker = action.payload
+        },
+        setOpenCreateRoom(state, action: PayloadAction<boolean>) {
+            state.openCreateRoom = action.payload
         }
     }
 })
 
-export default chatPickerSlice.reducer
-export const {setOpenStickerPicker, setOpenEmojiPicker} = chatPickerSlice.actions
+export default chatTriggerSlice.reducer
+export const {setOpenStickerPicker, setOpenEmojiPicker, setOpenCreateRoom} = chatTriggerSlice.actions

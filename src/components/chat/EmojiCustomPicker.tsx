@@ -1,7 +1,7 @@
 import EmojiPicker, {Theme} from "emoji-picker-react";
 import {useEffect, useState} from "react";
 import {X} from "lucide-react";
-import {setOpenEmojiPicker} from "@/redux/slices/chatPickerSlice.ts";
+import {setOpenEmojiPicker} from "@/redux/slices/chatTriggerSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import type {ReduxState} from "@/constants/ReduxState.ts";
 

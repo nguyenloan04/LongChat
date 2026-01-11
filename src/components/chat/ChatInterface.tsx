@@ -3,6 +3,11 @@
 import { Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User } from "lucide-react";
 import { Message } from "./Message";
 import { useRef } from "react";
+import StickerPicker from "@/components/chat/StickerPicker.tsx";
+import {useDispatch, useSelector} from "react-redux";
+import type {ReduxState} from "@/constants/ReduxState.ts";
+import {setOpenEmojiPicker, setOpenStickerPicker} from "@/redux/slices/chatPickerSlice.ts";
+import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 
 
 //Mock data
@@ -20,6 +25,9 @@ const msg = [
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
     const SendMessageComponent = () => {
+        const openStickerPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openStickerPicker)
+        const openEmojiPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openEmojiPicker)
+        const dispatch = useDispatch();
         const textareaRef = useRef<HTMLTextAreaElement>(null);
 
         const handleInput = (_: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -52,10 +60,21 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     className="flex items-start px-3 justify-end gap-3"
                 >
                     <div className="flex items-start justify-end gap-3 pt-2">
-                        <Paperclip size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                        <Image size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                        <Sticker size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                        <Smile size={"1.5rem"} className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
+                        <Paperclip size={"1.5rem"}
+                                   className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"/>
+                        <Image size={"1.5rem"}
+                               className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"/>
+                        <Sticker size={"1.5rem"}
+                                 className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                                 onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
+                        />
+                        {openStickerPicker && <StickerPicker />}
+                        
+                        <Smile size={"1.5rem"}
+                               className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                               onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
+                        />
+                        {openEmojiPicker && <EmojiCustomPicker />}
                     </div>
                     <div className="pt-0.5">
                         <SendHorizonal size={"2.25rem"} className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />

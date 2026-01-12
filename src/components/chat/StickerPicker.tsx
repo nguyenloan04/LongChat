@@ -94,7 +94,7 @@ export default function StickerPicker() {
     }, [page, key]);
     
     return (
-        <div className="fixed overflow-hidden rounded-lg shadow border bottom-14 index-99 bg-white dark:bg-gray-800 border w-90">
+        <div className="fixed overflow-hidden rounded-lg shadow bottom-14 index-99 bg-white dark:bg-gray-800 border w-90">
             <div className="relative">
                 <p className="shadow text-lg p-2 font-semibold text-center">Sticker</p>
                 <X className="absolute right-2 top-3 hover:bg-neutral-300/30 rounded" onClick={() => dispatch(setOpenStickerPicker(false))}/>

@@ -5,7 +5,11 @@ import { convertImageToWebp } from "@/utils/storageUtil"
 
 
 //Check auth before call this function
-export async function uploadAttachment(folder: string, file: File): Promise<{ result: boolean, message: string }> {
+export async function uploadAttachment(
+    folder: string,
+    file: File,
+    onProgress?: (percent: number) => void
+): Promise<{ result: boolean, message: string }> {
     const [format, extension] = file.type.split("/")
     const defaultResult = { result: false, message: "Upload thất bại" }
 
@@ -47,7 +51,7 @@ export async function uploadAttachment(folder: string, file: File): Promise<{ re
 
             Object.entries(cloudinaryData).forEach(([k, v]) => formData.append(k, String(v)))
 
-            const uploadResult = await storageApi.upload(formData, format)
+            const uploadResult = await storageApi.upload(formData, format, onProgress)
             return {
                 result: uploadResult,
                 message: uploadResult ? "Upload thành công" : "Upload thất bại"

@@ -27,11 +27,20 @@ export const storageApi = {
         })
     },
 
-    upload: async (formData: FormData, format: "image" | "video") => {
+    upload: async (formData: FormData, format: "image" | "video", onProgress?: (percent: number) => void) => {
         return await axios
             .post(
                 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${format}/upload`,
-                formData
+                formData,
+                {
+                    headers: {"Content-Type": "multipart/form-data"},
+                    onUploadProgress: (progressEvent) => {
+                        if (onProgress && progressEvent.total) {
+                            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                            onProgress(percent)
+                        }
+                    }
+                }
             )
             .then(response => response.status === 200)
     }

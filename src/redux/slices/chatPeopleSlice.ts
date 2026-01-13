@@ -1,15 +1,28 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type {ReceiveMsgGetChatPeoplePayload} from "@/socket/types/WebsocketReceivePayload";
-import type {SendMsgGetChatPayload, SendMsgSendChatPayload} from "@/socket/types/WebsocketSendPayload";
+import type {
+    ReceiveMsgGetChatPeoplePayload,
+    ReceiveMsgGetUserListPayload
+} from "@/socket/types/WebsocketReceivePayload";
+import type {
+    SendMsgGetChatPayload,
+    SendMsgGetUserListPayload,
+    SendMsgSendChatPayload
+} from "@/socket/types/WebsocketSendPayload";
 
 interface ChatState {
     // Key: target user, Value: data received
     peopleHistory: Record<string, ReceiveMsgGetChatPeoplePayload[]>;
+    // get list users that account had chatted
+    userList: ReceiveMsgGetUserListPayload[];
+    // currentUser that account open
+    currentChatTarget: ReceiveMsgGetUserListPayload | null;
     isLoading: boolean; //check for loading data from server
 }
 
 const initialState: ChatState = {
     peopleHistory: {},
+    userList: [],
+    currentChatTarget: null,
     isLoading: false,
 };
 
@@ -17,6 +30,10 @@ const chatSlice = createSlice({
     name: "chat",
     initialState,
     reducers: {
+        // request to get user list
+        getUserList: (state, action: PayloadAction<SendMsgGetUserListPayload>) => {
+            state.isLoading = true;
+        },
         // request to get message from chat
         getPeopleChatHistory: (state, action: PayloadAction<SendMsgGetChatPayload>) => {
             state.isLoading = true;
@@ -28,6 +45,16 @@ const chatSlice = createSlice({
         },
 
         // update store
+        //get user list account had chatted
+        setUserList: (state, action: PayloadAction<ReceiveMsgGetUserListPayload[]>) => {
+            state.userList = action.payload;
+            state.isLoading = false;
+        },
+
+        // Choose one to read chat history and chat
+        setCurrentChatTarget: (state, action: PayloadAction<ReceiveMsgGetUserListPayload>) => {
+            state.currentChatTarget = action.payload;
+        },
         setPeopleChatHistory: (state, action: PayloadAction<{ targetName: string, messages: ReceiveMsgGetChatPeoplePayload[] }>) => {
             const { targetName, messages } = action.payload;
             state.peopleHistory[targetName] = messages;
@@ -51,8 +78,11 @@ const chatSlice = createSlice({
 });
 
 export const {
+    getUserList,
     getPeopleChatHistory,
     sendPeopleChat,
+    setUserList,
+    setCurrentChatTarget,
     setPeopleChatHistory,
     receiveNewPeopleMessage
 } = chatSlice.actions;

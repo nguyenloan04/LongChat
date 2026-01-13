@@ -1,19 +1,25 @@
-import type { User } from "@/constants/User";
-import { setConnected, setErrorMessage } from "@/redux/slices/socketSlice";
-import { setCurrentUser } from "@/redux/slices/userSlice";
-import { WebsocketInstance } from "@/socket/WebsocketInstance";
-import { WebSocketEvent } from "@/socket/types/WebSoketMessage";
-import { forceLogout } from "@/utils/authUtil";
-import type { Middleware } from "@reduxjs/toolkit";
-import type { WsReceiveMessage } from "@/socket/types/WebSocketMessageReceive";
-import type { ReceiveMsgGetChatPeoplePayload } from "@/socket/types/WebsocketReceivePayload";
-import type { SendMsgGetChatPayload, SendMsgSendChatPayload } from "@/socket/types/WebsocketSendPayload";
+import type {User} from "@/constants/User";
+import {setConnected, setErrorMessage} from "@/redux/slices/socketSlice";
+import {setCurrentUser} from "@/redux/slices/userSlice";
+import {WebsocketInstance} from "@/socket/WebsocketInstance";
+import {WebSocketEvent} from "@/socket/types/WebSoketMessage";
+import {forceLogout} from "@/utils/authUtil";
+import type {Middleware} from "@reduxjs/toolkit";
+import type {WsReceiveMessage} from "@/socket/types/WebSocketMessageReceive";
+import type {ReceiveMsgGetChatPeoplePayload} from "@/socket/types/WebsocketReceivePayload";
+import type {
+    SendMsgGetChatPayload,
+    SendMsgGetUserListPayload,
+    SendMsgSendChatPayload
+} from "@/socket/types/WebsocketSendPayload";
 
 import {
+    setUserList,
     setPeopleChatHistory,
     receiveNewPeopleMessage,
     getPeopleChatHistory,
-    sendPeopleChat
+    sendPeopleChat,
+    getUserList
 } from "@/redux/slices/chatPeopleSlice";
 
 const RECONNECT_TIMEOUT = 180000 // Timeout 3 mins for reconnect
@@ -32,7 +38,7 @@ export const socketMiddleware: Middleware = (store) => {
             //Connection closed from connection error or timeout
             case 1006: {
                 ws.connect()
-                store.dispatch({ type: 'socket/requestRelogin' })
+                store.dispatch({type: 'socket/requestRelogin'})
                 break
             }
             //Server error
@@ -54,8 +60,7 @@ export const socketMiddleware: Middleware = (store) => {
     ws.subscribe(WebSocketEvent.RE_LOGIN, (response) => {
         if (response.status === "success") {
             //Notice here            
-        }
-        else {
+        } else {
             //Re login failed, end session and require login
             localStorage.removeItem("RE_LOGIN_CODE")
             store.dispatch(setCurrentUser(null))
@@ -92,7 +97,7 @@ export const socketMiddleware: Middleware = (store) => {
                 if (message.name === myUsername) {
                     targetName = message.to;
                 }
-                store.dispatch(receiveNewPeopleMessage({ targetName, message }));
+                store.dispatch(receiveNewPeopleMessage({targetName, message}));
             }
         }
     })
@@ -114,17 +119,29 @@ export const socketMiddleware: Middleware = (store) => {
                     targetName = firstMsg.name;
                 }
 
-                store.dispatch(setPeopleChatHistory({ targetName, messages }));
+                store.dispatch(setPeopleChatHistory({targetName, messages}));
             }
+        }
+    })
+    ws.subscribe(WebSocketEvent.GET_USER_LIST, (response: WsReceiveMessage<WebSocketEvent.GET_USER_LIST>) => {
+        if (response.status === "success") {
+            const userList = response.data; // Type: ReceiveMsgGetUserListPayload[]
+            store.dispatch(setUserList(userList));
         }
     })
 
     return (next) => (action: any) => {
         switch (action.type) {
+            case getUserList.type: {
+                // Payload thường là rỗng {}
+                const payload = action.payload as SendMsgGetUserListPayload;
+                ws.send(WebSocketEvent.GET_USER_LIST, payload);
+                break;
+            }
             case sendPeopleChat.type: {
                 const payload = action.payload as SendMsgSendChatPayload;
 
-                ws.send(WebSocketEvent.SEND_CHAT_TO_PEOPLE, { ...payload, type: 'people' });
+                ws.send(WebSocketEvent.SEND_CHAT_TO_PEOPLE, {...payload, type: 'people'});
                 break;
             }
 
@@ -136,7 +153,7 @@ export const socketMiddleware: Middleware = (store) => {
             case 'socket/requestRelogin': {
                 try {
                     serverErrorState = false
-                    
+
                     const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
                     const state = store.getState()
                     const currentUser: User = state.currentUser.currentUser as User
@@ -168,8 +185,7 @@ export const socketMiddleware: Middleware = (store) => {
 
                         currentTimeout += RECONNECT_INTERVAL
                     }, RECONNECT_INTERVAL)
-                }
-                catch (_) {
+                } catch (_) {
                     forceLogout(store)
                 }
                 break

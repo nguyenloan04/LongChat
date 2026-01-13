@@ -1,11 +1,43 @@
-import type { MessageContent } from "@/types/MessageContent";
+import type {MessageContent} from "@/types/MessageContent";
 
 //Extract from raw json into MessageContent object
 export function extractMessageContent(rawMessage: string): MessageContent | null {
     try {
-        return JSON.parse(rawMessage) as MessageContent
+        const parsed = JSON.parse(rawMessage);
+        // check for structure
+        if (parsed && (parsed.type || parsed.content || parsed.attachment)) {
+            return parsed as MessageContent;
+        }
+
+        return {
+            type: "chat",
+            content: String(rawMessage),
+            attachment: []
+        };
+    } catch (error) {
+        return {
+            type: "chat",
+            content: rawMessage,
+            attachment: []
+        };
     }
-    catch (_) {
-        return null
-    }
+}
+
+/**
+ * Wrap content to json in order to send to server
+ * @param content
+ * @param attachment
+ * @param type
+ */
+export function createMessagePayload(
+    content: string,
+    attachment: string[] = [],
+    type: "chat" | "sticker" | "attachment" = "chat"
+): string {
+    const messageObj: MessageContent = {
+        type: type,
+        content: content,
+        attachment: attachment
+    };
+    return JSON.stringify(messageObj);
 }

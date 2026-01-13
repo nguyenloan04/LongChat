@@ -3,7 +3,7 @@ import {stickerService} from "@/services/stickerService.ts";
 import {ChevronLeft, ChevronRight, Clock4, Flame, Frown, Heart, Search, Smile, X} from "lucide-react";
 import {StickerPreview} from "@/components/chat/StickerPreview.tsx";
 import {useDispatch} from "react-redux";
-import {setOpenStickerPicker} from "@/redux/slices/chatPickerSlice.ts";
+import {setOpenStickerPicker} from "@/redux/slices/chatTriggerSlice.ts";
 
 export default function StickerPicker() {
     const [stickers, setStickers] = useState<{ src: string, preview: string }[]>([]);

@@ -183,3 +183,13 @@
     scrollbar-width: thin;
     scrollbar-color: theme('colors.gray.400') theme('colors.gray.100');
 }
+
+.EmojiPickerReact {
+    --epr-font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.EmojiPickerReact *,
+.EmojiPickerReact input,
+.EmojiPickerReact span {
+    font-family: var(--epr-font-family) !important;
+}

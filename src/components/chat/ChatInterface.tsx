@@ -6,7 +6,7 @@ import { useRef } from "react";
 import StickerPicker from "@/components/chat/StickerPicker.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import type {ReduxState} from "@/constants/ReduxState.ts";
-import {setOpenEmojiPicker, setOpenStickerPicker} from "@/redux/slices/chatPickerSlice.ts";
+import {setOpenEmojiPicker, setOpenStickerPicker} from "@/redux/slices/chatTriggerSlice.ts";
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 
 
@@ -25,8 +25,8 @@ const msg = [
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
     const SendMessageComponent = () => {
-        const openStickerPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openStickerPicker)
-        const openEmojiPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openEmojiPicker)
+        const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker)
+        const openEmojiPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openEmojiPicker)
         const dispatch = useDispatch();
         const textareaRef = useRef<HTMLTextAreaElement>(null);
 

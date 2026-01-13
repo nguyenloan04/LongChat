@@ -8,6 +8,12 @@ import { WebsocketInstance } from "@/socket/WebsocketInstance"
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 import { FormType } from "@/constants/AuthForm"
 import { ConnectionLoading } from "../common/ConnectionLoading"
+import { authApi } from "@/api/auth"
+import { setCurrentUser } from "@/redux/slices/userSlice"
+import type { User } from "@/constants/User"
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export default function LoginComponent() {
     const dispatcher = useDispatch()
@@ -24,9 +30,10 @@ export default function LoginComponent() {
     const navigate = useNavigate()
     const wsInstance = WebsocketInstance.getInstance()
 
+    const cloudinaryUrl = process.env.CLOUDINARY_URL
+
     const handleForm = () => {
         const validateFormResult = validateForm(currentForm, FormType.LOGIN)
-        console.log(validateFormResult)
         if (validateFormResult.result) {
             isLoading(true)
             wsInstance.send(WebSocketEvent.LOGIN, {
@@ -54,11 +61,25 @@ export default function LoginComponent() {
 
 
     useEffect(() => {
-        const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, (response) => {
+        const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, async (response) => {
             if (response.status === "success") {
                 const reloginCode = response.data.RE_LOGIN_CODE
                 localStorage.setItem("RE_LOGIN_CODE", reloginCode)
                 localStorage.setItem("username", currentForm.username)
+
+                const description = await authApi.getDescription(currentForm.username).then(res => res.description)
+
+                dispatcher(setCurrentUser({
+                    username: currentForm.username,
+                    description,
+                    displayName: currentForm.username,
+                    avatar: `${cloudinaryUrl}/avatar/${currentForm.username}`,
+                    banner: {
+                        content: `${cloudinaryUrl}/banner/${currentForm.username}`,
+                        type: "image"
+                    },
+                }))
+                
                 setMessage("Đăng nhập thành công")
                 setTimeout(() => {
                     navigate("/")

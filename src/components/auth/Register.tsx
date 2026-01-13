@@ -29,8 +29,6 @@ export default function RegisterComponent() {
 
     const handleForm = () => {
         const validateFormResult = validateForm(currentForm, FormType.REGISTER)
-        //Check API here
-        //FIXME: Complete this
         if (validateFormResult.result) {
             isLoading(true)
             wsInstance.send(WebSocketEvent.REGISTER, {
@@ -59,6 +57,7 @@ export default function RegisterComponent() {
     useEffect(() => {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.REGISTER, (response) => {
             if (response.status === "success") {
+                //Config upload default avatar and default banner here
                 //Navigate back to login
                 setMessage("Đăng ký thành công. Đang chuyển về trang đăng nhập")
                 setTimeout(() => {

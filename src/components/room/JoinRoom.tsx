@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {WebsocketInstance} from "@/socket/WebsocketInstance.ts";
 import {WebSocketEvent} from "@/socket/types/WebSoketMessage.ts";
+import {setRoomChat} from "@/redux/slices/chatSlice.ts";
 
 export default function JoinRoom () {
     const [error, setError] = useState<string>('');
@@ -26,9 +27,8 @@ export default function JoinRoom () {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.JOIN_ROOM, (response) => {
             setLoading(false);
             if(response.status === "success") {
-                //Add response data into room list.
                 console.log(response.data)
-                
+                dispatch(setRoomChat(response.data))
                 dispatch(setOpenJoinRoom(false)) 
             } else {
                 setError(response.mes === "Room not found" ? "Không tìm thấy nhóm. Vui lòng đổi tên khác!" : "Đã có lỗi xảy ra!")

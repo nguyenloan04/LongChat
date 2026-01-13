@@ -5,6 +5,7 @@ import { WebsocketInstance } from "@/socket/WebsocketInstance";
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage";
 import { forceLogout } from "@/utils/authUtil";
 import type { Middleware } from "@reduxjs/toolkit";
+import {setRoomChat} from "@/redux/slices/chatSlice.ts";
 
 const RECONNECT_TIMEOUT = 180000 // Timeout 3 mins for reconnect
 const RECONNECT_INTERVAL = 500 //Reconnect every 0.5s
@@ -55,9 +56,7 @@ export const socketMiddleware: Middleware = (store) => {
     //Global state
     ws.subscribe(WebSocketEvent.GET_ROOM_CHAT_MES, (response) => {
         if (response.status === "success") {
-            // const data = response.data
-            //Insert action into store.dispatch()
-            // store.dispatch()
+            store.dispatch(setRoomChat(response.data))
         }
     })
 
@@ -121,6 +120,27 @@ export const socketMiddleware: Middleware = (store) => {
                     forceLogout(store)
                 }
                 break
+            }
+            case 'socket/sendMessageToRoom': {
+                const { roomName, message } = action.payload;
+                if (ws.getSocket?.readyState === WebSocket.OPEN) {
+                    ws.send(WebSocketEvent.SEND_CHAT_TO_ROOM, {
+                        type: "room",
+                        to: roomName,
+                        mes: JSON.stringify(message)
+                    });
+                }
+                break;
+            }
+            case 'socket/getMessageFromRoom': {
+                const { roomName, page } = action.payload;
+                if (ws.getSocket?.readyState === WebSocket.OPEN) {
+                    ws.send(WebSocketEvent.GET_ROOM_CHAT_MES, {
+                        name: roomName,
+                        page: page
+                    });
+                }
+                break;
             }
         }
 

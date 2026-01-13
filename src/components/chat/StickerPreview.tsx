@@ -1,12 +1,26 @@
 import {useState} from "react";
+import {useDispatch} from "react-redux";
 
 export function StickerPreview(props: {src: string, preview: string}) {
     const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
     
     const handleSticker = () => {
         const stickers = JSON.parse(localStorage.getItem("stickerHistory") || "[]");
         const newStickers = [{src: props.src, preview: props.preview}, ...stickers];
         localStorage.setItem("stickerHistory", JSON.stringify(newStickers));
+        // FIXME: need change roomName
+        dispatch({
+            type: "socket/sendMessageToRoom",
+            payload: {
+                roomName: "Nhóm 77 Test WEB",
+                message: {
+                    type: "sticker",
+                    content: props.src,
+                    attachment: []
+                }
+            },
+        })
     }
     
     return (

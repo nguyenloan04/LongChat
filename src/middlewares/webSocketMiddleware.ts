@@ -31,6 +31,53 @@ export const socketMiddleware: Middleware = (store) => {
 
     ws.onInitConnection = () => {
         store.dispatch(setConnected(true))
+        // console.log("%c[WS] Socket Opened. Checking Credentials...", "color: blue");
+        //
+        // const state = store.getState();
+        // const reloginCode = localStorage.getItem("RE_LOGIN_CODE");
+        //
+        // // 1. Thử lấy User từ Redux
+        // let currentUser = state.currentUser.user as User;
+        // let usernameToLogin = currentUser?.username;
+        //
+        // // 2. Nếu Redux rỗng (do F5), thử lấy từ LocalStorage
+        // // Giả sử bạn lưu username với key là "USERNAME" hoặc lưu cả object user
+        // if (!usernameToLogin) {
+        //     const savedUsername = localStorage.getItem("username"); // <--- Key bạn dùng để lưu username
+        //
+        //     if (savedUsername) {
+        //         console.log("[WS] Found username in LocalStorage:", savedUsername);
+        //         usernameToLogin = savedUsername;
+        //
+        //         // (Tùy chọn) Khôi phục tạm vào Redux để các chỗ khác không bị lỗi
+        //         // Lưu ý: Nếu chỉ lưu mỗi username thì các thông tin khác của user sẽ thiếu
+        //         store.dispatch(setCurrentUser({ username: savedUsername } as User));
+        //     }
+        // }
+        //
+        // if (reloginCode && usernameToLogin) {
+        //     console.log(`[WS] Auto-relogin for user: ${usernameToLogin}`);
+        //     ws.send(WebSocketEvent.RE_LOGIN, {
+        //         code: reloginCode,
+        //         user: usernameToLogin // Dùng biến này thay vì currentUser.username
+        //     });
+        // } else {
+        //     console.log("[WS] No credentials found (Guest).");
+        //     store.dispatch(setConnected(true));
+        // }
+    };
+
+    ws.onConnectionLost = (code) => {
+        console.log(`%c[WS] Connection Lost (Code: ${code})`, "color: red");
+
+        store.dispatch(setConnected(false));
+
+        if (code === 1006 || code === 1001) {
+            console.log("[WS] Attempting to reconnect in 3s...");
+            setTimeout(() => {
+                ws.connect(); // Kết nối lại. Nếu thành công, onInitConnection sẽ chạy lại -> Auto Relogin
+            }, 3000);
+        }
     }
 
     ws.onConnectionLost = (code) => {
@@ -58,12 +105,21 @@ export const socketMiddleware: Middleware = (store) => {
 
     //For relogin when disconnect
     ws.subscribe(WebSocketEvent.RE_LOGIN, (response) => {
+        // if (response.status === "success") {
+        //     //Notice here
+        // } else {
+        //     //Re login failed, end session and require login
+        //     localStorage.removeItem("RE_LOGIN_CODE")
+        //     store.dispatch(setCurrentUser(null))
+        // }
         if (response.status === "success") {
-            //Notice here            
+            console.log("%c[WS] Re-Login Success! System Ready.", "color: green");
+            store.dispatch(setConnected(true));
         } else {
-            //Re login failed, end session and require login
-            localStorage.removeItem("RE_LOGIN_CODE")
-            store.dispatch(setCurrentUser(null))
+            console.error("[WS] Re-Login Failed. Logging out...");
+            // localStorage.removeItem("RE_LOGIN_CODE");
+            store.dispatch(setCurrentUser(null));
+            // Force logout hoặc chuyển về trang login
         }
     })
 
@@ -86,15 +142,20 @@ export const socketMiddleware: Middleware = (store) => {
     })
 
     ws.subscribe(WebSocketEvent.SEND_CHAT_TO_PEOPLE, (response) => {
+        console.log("[DEBUG] Received SEND_CHAT_TO_PEOPLE response:", response);
         if (response.status === "success") {
             const message = response.data as unknown as ReceiveMsgGetChatPeoplePayload;
 
             const state = store.getState();
-            const myUsername = state.currentUser.currentUser?.username;
+            let username = state.currentUser.user?.username;
 
-            if (message && message.mes && myUsername) {
+            if (!username) {
+                username = localStorage.getItem("username") || undefined;
+            }
+
+            if (message && message.mes && username) {
                 let targetName = message.name;
-                if (message.name === myUsername) {
+                if (message.name === username) {
                     targetName = message.to;
                 }
                 store.dispatch(receiveNewPeopleMessage({targetName, message}));
@@ -102,30 +163,40 @@ export const socketMiddleware: Middleware = (store) => {
         }
     })
     ws.subscribe(WebSocketEvent.GET_PEOPLE_CHAT_MES, (response: WsReceiveMessage<WebSocketEvent.GET_PEOPLE_CHAT_MES>) => {
+        console.log("[DEBUG] Received GET_PEOPLE_CHAT_MES response:", response);
         if (response.status === "success") {
-            const messages = response.data; // Type: ReceiveMsgGetChatPeoplePayload[]
-
+            const messages = response.data;
+            // const state = store.getState();
             const state = store.getState();
-            const currentUser = state.currentUser.currentUser as User;
-            const myUsername = currentUser?.username;
+            console.log("[DEBUG] Current User State:", state.currentUser);
+            let username = state.currentUser.user?.username;
 
-            if (messages && messages.length > 0 && myUsername) {
+            if (!username) {
+                username = localStorage.getItem("username") || undefined;
+            }
+
+            console.log("[WS] History loaded. My User:", username, "Messages:", messages.length);
+
+            if (messages && messages.length > 0 && username) {
                 const firstMsg = messages[0];
                 let targetName = "";
 
-                if (firstMsg.name === myUsername) {
+                if (firstMsg.name === username) {
                     targetName = firstMsg.to;
                 } else {
                     targetName = firstMsg.name;
                 }
 
-                store.dispatch(setPeopleChatHistory({targetName, messages}));
+                // Dispatch action lưu vào Redux Store
+                store.dispatch(setPeopleChatHistory({ targetName, messages }));
             }
         }
     })
     ws.subscribe(WebSocketEvent.GET_USER_LIST, (response: WsReceiveMessage<WebSocketEvent.GET_USER_LIST>) => {
+        console.log("[DEBUG] Received GET_USER_LIST response:", response);
         if (response.status === "success") {
-            const userList = response.data; // Type: ReceiveMsgGetUserListPayload[]
+            const userList = response.data;
+            console.log("[DEBUG] Dispatching Set User List:", userList);
             store.dispatch(setUserList(userList));
         }
     })
@@ -133,7 +204,6 @@ export const socketMiddleware: Middleware = (store) => {
     return (next) => (action: any) => {
         switch (action.type) {
             case getUserList.type: {
-                // Payload thường là rỗng {}
                 const payload = action.payload as SendMsgGetUserListPayload;
                 ws.send(WebSocketEvent.GET_USER_LIST, payload);
                 break;
@@ -156,9 +226,10 @@ export const socketMiddleware: Middleware = (store) => {
 
                     const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
                     const state = store.getState()
-                    const currentUser: User = state.currentUser.currentUser as User
-
-
+                    // const currentUser: User = state.currentUser.currentUser as User
+                    const currentUser: User = state.currentUser.user as User
+                    const username = state.currentUser.user?.username;
+                    console.log("[WS] Relogin Action. User:", currentUser?.username, "Code:", reloginCode);
                     if (!reloginCode || !currentUser) {
                         forceLogout(store)
                         break
@@ -169,7 +240,7 @@ export const socketMiddleware: Middleware = (store) => {
                         if (ws.getSocket?.readyState === WebSocket.OPEN) {
                             ws.send(WebSocketEvent.RE_LOGIN, {
                                 code: reloginCode,
-                                user: currentUser.username
+                                user: username
                             })
                             clearInterval(reconnectInterval)
                         }
@@ -178,11 +249,9 @@ export const socketMiddleware: Middleware = (store) => {
                             clearInterval(reconnectInterval)
                             forceLogout(store)
                         }
-
                         if (serverErrorState) {
                             clearInterval(reconnectInterval)
                         }
-
                         currentTimeout += RECONNECT_INTERVAL
                     }, RECONNECT_INTERVAL)
                 } catch (_) {

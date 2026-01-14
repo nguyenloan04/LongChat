@@ -98,17 +98,26 @@ export function ChatMenuBar() {
     const dispatch = useDispatch();
     const [isInputFocused, setInputFocusState] = useState(false);
 
+    const isConnected = useSelector((state: any) => state.socketState.isConnected);
+
     const userList = useSelector((state: ReduxState) => state.chatState.userList);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
-
     useEffect(() => {
-        dispatch(getUserList({}));
-    }, [dispatch]);
+        console.log("[DEBUG-UI] UserList Updated in Store:", userList);
+        if (isConnected) {
+            console.log("Socket connected -> Fetching User List...");
+            dispatch(getUserList({}));
+        } else {
+            console.log("Waiting for socket connection...");
+        }
+    }, [dispatch, isConnected]);
 
     const handleSelectUser = (user: any) => {
+        console.log("[DEBUG-UI] User Selected:", user);
         dispatch(setCurrentChatTarget(user));
 
         if (user.type === 0) {
+            console.log("[DEBUG-UI] Dispatching getPeopleChatHistory for:", user.name);
             dispatch(getPeopleChatHistory({ name: user.name, page: 1 }));
         } else {
             // TODO: Handle requestGetRoomHistory

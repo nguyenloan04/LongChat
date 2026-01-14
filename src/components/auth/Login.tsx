@@ -8,6 +8,7 @@ import { WebsocketInstance } from "@/socket/WebsocketInstance"
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 import { FormType } from "@/constants/AuthForm"
 import { ConnectionLoading } from "../common/ConnectionLoading"
+import {setCurrentUser} from "@/redux/slices/userSlice.ts";
 
 export default function LoginComponent() {
     const dispatcher = useDispatch()
@@ -49,7 +50,10 @@ export default function LoginComponent() {
     useEffect(() => {
         dispatcher(resetAuthForm())
         //Redirect to home page if logged in
-        if (currentUser.user) navigate("/")
+        if (currentUser.user) {
+            // console.log("user", currentUser)
+            navigate("/chat")
+        }
     }, [])
 
 
@@ -57,11 +61,23 @@ export default function LoginComponent() {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, (response) => {
             if (response.status === "success") {
                 const reloginCode = response.data.RE_LOGIN_CODE
+                // const username = currentForm.username
                 localStorage.setItem("RE_LOGIN_CODE", reloginCode)
                 localStorage.setItem("username", currentForm.username)
+                const username = currentForm.username
+                console.log("Saved Username: " ,username)
+                console.log(reloginCode)
+                // save state.currentUser
+                dispatcher(setCurrentUser({
+                    username: username,
+                    avatar: `https://res.cloudinary.com/dcyo10lft/image/upload/${username}.jpg`,
+                    displayName: username,
+                    banner: { type: "color", content: "#6366f1" },
+                    description: "",
+                }));
                 setMessage("Đăng nhập thành công")
                 setTimeout(() => {
-                    navigate("/")
+                    navigate("/chat")
                 }, 500)
             }
             else {

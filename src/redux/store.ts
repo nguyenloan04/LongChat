@@ -18,5 +18,5 @@ export const store = configureStore({
         chatPickerSlice: chatPickerSlice,
         chatState: chatReducer
     },
-    // middleware: (getDefault) => getDefault().concat(socketMiddleware)
+    middleware: (getDefault) => getDefault().concat(socketMiddleware)
 })

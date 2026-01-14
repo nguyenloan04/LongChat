@@ -81,23 +81,18 @@ export const socketMiddleware: Middleware = (store) => {
 
     //For relogin when disconnect
     ws.subscribe(WebSocketEvent.RE_LOGIN, (response) => {
-            if (response.status === "success") {
-                const responseData = response.data as any;
-                const newCode = responseData?.RE_LOGIN_CODE || responseData?.code;
-
-                if (newCode) {
-                    localStorage.setItem("RE_LOGIN_CODE", newCode);
-                }
-                //Notice here
-            } else {
-                //Re login failed, end session and require login
-                store.dispatch(setCurrentUser(null))
-                if ((response as any).event === "ACTION_NOT_EXIT") return
-                localStorage.removeItem("RE_LOGIN_CODE")
-                localStorage.removeItem("user")
-            }
+        if (response.status === "success") {
+            //Notice here
+            localStorage.setItem("RE_LOGIN_CODE", response.data.RE_LOGIN_CODE)
         }
-    )
+        else {
+            //Re login failed, end session and require login
+            store.dispatch(setCurrentUser(null))
+            if ((response as any).event === "ACTION_NOT_EXIT") return
+            localStorage.removeItem("RE_LOGIN_CODE")
+            localStorage.removeItem("user")
+        }
+    })
 
     //Global state
     ws.subscribe(WebSocketEvent.GET_ROOM_CHAT_MES, (response) => {

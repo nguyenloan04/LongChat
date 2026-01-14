@@ -1,7 +1,7 @@
 import type { MessageContent } from "@/types/MessageContent";
-import { createPlugin } from "node_modules/simple-customize-markdown-converter/dist/types/plugin";
+import { } from "simple-customize-markdown-converter"
 import React from "react";
-import { MarkdownComponent } from "simple-customize-markdown-converter/react"
+import { createPlugin, MarkdownComponent } from "simple-customize-markdown-converter/react"
 
 const convertPlugin = [
     createPlugin<string, React.ReactNode>(
@@ -23,6 +23,30 @@ const convertPlugin = [
         },
         {
             render: (node) => node.value && decodeURIComponent(node.value)
+        }
+    ),
+    createPlugin<string, React.ReactNode>(
+        "Underline",
+        "inline",
+        {
+            match: (lexer) => lexer.startsWith("++"),
+            emit: (lexer) => {
+                lexer.next();
+                lexer.listToken.push({ type: "Underline" });
+            }
+        },
+        {
+            execute: (parser) => {
+                parser.next(1)
+                return { type: "Underline", children: parser.parseInlineUntil("Underline", true) }
+            }
+        },
+        {
+            render: (_node, children) => (
+                <span key={Math.random()} style={{ textDecoration: "underline" }}>
+                    {children}
+                </span>
+            )
         }
     )
 ]

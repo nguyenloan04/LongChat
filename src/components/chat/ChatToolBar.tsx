@@ -1,5 +1,5 @@
 import { insertMarkdown } from "@/utils/chatToolbarUtil";
-import { Bold, Heading, Italic, Link, List, ListOrdered } from "lucide-react";
+import { Bold, Heading, Italic, Link, List, ListOrdered, TextQuote, Underline } from "lucide-react";
 import type { RefObject } from "react";
 
 export function ChatToolBar({ inputRef }: { inputRef: RefObject<HTMLTextAreaElement | null> }) {
@@ -7,7 +7,7 @@ export function ChatToolBar({ inputRef }: { inputRef: RefObject<HTMLTextAreaElem
         {
             name: "Tiêu đề",
             Icon: Heading,
-            onClick: () => handlerFunction((element) => { })
+            onClick: () => handlerFunction((element) => insertMarkdown(element, "###", ""))
         },
         {
             name: "Chữ đậm",
@@ -17,7 +17,24 @@ export function ChatToolBar({ inputRef }: { inputRef: RefObject<HTMLTextAreaElem
         {
             name: "Chữ nghiêng",
             Icon: Italic,
-            onClick: () => handlerFunction((element) => insertMarkdown(element, "**"))
+            onClick: () => handlerFunction((element) => insertMarkdown(element, "*"))
+        },
+        {
+            name: "Chữ gạch chân",
+            Icon: Underline,
+            onClick: () => handlerFunction((element) => insertMarkdown(element, "++"))
+        },
+        {
+            name: "Trích dẫn",
+            Icon: TextQuote,
+            onClick: () => handlerFunction((element) => {
+                const start = element.selectionStart;
+                const isStartOfLine = start === 0 || element.value[start - 1] === "\n";
+
+                //Add \n if not start of line
+                const symbol = isStartOfLine ? "> " : "\n> ";
+                insertMarkdown(element, symbol, "\n")
+            })
         },
         {
             name: "Link",
@@ -29,11 +46,27 @@ export function ChatToolBar({ inputRef }: { inputRef: RefObject<HTMLTextAreaElem
     const listAndTaskFeature = [
         {
             name: "Danh sách",
-            Icon: List
+            Icon: List,
+            onClick: () => handlerFunction((element) => {
+                const start = element.selectionStart;
+                const isStartOfLine = start === 0 || element.value[start - 1] === "\n";
+
+                //Add \n if not start of line
+                const symbol = isStartOfLine ? "- " : "\n- ";
+                insertMarkdown(element, symbol, "")
+            })
         },
         {
             name: "Danh sách đánh số",
-            Icon: ListOrdered
+            Icon: ListOrdered,
+            onClick: () => handlerFunction((element) => {
+                const start = element.selectionStart;
+                const isStartOfLine = start === 0 || element.value[start - 1] === "\n";
+
+                //Add \n if not start of line
+                const symbol = isStartOfLine ? "1. " : "\n1. ";
+                insertMarkdown(element, symbol, "");
+            })
         },
     ]
 
@@ -62,6 +95,7 @@ export function ChatToolBar({ inputRef }: { inputRef: RefObject<HTMLTextAreaElem
                         className="rounded hover:bg-neutral-200 dark:hover:bg-neutral-600 cursor-pointer p-1.5"
                         size={"2rem"}
                         onMouseDown={(e) => e.preventDefault()}
+                        onClick={ele.onClick}
                     />
                 </div>
             )}

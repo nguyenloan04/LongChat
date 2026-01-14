@@ -1,8 +1,6 @@
-import dotenv from 'dotenv'
 import axios from 'axios'
-dotenv.config()
 
-const SERVER_URL = process.env.SERVER_URL
+const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
 export const authApi = {
     getDescription: async (username: string) => {

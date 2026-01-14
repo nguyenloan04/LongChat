@@ -61,7 +61,7 @@ export default function LoginComponent() {
                 localStorage.setItem("username", currentForm.username)
                 setMessage("Đăng nhập thành công")
                 setTimeout(() => {
-                    navigate("/")
+                    navigate("/chat")
                 }, 500)
             }
             else {

@@ -1,7 +1,7 @@
 import type { ReduxState } from "@/constants/ReduxState"
 import { useDispatch, useSelector } from "react-redux"
 import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
-import { useEffect, useState } from "react"
+import {useEffect, useRef, useState} from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
 import { WebsocketInstance } from "@/socket/WebsocketInstance"
@@ -24,6 +24,11 @@ export default function LoginComponent() {
 
     const navigate = useNavigate()
     const wsInstance = WebsocketInstance.getInstance()
+    // Save newest username
+    const usernameRef = useRef(currentForm.username);
+    useEffect(() => {
+        usernameRef.current = currentForm.username;
+    }, [currentForm.username]);
 
     const handleForm = () => {
         const validateFormResult = validateForm(currentForm, FormType.LOGIN)
@@ -61,10 +66,10 @@ export default function LoginComponent() {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, (response) => {
             if (response.status === "success") {
                 const reloginCode = response.data.RE_LOGIN_CODE
+                const username = usernameRef.current;
                 // const username = currentForm.username
                 localStorage.setItem("RE_LOGIN_CODE", reloginCode)
-                localStorage.setItem("username", currentForm.username)
-                const username = currentForm.username
+                localStorage.setItem("username", username)
                 console.log("Saved Username: " ,username)
                 console.log(reloginCode)
                 // save state.currentUser

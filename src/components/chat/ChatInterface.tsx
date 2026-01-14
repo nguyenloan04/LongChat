@@ -35,8 +35,8 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             const textareaRef = useRef<HTMLTextAreaElement>(null);
             const [inputValue, setInputValue] = useState("");
 
-            const openStickerPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openStickerPicker);
-            const openEmojiPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openEmojiPicker);
+            const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker);
+            const openEmojiPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openEmojiPicker);
 
             const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 setInputValue(e.target.value);

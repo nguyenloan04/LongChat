@@ -81,15 +81,21 @@ export const socketMiddleware: Middleware = (store) => {
 
     //For relogin when disconnect
     ws.subscribe(WebSocketEvent.RE_LOGIN, (response) => {
-        if (response.status === "success") {
-            //Notice here            
-        }
-        else {
-            //Re login failed, end session and require login
-            store.dispatch(setCurrentUser(null))
-            if ((response as any).event === "ACTION_NOT_EXIT") return
-            localStorage.removeItem("RE_LOGIN_CODE")
-            localStorage.removeItem("user")
+            if (response.status === "success") {
+                const responseData = response.data as any;
+                const newCode = responseData?.RE_LOGIN_CODE || responseData?.code;
+
+                if (newCode) {
+                    localStorage.setItem("RE_LOGIN_CODE", newCode);
+                }
+                //Notice here
+            } else {
+                //Re login failed, end session and require login
+                store.dispatch(setCurrentUser(null))
+                if ((response as any).event === "ACTION_NOT_EXIT") return
+                localStorage.removeItem("RE_LOGIN_CODE")
+                localStorage.removeItem("user")
+            }
         }
     )
 
@@ -207,6 +213,7 @@ export const socketMiddleware: Middleware = (store) => {
                     serverErrorState = false
 
                     const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
+                    const username = (JSON.parse(<string>localStorage.getItem("user")) as User)?.username
                     const state = store.getState()
 
                     const currentUser: User = state.currentUser.user as User

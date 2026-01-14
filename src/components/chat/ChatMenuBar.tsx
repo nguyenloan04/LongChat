@@ -1,6 +1,7 @@
 import getTimeDifference from "locale-time-diff"
 import { Search } from "lucide-react"
 import { useState } from "react"
+import RoomMenu from "@/components/room/RoomMenu.tsx";
 
 export function ChatMenuBar() {
     const [isInputFocused, setInputFocusState] = useState(false)
@@ -96,7 +97,7 @@ export function ChatMenuBar() {
     return (
         <div className="h-full flex flex-col">
             {/* Header */}
-            <div className="px-2 py-2 h-fit border-b min-h-16">
+            <div className="flex gap-2 justify-center items-center px-2 py-2 h-fit border-b min-h-16">
                 <div
                     className={`flex items-center gap-1 border rounded-md bg-gray-200/60 ${isInputFocused && "border border-neutral-500"}`}
                     onClick={() => setInputFocusState(true)}
@@ -108,6 +109,7 @@ export function ChatMenuBar() {
                         type="text" placeholder="Tìm kiếm..."
                     />
                 </div>
+                <RoomMenu />
             </div>
             {/* Body */}
             <div className="px-2 flex-1 overflow-y-auto">

@@ -92,7 +92,7 @@ export default function LoginComponent() {
 
                 setMessage("Đăng nhập thành công")
                 setTimeout(() => {
-                    navigate("/")
+                    navigate("/chat")
                 }, 500)
             }
             else {

@@ -28,11 +28,6 @@ export default function LoginComponent() {
 
     const navigate = useNavigate()
     const wsInstance = WebsocketInstance.getInstance()
-    // Save newest username
-    const usernameRef = useRef(currentForm.username);
-    useEffect(() => {
-        usernameRef.current = currentForm.username;
-    }, [currentForm.username]);
 
     const cloudinaryUrl = import.meta.env.VITE_CLOUDINARY_URL
 

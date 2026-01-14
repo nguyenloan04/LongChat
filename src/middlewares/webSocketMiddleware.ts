@@ -90,24 +90,33 @@ export const socketMiddleware: Middleware = (store) => {
 
     //For relogin when disconnect
     ws.subscribe(WebSocketEvent.RE_LOGIN, (response) => {
-        // if (response.status === "success") {
-        //     //Notice here
-        // } else {
-        //     //Re login failed, end session and require login
-        //     localStorage.removeItem("RE_LOGIN_CODE")
-        //     store.dispatch(setCurrentUser(null))
-        // }
-        if (response.status === "success") {
-            console.log("%c[WS] Re-Login Success! System Ready.", "color: green");
-            store.dispatch(setConnected(true));
-        } else {
-            console.error("[WS] Re-Login Failed. Logging out...");
-            localStorage.removeItem("RE_LOGIN_CODE");
-            localStorage.removeItem("username");
-            localStorage.removeItem("theme");
-            store.dispatch(setCurrentUser(null));
+            // if (response.status === "success") {
+            //     //Notice here
+            // } else {
+            //     //Re login failed, end session and require login
+            //     localStorage.removeItem("RE_LOGIN_CODE")
+            //     store.dispatch(setCurrentUser(null))
+            // }
+            if (response.status === "success") {
+                console.log("%c[WS] Re-Login Success! System Ready.", "color: green");
+                const responseData = response.data as any;
+                const newCode = responseData?.RE_LOGIN_CODE || responseData?.code;
+
+                if (newCode) {
+                    console.log("[WS] Updated new Relogin Code:", newCode);
+                    localStorage.setItem("RE_LOGIN_CODE", newCode);
+                }
+                store.dispatch(setConnected(true))
+                store.dispatch(getUserList({}));
+            } else {
+                console.error("[WS] Re-Login Failed. Logging out...");
+                localStorage.removeItem("RE_LOGIN_CODE");
+                localStorage.removeItem("username");
+                localStorage.removeItem("theme");
+                store.dispatch(setCurrentUser(null));
+            }
         }
-    })
+    )
 
     //Global state
     ws.subscribe(WebSocketEvent.GET_ROOM_CHAT_MES, (response) => {
@@ -152,7 +161,7 @@ export const socketMiddleware: Middleware = (store) => {
                 //     name: targetName,
                 //     page: 1
                 // }));
-            }else {
+            } else {
                 console.warn("something wrong");
             }
         }
@@ -183,7 +192,7 @@ export const socketMiddleware: Middleware = (store) => {
                 }
 
                 // Dispatch action lưu vào Redux Store
-                store.dispatch(setPeopleChatHistory({ targetName, messages }));
+                store.dispatch(setPeopleChatHistory({targetName, messages}));
             }
         }
     })

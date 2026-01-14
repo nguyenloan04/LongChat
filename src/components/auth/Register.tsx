@@ -29,8 +29,6 @@ export default function RegisterComponent() {
 
     const handleForm = () => {
         const validateFormResult = validateForm(currentForm, FormType.REGISTER)
-        //Check API here
-        //FIXME: Complete this
         if (validateFormResult.result) {
             isLoading(true)
             wsInstance.send(WebSocketEvent.REGISTER, {
@@ -59,6 +57,7 @@ export default function RegisterComponent() {
     useEffect(() => {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.REGISTER, (response) => {
             if (response.status === "success") {
+                //Config upload default avatar and default banner here
                 //Navigate back to login
                 setMessage("Đăng ký thành công. Đang chuyển về trang đăng nhập")
                 setTimeout(() => {
@@ -81,7 +80,10 @@ export default function RegisterComponent() {
             <div className="w-100 h-full flex justify-center p-8 bg-white dark:bg-gray-900">
                 {pageLoading ?
                     <div>
-                        <div className="text-center mb-8">
+                        <div className="text-center mb-8 flex flex-col items-center">
+                            <div className="mb-2 text-white flex justify-center items-center bg-appchat-bluesky text-2xl w-14 h-14 rounded-full">
+                                <i className="fa-solid fa-comment"></i>
+                            </div>
                             <h4 className="text-2xl font-semibold mb-1">Đăng ký</h4>
                             <p>Đăng ký tài khoản để tham gia cùng chúng tôi</p>
                         </div>
@@ -89,7 +91,7 @@ export default function RegisterComponent() {
                             <div className="mb-5">
                                 <p className="font-semibold mb-1 text-sm pb-1">Tên người dùng</p>
                                 <input
-                                    className="w-full border border-gray-400 p-1 ps-3 rounded-md"
+                                    className="w-full border border-gray-400 p-1 py-2 ps-3 rounded-md"
                                     type="text" name="" id="" placeholder="Tên người dùng của bạn"
                                     onChange={(e) => handleInputChange("username", e.target.value)}
                                 />
@@ -97,7 +99,7 @@ export default function RegisterComponent() {
                             <div className="mb-5">
                                 <p className="font-semibold text-sm pb-1">Mật khẩu</p>
                                 <input
-                                    className="w-full border border-gray-400 p-1 ps-3 rounded-md"
+                                    className="w-full border border-gray-400 p-1 py-2 ps-3 rounded-md"
                                     type="password" name="" id="" placeholder="Mật khẩu của bạn"
                                     onChange={(e) => handleInputChange("password", e.target.value)}
                                 />
@@ -105,17 +107,17 @@ export default function RegisterComponent() {
                             <div className="mb-5">
                                 <p className="font-semibold text-sm pb-1">Nhập lại mật khẩu</p>
                                 <input
-                                    className="w-full border border-gray-400 p-1 ps-3 rounded-md"
-                                    type="password" name="" id="" placeholder="Nhập lại mật khâu"
+                                    className="w-full border border-gray-400 p-1 py-2 ps-3 rounded-md"
+                                    type="password" name="" id="" placeholder="Nhập lại mật khẩu"
                                     onChange={(e) => handleInputChange("validatePassword", e.target.value)}
                                 />
                             </div>
-                            <p className="text-center text-red-500">{message}</p>
+                            <p className="text-center text-red-500 text-sm">{message}</p>
                         </div>
 
 
                         <button
-                            className="cursor-pointer mt-4 bg-blue-900 hover:bg-blue-800 text-white p-2 rounded-md w-full disabled:bg-blue-900/70"
+                            className="cursor-pointer mt-4 bg-appchat-bluesky hover:bg-blue-800/80 text-white p-2 rounded-md w-full disabled:bg-blue-900/70"
                             disabled={loading}
                             onClick={handleForm}
                         >

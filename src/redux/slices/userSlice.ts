@@ -6,8 +6,17 @@ export interface UserSlice {
     isLoading: boolean,
 }
 
+const getCurrentUser = (): User | null => {
+    try {
+        const savedUser = localStorage.getItem("user")
+        return savedUser ? JSON.parse(savedUser) : null
+    }
+    catch(_) {
+        return null
+    }
+}
 const initialState: UserSlice = {
-    user: null,
+    user: getCurrentUser(),
     isLoading: true,
 }
 

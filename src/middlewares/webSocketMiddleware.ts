@@ -28,29 +28,36 @@ const RECONNECT_INTERVAL = 500 //Reconnect every 0.5s
 export const socketMiddleware: Middleware = (store) => {
     const ws = WebsocketInstance.getInstance()
     let serverErrorState = false
+    let reconnectInterval: ReturnType<typeof setInterval> | undefined = undefined
+
+    const clearReconnectInterval = () => {
+        if (reconnectInterval) {
+            clearInterval(reconnectInterval)
+            reconnectInterval = undefined
+        }
+    }
 
     ws.onInitConnection = () => {
-        // store.dispatch(setConnected(true))
-        const reloginCode = localStorage.getItem("RE_LOGIN_CODE");
-        const state = store.getState();
-        let username = state.currentUser.user?.username;
+        store.dispatch(setConnected(true))
+        //Auto login if possible
+        const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
+        const state = store.getState()
+        const rawUser = localStorage.getItem("user")
+        const user: User = rawUser ? JSON.parse(rawUser) as User : state.currentUser.user
 
-        if (!username) {
-            username = localStorage.getItem("username") || undefined;
-        }
-
-        if (reloginCode && username) {
+        if (reloginCode && user) {
             ws.send(WebSocketEvent.RE_LOGIN, {
                 code: reloginCode,
-                user: username
-            });
-
-        } else {
-            store.dispatch(setConnected(true));
+                user: user.username
+            })
         }
-    };
+        else {
+            // store.dispatch(setConnected(false))
+        }
+    }
 
     ws.onConnectionLost = (code) => {
+        store.dispatch(setConnected(false))
         switch (code) {
             //Connection closed from connection error or timeout
             case 1006: {
@@ -59,8 +66,8 @@ export const socketMiddleware: Middleware = (store) => {
                 break
             }
             //Server error
-            case 1011: {
-
+            case 1001: {
+                forceLogout(store)
                 break
             }
         }
@@ -68,29 +75,21 @@ export const socketMiddleware: Middleware = (store) => {
 
     ws.onServerError = () => {
         store.dispatch(setErrorMessage("Server đang gặp lỗi, hãy quay lại sau"))
-        if (!serverErrorState) {
-            serverErrorState = true
-        }
+        serverErrorState = true
+        clearReconnectInterval()
     }
 
     //For relogin when disconnect
     ws.subscribe(WebSocketEvent.RE_LOGIN, (response) => {
-            if (response.status === "success") {
-                const responseData = response.data as any;
-                const newCode = responseData?.RE_LOGIN_CODE || responseData?.code;
-
-                if (newCode) {
-                    localStorage.setItem("RE_LOGIN_CODE", newCode);
-                }
-                store.dispatch(setConnected(true))
-                store.dispatch(getUserList({}));
-            } else {
-                console.error("[WS] Re-Login Failed. Logging out...");
-                localStorage.removeItem("RE_LOGIN_CODE");
-                localStorage.removeItem("username");
-                localStorage.removeItem("theme");
-                store.dispatch(setCurrentUser(null));
-            }
+        if (response.status === "success") {
+            //Notice here            
+        }
+        else {
+            //Re login failed, end session and require login
+            store.dispatch(setCurrentUser(null))
+            if ((response as any).event === "ACTION_NOT_EXIT") return
+            localStorage.removeItem("RE_LOGIN_CODE")
+            localStorage.removeItem("user")
         }
     )
 
@@ -204,34 +203,32 @@ export const socketMiddleware: Middleware = (store) => {
             }
             case 'socket/requestRelogin': {
                 try {
+                    clearReconnectInterval()
                     serverErrorState = false
 
                     const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
                     const state = store.getState()
-                    // const currentUser: User = state.currentUser.currentUser as User
+
                     const currentUser: User = state.currentUser.user as User
-                    const username = state.currentUser.user?.username;
+
                     if (!reloginCode || !currentUser) {
                         forceLogout(store)
-                        break
+                        return next(action)
                     }
 
                     let currentTimeout = 0
-                    const reconnectInterval = setInterval(() => {
+                    reconnectInterval = setInterval(() => {
                         if (ws.getSocket?.readyState === WebSocket.OPEN) {
                             ws.send(WebSocketEvent.RE_LOGIN, {
                                 code: reloginCode,
                                 user: username
                             })
-                            clearInterval(reconnectInterval)
+                            clearReconnectInterval()
                         }
 
-                        if (currentTimeout >= RECONNECT_TIMEOUT) {
-                            clearInterval(reconnectInterval)
-                            forceLogout(store)
-                        }
-                        if (serverErrorState) {
-                            clearInterval(reconnectInterval)
+                        if (currentTimeout >= RECONNECT_TIMEOUT || serverErrorState) {
+                            clearReconnectInterval()
+                            if (!serverErrorState) forceLogout(store)
                         }
                         currentTimeout += RECONNECT_INTERVAL
                     }, RECONNECT_INTERVAL)

@@ -1,7 +1,7 @@
 import type { ReduxState } from "@/constants/ReduxState"
 import { useDispatch, useSelector } from "react-redux"
 import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
 import { WebsocketInstance } from "@/socket/WebsocketInstance"
@@ -28,6 +28,9 @@ export default function LoginComponent() {
     const wsInstance = WebsocketInstance.getInstance()
 
     const cloudinaryUrl = import.meta.env.VITE_CLOUDINARY_URL
+
+    //Ref
+    const usernameInputRef = useRef<HTMLInputElement>(null)
 
     const handleForm = () => {
         const validateFormResult = validateForm(currentForm, FormType.LOGIN)
@@ -62,17 +65,27 @@ export default function LoginComponent() {
             if (response.status === "success") {
                 const reloginCode = response.data.RE_LOGIN_CODE
                 localStorage.setItem("RE_LOGIN_CODE", reloginCode)
-                localStorage.setItem("username", currentForm.username)
 
-                const description = await authApi.getDescription(currentForm.username).then(res => res.description)
+                const username = usernameInputRef.current?.value
+                if (!username) {
+                    isLoading(false)
+                    return
+                }
+                localStorage.setItem("username", username)
+
+                let description = ""
+                try {
+                    description = await authApi.getDescription(username).then(res => res.description)
+                }
+                catch (_) { }
 
                 dispatcher(setCurrentUser({
-                    username: currentForm.username,
+                    username: username,
                     description,
-                    displayName: currentForm.username,
-                    avatar: `${cloudinaryUrl}/avatar/${currentForm.username}`,
+                    displayName: username,
+                    avatar: `${cloudinaryUrl}/avatar/${username}`,
                     banner: {
-                        content: `${cloudinaryUrl}/banner/${currentForm.username}`,
+                        content: `${cloudinaryUrl}/banner/${username}`,
                         type: "image"
                     },
                 }))
@@ -112,6 +125,7 @@ export default function LoginComponent() {
                                 <input
                                     className="w-full border border-gray-400 p-1 py-2 ps-3 rounded-md"
                                     type="text" name="" id="" placeholder=""
+                                    ref={usernameInputRef}
                                     onChange={(e) => handleInputChange("username", e.target.value)}
                                 />
                             </div>

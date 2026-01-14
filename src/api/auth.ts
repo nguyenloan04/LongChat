@@ -4,7 +4,7 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
 export const authApi = {
     getDescription: async (username: string) => {
-        return await axios.get(`${SERVER_URL}/get-description?username=${username}`).then(response => {
+        return await axios.get(`${SERVER_URL}/user/get-description?username=${username}`).then(response => {
             try {
                 const data = response.data
                 return JSON.parse(data) as { result: boolean, description: string }

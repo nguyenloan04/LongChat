@@ -12,12 +12,35 @@ const RECONNECT_INTERVAL = 500 //Reconnect every 0.5s
 export const socketMiddleware: Middleware = (store) => {
     const ws = WebsocketInstance.getInstance()
     let serverErrorState = false
+    let reconnectInterval: ReturnType<typeof setInterval> | undefined = undefined
+
+    const clearReconnectInterval = () => {
+        if (reconnectInterval) {
+            clearInterval(reconnectInterval)
+            reconnectInterval = undefined
+        }
+    }
 
     ws.onInitConnection = () => {
         store.dispatch(setConnected(true))
+        //Auto login if possible
+        const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
+        const state = store.getState()
+        const username = state.currentUser.user?.username || localStorage.getItem("username")
+
+        if (reloginCode && username) {
+            ws.send(WebSocketEvent.RE_LOGIN, {
+                code: reloginCode,
+                user: username
+            })
+        }
+        else {
+            // store.dispatch(setConnected(false))
+        }
     }
 
     ws.onConnectionLost = (code) => {
+        store.dispatch(setConnected(false))
         switch (code) {
             //Connection closed from connection error or timeout
             case 1006: {
@@ -26,7 +49,7 @@ export const socketMiddleware: Middleware = (store) => {
                 break
             }
             //Server error
-            case 1011: {
+            case 1001: {
 
                 break
             }
@@ -35,9 +58,8 @@ export const socketMiddleware: Middleware = (store) => {
 
     ws.onServerError = () => {
         store.dispatch(setErrorMessage("Server đang gặp lỗi, hãy quay lại sau"))
-        if (!serverErrorState) {
-            serverErrorState = true
-        }
+        serverErrorState = true
+        clearReconnectInterval()
     }
 
     //For relogin when disconnect
@@ -48,6 +70,7 @@ export const socketMiddleware: Middleware = (store) => {
         else {
             //Re login failed, end session and require login
             localStorage.removeItem("RE_LOGIN_CODE")
+            localStorage.removeItem("username")
             store.dispatch(setCurrentUser(null))
         }
     })
@@ -83,35 +106,31 @@ export const socketMiddleware: Middleware = (store) => {
         switch (action.type) {
             case 'socket/requestRelogin': {
                 try {
+                    clearReconnectInterval()
                     serverErrorState = false
-                    
+
                     const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
                     const state = store.getState()
-                    const currentUser: User = state.currentUser.currentUser as User
-
+                    const currentUser: User = state.currentUser.user as User
 
                     if (!reloginCode || !currentUser) {
                         forceLogout(store)
-                        break
+                        return next(action)
                     }
 
                     let currentTimeout = 0
-                    const reconnectInterval = setInterval(() => {
+                    reconnectInterval = setInterval(() => {
                         if (ws.getSocket?.readyState === WebSocket.OPEN) {
                             ws.send(WebSocketEvent.RE_LOGIN, {
                                 code: reloginCode,
                                 user: currentUser.username
                             })
-                            clearInterval(reconnectInterval)
+                            clearReconnectInterval()
                         }
 
-                        if (currentTimeout >= RECONNECT_TIMEOUT) {
-                            clearInterval(reconnectInterval)
-                            forceLogout(store)
-                        }
-
-                        if (serverErrorState) {
-                            clearInterval(reconnectInterval)
+                        if (currentTimeout >= RECONNECT_TIMEOUT || serverErrorState) {
+                            clearReconnectInterval()
+                            if (!serverErrorState) forceLogout(store)
                         }
 
                         currentTimeout += RECONNECT_INTERVAL

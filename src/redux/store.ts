@@ -16,5 +16,5 @@ export const store = configureStore({
         editUserState: editUserReducer,
         chatPickerSlice: chatPickerSlice,
     },
-    // middleware: (getDefault) => getDefault().concat(socketMiddleware)
+    middleware: (getDefault) => getDefault().concat(socketMiddleware)
 })

@@ -60,29 +60,40 @@ const chatSlice = createSlice({
             state.peopleHistory[targetName] = messages;
             state.isLoading = false;
         },
-
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
             const { targetName, message } = action.payload;
-            console.log("[REDUCER] Đang xử lý tin nhắn mới cho:", targetName);
 
             if (!state.peopleHistory[targetName]) {
                 state.peopleHistory[targetName] = [];
             }
-
             const isExist = state.peopleHistory[targetName].find(m => m.id === message.id);
             if (!isExist) {
                 state.peopleHistory[targetName].push(message);
             }
 
-            const userIndex = state.userList.findIndex(u => u.name === targetName);
+            const userIndex = state.userList.findIndex(u => u.name.toLowerCase() === targetName.toLowerCase());
 
             if (userIndex !== -1) {
-                const user = { ...state.userList[userIndex] };
-                user.actionTime = message.createAt; // Cập nhật giờ
+                const updatedUser = {
+                    ...state.userList[userIndex],
+                    actionTime: message.createAt
+                };
 
-                state.userList.splice(userIndex, 1);
-                state.userList.unshift(user);
+                state.userList = [
+                    updatedUser,
+                    ...state.userList.filter((_, index) => index !== userIndex)
+                ];
+            } else {
+                // if u chat to new user that u have never chatted to them before
+                const newUser: ReceiveMsgGetUserListPayload = {
+                    name: targetName,
+                    type: 0,
+                    actionTime: message.createAt
+                };
+
+                state.userList = [newUser, ...state.userList];
             }
+            state.isLoading = false;
         },
     },
 });

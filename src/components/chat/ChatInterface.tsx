@@ -12,39 +12,9 @@ import {createMessagePayload} from "@/services/chatService.ts";
 import {sendPeopleChat} from "@/redux/slices/chatPeopleSlice.ts";
 
 
-//Mock data
-// const msg = [
-//     "Hello",
-//     "Đây là tin nhắn",
-//     "Hôm nay bạn khỏe hong",
-//     "Hôm nay tệ lắm hả",
-//     "Không sao đâu",
-//     "Thôi mệt quá",
-//     "Học bài đi nhé :D",
-//     "Làm bài cũ chưa mà học???"
-// ]
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
-    // const SendMessageComponent = () => {
-    //     const openStickerPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openStickerPicker)
-    //     const openEmojiPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openEmojiPicker)
-    //     const dispatch = useDispatch();
-    //     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    //
-    //     const handleInput = (_: React.ChangeEvent<HTMLTextAreaElement>) => {
-    //         const textarea = textareaRef.current;
-    //         if (textarea) {
-    //             textarea.style.height = 'auto';
-    //
-    //             const maxHeight = 200;
-    //             const nextHeight = Math.min(textarea.scrollHeight, maxHeight);
-    //
-    //             textarea.style.height = `${nextHeight}px`;
-    //
-    //             textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
-    //         }
-    //     };
 
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);

@@ -52,18 +52,18 @@ export const socketMiddleware: Middleware = (store) => {
         }
     };
 
-    ws.onConnectionLost = (code) => {
-        console.log(`%c[WS] Connection Lost (Code: ${code})`, "color: red");
-
-        store.dispatch(setConnected(false));
-
-        if (code === 1006 || code === 1001) {
-            console.log("[WS] Attempting to reconnect in 3s...");
-            setTimeout(() => {
-                ws.connect(); // Kết nối lại. Nếu thành công, onInitConnection sẽ chạy lại -> Auto Relogin
-            }, 3000);
-        }
-    }
+    // ws.onConnectionLost = (code) => {
+    //     console.log(`%c[WS] Connection Lost (Code: ${code})`, "color: red");
+    //
+    //     store.dispatch(setConnected(false));
+    //
+    //     if (code === 1006 || code === 1001) {
+    //         console.log("[WS] Attempting to reconnect in 3s...");
+    //         setTimeout(() => {
+    //             ws.connect(); // Kết nối lại. Nếu thành công, onInitConnection sẽ chạy lại -> Auto Relogin
+    //         }, 3000);
+    //     }
+    // }
 
     ws.onConnectionLost = (code) => {
         switch (code) {
@@ -142,27 +142,23 @@ export const socketMiddleware: Middleware = (store) => {
             const message = response.data as unknown as ReceiveMsgGetChatPeoplePayload;
 
             const state = store.getState();
-            let username = state.currentUser.user?.username;
+            const rawUsername = state.currentUser.user?.username || localStorage.getItem("username") || "";
+            const myUsername = rawUsername.trim();
 
-            if (!username) {
-                username = localStorage.getItem("username") || undefined;
-            }
+            if (message && message.mes && myUsername) {
+                let targetName = "";
 
-            if (message && message.mes && username) {
-                let targetName = message.name;
-                if (message.name === username) {
+                if (message.name.trim() === myUsername) {
                     targetName = message.to;
+                } else {
+                    targetName = message.name;
                 }
-                console.log("[WS] Gửi thành công. Đang tải lại lịch sử chat với:", targetName);
-                store.dispatch(receiveNewPeopleMessage({targetName, message}));
-                console.log("[WS-DEBUG] Đã Dispatch receiveNewPeopleMessage!");
-                //
-                // store.dispatch(getPeopleChatHistory({
-                //     name: targetName,
-                //     page: 1
-                // }));
+
+
+                store.dispatch(receiveNewPeopleMessage({ targetName, message }));
+
             } else {
-                console.warn("something wrong");
+                console.warn("[WS] Error");
             }
         }
     })
@@ -216,6 +212,20 @@ export const socketMiddleware: Middleware = (store) => {
                 const payload = action.payload as SendMsgSendChatPayload;
 
                 ws.send(WebSocketEvent.SEND_CHAT_TO_PEOPLE, {...payload, type: 'people'});
+                console.log("[WS] Đã gửi tin nhắn. Đang chờ 2s để cập nhật...");
+
+                setTimeout(() => {
+                    console.log("[WS] Hết 2s -> Gọi cập nhật lại toàn bộ!");
+
+                    store.dispatch(getUserList({}));
+
+                    store.dispatch(getPeopleChatHistory({
+                        name: payload.to,
+                        page: 1
+                    }));
+
+                }, 3000);
+
                 break;
             }
 

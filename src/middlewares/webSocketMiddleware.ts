@@ -77,17 +77,17 @@ export const socketMiddleware: Middleware = (store) => {
             const state = store.getState();
 
             const currentRoom = state.chatSlice.roomHistory[target];
-            if (!currentRoom || currentRoom.userList.length === 0) {
-                ws.send(WebSocketEvent.GET_ROOM_CHAT_MES, {
-                    name: target,
+            if (!currentRoom) {
+                 store.dispatch(getRoomChatMessage({
+                    roomName: target,
                     page: 1
-                });
+                }))
+            } else {
+                store.dispatch(receiveNewMessageFromRoom({
+                    target: target,
+                    value: message
+                }));
             }
-
-            store.dispatch(receiveNewMessageFromRoom({
-                target: target,
-                value: message
-            }));
         }
     });
 

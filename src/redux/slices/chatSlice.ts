@@ -26,22 +26,14 @@ export const chatSlice = createSlice({
         receiveNewMessageFromRoom: (state, action: PayloadAction<{target: string, value: ChatDataRoom}>) => {
             const { target, value } = action.payload;
 
-            if (!state.roomHistory[target]) {
-                state.roomHistory[target] = {
-                    id: 0,              
-                    name: target,      
-                    own: "",            
-                    userList: [],       
-                    chatData: []        
+            if(state.roomHistory[target]) {
+                const formattedMessage = {
+                    ...value,
+                    createAt: value.createAt || new Date().toISOString()
                 };
+
+                state.roomHistory[target].chatData.push(formattedMessage);
             }
-
-            const formattedMessage = {
-                ...value,
-                createAt: value.createAt || new Date().toISOString()
-            };
-
-            state.roomHistory[target].chatData.push(formattedMessage);
         },
 
         getRoomChatMessage: (state, action: PayloadAction<{roomName: string, page: number}>) => {

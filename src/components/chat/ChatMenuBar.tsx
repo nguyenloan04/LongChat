@@ -13,15 +13,9 @@ export function ChatMenuBar() {
 
     const userList = useSelector((state: ReduxState) => state.chatState.userList);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
-    // test log
-    useEffect(() => {
-        console.log(">>> [UI UPDATE] UserList đã thay đổi:", userList);
-    }, [userList]);
     // render user list
     useEffect(() => {
-        console.log("[DEBUG-UI] UserList Updated in Store:", userList);
         if (isConnected) {
-            console.log("Socket connected -> Fetching User List...");
             dispatch(getUserList({}));
         } else {
             console.log("Waiting for socket connection...");
@@ -29,11 +23,9 @@ export function ChatMenuBar() {
     }, [dispatch, isConnected]);
 
     const handleSelectUser = (user: any) => {
-        console.log("[DEBUG-UI] User Selected:", user);
         dispatch(setCurrentChatTarget(user));
 
         if (user.type === 0) {
-            console.log("[DEBUG-UI] Dispatching getPeopleChatHistory for:", user.name);
             dispatch(getPeopleChatHistory({ name: user.name, page: 1 }));
         } else {
             // TODO: Handle requestGetRoomHistory

@@ -56,7 +56,6 @@ export default function LoginComponent() {
         dispatcher(resetAuthForm())
         //Redirect to home page if logged in
         if (currentUser.user) {
-            // console.log("user", currentUser)
             navigate("/chat")
         }
     }, [])
@@ -67,11 +66,8 @@ export default function LoginComponent() {
             if (response.status === "success") {
                 const reloginCode = response.data.RE_LOGIN_CODE
                 const username = usernameRef.current;
-                // const username = currentForm.username
                 localStorage.setItem("RE_LOGIN_CODE", reloginCode)
                 localStorage.setItem("username", username)
-                console.log("Saved Username: " ,username)
-                console.log(reloginCode)
                 // save state.currentUser
                 dispatcher(setCurrentUser({
                     username: username,

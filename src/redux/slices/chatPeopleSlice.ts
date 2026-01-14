@@ -48,6 +48,10 @@ const chatSlice = createSlice({
         //get user list account had chatted
         setUserList: (state, action: PayloadAction<ReceiveMsgGetUserListPayload[]>) => {
             state.userList = action.payload;
+            const sortedList = [...action.payload].sort((a, b) => {
+                return new Date(b.actionTime || 0).getTime() - new Date(a.actionTime || 0).getTime();
+            });
+            state.userList = sortedList;
             state.isLoading = false;
         },
 
@@ -57,7 +61,8 @@ const chatSlice = createSlice({
         },
         setPeopleChatHistory: (state, action: PayloadAction<{ targetName: string, messages: ReceiveMsgGetChatPeoplePayload[] }>) => {
             const { targetName, messages } = action.payload;
-            state.peopleHistory[targetName] = messages;
+            // state.peopleHistory[targetName] = messages;
+            state.peopleHistory[targetName] = [...messages].reverse();
             state.isLoading = false;
         },
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {

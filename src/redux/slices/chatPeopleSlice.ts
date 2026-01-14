@@ -63,15 +63,25 @@ const chatSlice = createSlice({
 
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
             const { targetName, message } = action.payload;
+            console.log("[REDUCER] Đang xử lý tin nhắn mới cho:", targetName);
 
             if (!state.peopleHistory[targetName]) {
                 state.peopleHistory[targetName] = [];
             }
 
-            // Check repeat old message
-            const exists = state.peopleHistory[targetName].some(m => m.id === message.id);
-            if (!exists) {
+            const isExist = state.peopleHistory[targetName].find(m => m.id === message.id);
+            if (!isExist) {
                 state.peopleHistory[targetName].push(message);
+            }
+
+            const userIndex = state.userList.findIndex(u => u.name === targetName);
+
+            if (userIndex !== -1) {
+                const user = { ...state.userList[userIndex] };
+                user.actionTime = message.createAt; // Cập nhật giờ
+
+                state.userList.splice(userIndex, 1);
+                state.userList.unshift(user);
             }
         },
     },

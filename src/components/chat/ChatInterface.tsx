@@ -49,175 +49,103 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
 
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
     const messages = useSelector((state: ReduxState) =>
         currentTarget ? (state.chatState.peopleHistory[currentTarget.name] || []) : []
     );
-
-    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
 
-    const SendMessageComponent = () => {
-        const openStickerPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openStickerPicker);
-        const openEmojiPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openEmojiPicker);
-        const dispatch = useDispatch();
-        const textareaRef = useRef<HTMLTextAreaElement>(null);
-        const [inputValue, setInputValue] = useState("");
+        const SendMessageComponent = ({ currentTarget }: { currentTarget: any }) => {
+            const dispatch = useDispatch();
+            const textareaRef = useRef<HTMLTextAreaElement>(null);
+            const [inputValue, setInputValue] = useState("");
 
-        const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            setInputValue(e.target.value);
-            const textarea = textareaRef.current;
-            if (textarea) {
-                textarea.style.height = 'auto';
-                const maxHeight = 200;
-                const nextHeight = Math.min(textarea.scrollHeight, maxHeight);
-                textarea.style.height = `${nextHeight}px`;
-                textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
-            }
-        };
+            const openStickerPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openStickerPicker);
+            const openEmojiPicker = useSelector((state: ReduxState) => state.chatPickerSlice.openEmojiPicker);
 
-        const handleSendText = () => {
-            if (!inputValue.trim() || !currentTarget) return;
+            const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                setInputValue(e.target.value);
+                if (textareaRef.current) {
+                    textareaRef.current.style.height = 'auto';
+                    textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
+                }
+            };
 
-            const jsonMessage = createMessagePayload(inputValue.trim(), [], "chat");
+            const handleSendText = () => {
+                if (!inputValue.trim() || !currentTarget) return;
 
-            dispatch(sendPeopleChat({
-                type: 'people',
-                to: currentTarget.name,
-                mes: jsonMessage
-            }));
+                const jsonMessage = createMessagePayload(inputValue.trim(), [], "chat");
 
-            setInputValue("");
-            if (textareaRef.current) textareaRef.current.style.height = 'auto';
-        };
+                dispatch(sendPeopleChat({
+                    type: 'people',
+                    to: currentTarget.name,
+                    mes: jsonMessage
+                }));
 
+                setInputValue("");
+                if (textareaRef.current) textareaRef.current.style.height = 'auto';
+            };
 
-        const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendText();
-            }
-        };
-        return (
-    //         <div className="min-h-4 border-t border-gray-200 flex p-2">
-    //             <textarea
-    //                 className="bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
-    //                 onChange={handleInput}
-    //                 ref={textareaRef}
-    //                 name=""
-    //                 id=""
-    //                 rows={1}
-    //                 placeholder="Nhập tin nhắn tới Group 77">
-    //             </textarea>
-    //             <div
-    //                 className="flex items-start px-3 justify-end gap-3"
-    //             >
-    //                 <div className="flex items-start justify-end gap-3 pt-2">
-    //                     <Paperclip size={"1.5rem"}
-    //                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"/>
-    //                     <Image size={"1.5rem"}
-    //                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"/>
-    //                     <Sticker size={"1.5rem"}
-    //                              className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-    //                              onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
-    //                     />
-    //                     {openStickerPicker && <StickerPicker />}
-    //
-    //                     <Smile size={"1.5rem"}
-    //                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-    //                            onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
-    //                     />
-    //                     {openEmojiPicker && <EmojiCustomPicker />}
-    //                 </div>
-    //                 <div className="pt-0.5">
-    //                     <SendHorizonal size={"2.25rem"} className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
-    //
-    // return (
-    //     <div className="py-0 flex flex-col h-full">
-    //         {/* Header */}
-    //         <div className="flex justify-between items-center p-1 px-3 border border-gray-200 h-16">
-    //             <div className="flex gap-3 items-center">
-    //                 <div className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
-    //                     <User />
-    //                 </div>
-    //                 <div>
-    //                     <p className="font-semibold text-xl">Group 77</p>
-    //                     <p>3 thành viên</p>
-    //                 </div>
-    //             </div>
-    //             <div className="flex gap-1">
-    //                 <Search size={"2.25rem"} className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
-    //                 <Phone size={"2.25rem"} className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
-    //                 <PanelRight
-    //                     size={"2.25rem"}
-    //                     className={`rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400 ${props.closeTabState && "bg-indigo-200 text-indigo-700"}`}
-    //                     onClick={props.onCloseTab}
-    //                 />
-    //             </div>
-    //         </div>
-    //         {/* Main UI */}
-    //         <div className="flex-1 overflow-y-auto flex flex-col gap-1 w-full bg-gray-300/50 p-2">
-    //             {msg.map(ele => (
-    //                 <Message
-    //                     text={ele}
-    //                     isOwner={Boolean(Math.round(Math.random()))}
-    //                     username={`Người dùng ${Math.floor(Math.random() * 4)}`}
-    //                 />
-    //             ))}
-    //         </div>
-    //         {/* Message */}
-    //         <SendMessageComponent />
-    //     </div>
-            <div className="min-h-4 border-t border-gray-200 flex p-2 items-end">
+            const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendText();
+                }
+            };
+
+            return (
+                <div className="min-h-16 border-t border-gray-200 bg-white flex items-end p-2 gap-2">
+                    <div className="flex-1 bg-gray-100 rounded-2xl flex items-center px-2 py-1">
                 <textarea
-                    className="bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0 max-h-[200px]"
+                    ref={textareaRef}
+                    className="w-full bg-transparent border-none outline-none resize-none max-h-[150px] py-2 px-2 text-sm"
+                    rows={1}
+                    placeholder={`Nhắn tin tới ${currentTarget?.name}...`}
+                    value={inputValue}
                     onChange={handleInput}
                     onKeyDown={handleKeyDown}
-                    ref={textareaRef}
-                    value={inputValue}
-                    rows={1}
-                    placeholder={`Nhập tin nhắn tới ${currentTarget?.name || "..."}`}>
-                </textarea>
-                <div className="flex items-start px-3 justify-end gap-3 pb-1">
-                    <div className="flex items-start justify-end gap-3 pt-2">
-                        <Paperclip size={"1.5rem"} className="cursor-pointer text-gray-700 hover:text-neutral-500"/>
-                        <Image size={"1.5rem"} className="cursor-pointer text-gray-700 hover:text-neutral-500"/>
-
-                        {/* Sticker Trigger */}
-                        <div className="relative">
-                            <Sticker size={"1.5rem"}
-                                     className={`cursor-pointer ${openStickerPicker ? "text-indigo-500" : "text-gray-700"} hover:text-neutral-500`}
-                                     onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
-                            />
-                            {/* Pass callback function to StickerPicker if needed to handle send directly */}
-                            {openStickerPicker && <StickerPicker />}
-                        </div>
-
-                        {/* Emoji Trigger */}
-                        <div className="relative">
-                            <Smile size={"1.5rem"}
-                                   className={`cursor-pointer ${openEmojiPicker ? "text-indigo-500" : "text-gray-700"} hover:text-neutral-500`}
-                                   onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
-                            />
-                            {/* EmojiPicker should probably insert into input value */}
-                            {openEmojiPicker && <EmojiCustomPicker />}
-                        </div>
+                />
                     </div>
-                    <div onClick={handleSendText}>
-                        <SendHorizonal size={"2.25rem"} className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100" />
+
+                    <div className="flex items-center gap-2 pb-1">
+                        {/* Các nút chức năng */}
+                        <div className="flex gap-1">
+                            <Paperclip size={20} className="cursor-pointer text-gray-500 hover:text-indigo-600 transition-colors"/>
+                            <Image size={20} className="cursor-pointer text-gray-500 hover:text-indigo-600 transition-colors"/>
+
+                            <div className="relative">
+                                <Sticker size={20}
+                                         className={`cursor-pointer transition-colors ${openStickerPicker ? "text-indigo-600" : "text-gray-500 hover:text-indigo-600"}`}
+                                         onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
+                                />
+                                {openStickerPicker && <div className="absolute bottom-10 right-0 z-10"><StickerPicker /></div>}
+                            </div>
+
+                            <div className="relative">
+                                <Smile size={20}
+                                       className={`cursor-pointer transition-colors ${openEmojiPicker ? "text-indigo-600" : "text-gray-500 hover:text-indigo-600"}`}
+                                       onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
+                                />
+                                {openEmojiPicker && <div className="absolute bottom-10 right-0 z-10"><EmojiCustomPicker /></div>}
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleSendText}
+                            className={`p-2 rounded-full transition-all ${inputValue.trim() ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}
+                            disabled={!inputValue.trim()}
+                        >
+                            <SendHorizonal size={20} />
+                        </button>
                     </div>
                 </div>
-            </div>
-        )
-    }
+            )
+        }
 
     if (!currentTarget) {
         return (
@@ -272,7 +200,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             </div>
 
             {/* Input Area */}
-            <SendMessageComponent />
+            <SendMessageComponent currentTarget={currentTarget} />
         </div>
     )
 }

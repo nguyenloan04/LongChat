@@ -94,7 +94,7 @@ export default function LoginComponent() {
         })
 
         return () => unsubscribe()
-    }, [navigate, wsInstance])
+    }, [navigate, wsInstance,dispatcher])
 
 
     return (

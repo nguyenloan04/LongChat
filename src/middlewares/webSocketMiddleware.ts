@@ -30,41 +30,26 @@ export const socketMiddleware: Middleware = (store) => {
     let serverErrorState = false
 
     ws.onInitConnection = () => {
-        store.dispatch(setConnected(true))
-        // console.log("%c[WS] Socket Opened. Checking Credentials...", "color: blue");
-        //
-        // const state = store.getState();
-        // const reloginCode = localStorage.getItem("RE_LOGIN_CODE");
-        //
-        // // 1. Thử lấy User từ Redux
-        // let currentUser = state.currentUser.user as User;
-        // let usernameToLogin = currentUser?.username;
-        //
-        // // 2. Nếu Redux rỗng (do F5), thử lấy từ LocalStorage
-        // // Giả sử bạn lưu username với key là "USERNAME" hoặc lưu cả object user
-        // if (!usernameToLogin) {
-        //     const savedUsername = localStorage.getItem("username"); // <--- Key bạn dùng để lưu username
-        //
-        //     if (savedUsername) {
-        //         console.log("[WS] Found username in LocalStorage:", savedUsername);
-        //         usernameToLogin = savedUsername;
-        //
-        //         // (Tùy chọn) Khôi phục tạm vào Redux để các chỗ khác không bị lỗi
-        //         // Lưu ý: Nếu chỉ lưu mỗi username thì các thông tin khác của user sẽ thiếu
-        //         store.dispatch(setCurrentUser({ username: savedUsername } as User));
-        //     }
-        // }
-        //
-        // if (reloginCode && usernameToLogin) {
-        //     console.log(`[WS] Auto-relogin for user: ${usernameToLogin}`);
-        //     ws.send(WebSocketEvent.RE_LOGIN, {
-        //         code: reloginCode,
-        //         user: usernameToLogin // Dùng biến này thay vì currentUser.username
-        //     });
-        // } else {
-        //     console.log("[WS] No credentials found (Guest).");
-        //     store.dispatch(setConnected(true));
-        // }
+        // store.dispatch(setConnected(true))
+        const reloginCode = localStorage.getItem("RE_LOGIN_CODE");
+        const state = store.getState();
+        let username = state.currentUser.user?.username;
+
+        if (!username) {
+            username = localStorage.getItem("username") || undefined;
+        }
+
+        if (reloginCode && username) {
+            console.log(`[WS] Sending RE_LOGIN for ${username}...`);
+            ws.send(WebSocketEvent.RE_LOGIN, {
+                code: reloginCode,
+                user: username
+            });
+
+        } else {
+            console.log("[WS] Guest mode connected.");
+            store.dispatch(setConnected(true));
+        }
     };
 
     ws.onConnectionLost = (code) => {
@@ -117,9 +102,10 @@ export const socketMiddleware: Middleware = (store) => {
             store.dispatch(setConnected(true));
         } else {
             console.error("[WS] Re-Login Failed. Logging out...");
-            // localStorage.removeItem("RE_LOGIN_CODE");
+            localStorage.removeItem("RE_LOGIN_CODE");
+            localStorage.removeItem("username");
+            localStorage.removeItem("theme");
             store.dispatch(setCurrentUser(null));
-            // Force logout hoặc chuyển về trang login
         }
     })
 
@@ -158,7 +144,16 @@ export const socketMiddleware: Middleware = (store) => {
                 if (message.name === username) {
                     targetName = message.to;
                 }
+                console.log("[WS] Gửi thành công. Đang tải lại lịch sử chat với:", targetName);
                 store.dispatch(receiveNewPeopleMessage({targetName, message}));
+                console.log("[WS-DEBUG] Đã Dispatch receiveNewPeopleMessage!");
+                //
+                // store.dispatch(getPeopleChatHistory({
+                //     name: targetName,
+                //     page: 1
+                // }));
+            }else {
+                console.warn("something wrong");
             }
         }
     })

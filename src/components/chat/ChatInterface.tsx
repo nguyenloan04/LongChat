@@ -4,10 +4,11 @@ import { Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Stic
 import { Message } from "./Message";
 import { useRef } from "react";
 import StickerPicker from "@/components/chat/StickerPicker.tsx";
-import {useDispatch, useSelector} from "react-redux";
-import type {ReduxState} from "@/constants/ReduxState.ts";
-import {setOpenEmojiPicker, setOpenStickerPicker} from "@/redux/slices/chatTriggerSlice.ts";
+import { useDispatch, useSelector } from "react-redux";
+import type { ReduxState } from "@/constants/ReduxState.ts";
+import { setOpenEmojiPicker, setOpenStickerPicker } from "@/redux/slices/chatTriggerSlice.ts";
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
+import { ChatToolBar } from "./ChatToolBar";
 
 
 //Mock data
@@ -24,11 +25,12 @@ const msg = [
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
     const SendMessageComponent = () => {
         const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker)
         const openEmojiPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openEmojiPicker)
         const dispatch = useDispatch();
-        const textareaRef = useRef<HTMLTextAreaElement>(null);
 
         const handleInput = (_: React.ChangeEvent<HTMLTextAreaElement>) => {
             const textarea = textareaRef.current;
@@ -46,7 +48,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
 
         return (
-            <div className="min-h-4 border-t border-gray-200 flex p-2">
+            <div className="min-h-4 flex p-2 pt-0">
                 <textarea
                     className="bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
                     onChange={handleInput}
@@ -61,18 +63,18 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 >
                     <div className="flex items-start justify-end gap-3 pt-2">
                         <Paperclip size={"1.5rem"}
-                                   className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"/>
+                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
                         <Image size={"1.5rem"}
-                               className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"/>
+                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
                         <Sticker size={"1.5rem"}
-                                 className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-                                 onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
+                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                            onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
                         />
                         {openStickerPicker && <StickerPicker />}
-                        
+
                         <Smile size={"1.5rem"}
-                               className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-                               onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
+                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                            onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
                         />
                         {openEmojiPicker && <EmojiCustomPicker />}
                     </div>
@@ -118,6 +120,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 ))}
             </div>
             {/* Message */}
+            <ChatToolBar inputRef={textareaRef} />
             <SendMessageComponent />
         </div>
     )

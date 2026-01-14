@@ -5,7 +5,13 @@ import { WebsocketInstance } from "@/socket/WebsocketInstance";
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage";
 import { forceLogout } from "@/utils/authUtil";
 import type { Middleware } from "@reduxjs/toolkit";
-import {setRoomChat} from "@/redux/slices/chatSlice.ts";
+import {
+    getRoomChatMessage,
+    receiveNewMessageFromRoom,
+    sendMessageToRoom,
+    updateRoomHistory
+} from "@/redux/slices/chatSlice.ts";
+import type {ChatDataRoom} from "@/socket/types/WebsocketReceivePayload.ts";
 
 const RECONNECT_TIMEOUT = 180000 // Timeout 3 mins for reconnect
 const RECONNECT_INTERVAL = 500 //Reconnect every 0.5s
@@ -56,18 +62,34 @@ export const socketMiddleware: Middleware = (store) => {
     //Global state
     ws.subscribe(WebSocketEvent.GET_ROOM_CHAT_MES, (response) => {
         if (response.status === "success") {
-            store.dispatch(setRoomChat(response.data))
+            const message = response.data
+            store.dispatch(updateRoomHistory({
+                target: message.name,
+                value: message
+            }))
         }
     })
 
     ws.subscribe(WebSocketEvent.SEND_CHAT_TO_ROOM, (response) => {
         if (response.status === "success") {
-            // const data = response.data
-            //Check does message come from owner here
-            //Insert action into store.dispatch()
-            // store.dispatch()
+            const message = response.data as unknown as ChatDataRoom;
+            const target = message.to;
+            const state = store.getState();
+
+            const currentRoom = state.chatSlice.roomHistory[target];
+            if (!currentRoom || currentRoom.userList.length === 0) {
+                ws.send(WebSocketEvent.GET_ROOM_CHAT_MES, {
+                    name: target,
+                    page: 1
+                });
+            }
+
+            store.dispatch(receiveNewMessageFromRoom({
+                target: target,
+                value: message
+            }));
         }
-    })
+    });
 
     ws.subscribe(WebSocketEvent.SEND_CHAT_TO_PEOPLE, (response) => {
         if (response.status === "success") {
@@ -121,7 +143,7 @@ export const socketMiddleware: Middleware = (store) => {
                 }
                 break
             }
-            case 'socket/sendMessageToRoom': {
+            case sendMessageToRoom.type: {
                 const { roomName, message } = action.payload;
                 if (ws.getSocket?.readyState === WebSocket.OPEN) {
                     ws.send(WebSocketEvent.SEND_CHAT_TO_ROOM, {
@@ -132,7 +154,7 @@ export const socketMiddleware: Middleware = (store) => {
                 }
                 break;
             }
-            case 'socket/getMessageFromRoom': {
+            case getRoomChatMessage.type: {
                 const { roomName, page } = action.payload;
                 if (ws.getSocket?.readyState === WebSocket.OPEN) {
                     ws.send(WebSocketEvent.GET_ROOM_CHAT_MES, {

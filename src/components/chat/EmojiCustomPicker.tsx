@@ -3,7 +3,6 @@ import {X} from "lucide-react";
 import {setOpenEmojiPicker} from "@/redux/slices/chatTriggerSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import type {ReduxState} from "@/constants/ReduxState.ts";
-import {updateTypingContent} from "@/redux/slices/chatSlice.ts";
 
 export default function EmojiCustomPicker() {
     const dispatch = useDispatch();
@@ -66,11 +65,8 @@ export default function EmojiCustomPicker() {
                              showPreview: true
                          }}
                          onEmojiClick={(emojiData) =>
-                             // FIXME: need change id
-                             dispatch(updateTypingContent({
-                                id: "",
-                                text: encoderEmoji(emojiData.emoji), 
-                             }))
+                             // FIXME: insert emoji to typing message
+                             console.log("emoji", encoderEmoji(emojiData.emoji))
                          }
             />
         </div>

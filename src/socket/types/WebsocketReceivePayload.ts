@@ -5,6 +5,8 @@ export interface ReceiveMsgLoginPayload {
 
 export interface ReceiveMsgReLoginPayload { }
 
+export interface ChatDataRoom { id: number, name: string, type: number, to: string, mes: string, createAt?: string }
+
 export interface ReceiveMsgRoomManagementPayload {
     id: number,
     name: string,
@@ -12,7 +14,7 @@ export interface ReceiveMsgRoomManagementPayload {
     //TODO: Change this to a class
     userList: { id: number, name: string }[],
     //TODO: Change this to a class
-    chatData: { id: number, name: string, type: number, to: string, mes: string, createAt: string }[]
+    chatData: ChatDataRoom[]
 }
 
 export interface ReceiveMsgGetChatRoomPayload {
@@ -22,7 +24,7 @@ export interface ReceiveMsgGetChatRoomPayload {
     //TODO: Change this to a class
     userList: { id: number, name: string }[],
     //TODO: Change this to a class
-    chatData: { id: number, name: string, type: number, to: string, mes: string, createAt: string }[]
+    chatData: ChatDataRoom[]
 }
 
 export interface ReceiveMsgGetChatPeoplePayload {

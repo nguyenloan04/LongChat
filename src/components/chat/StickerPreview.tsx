@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {useDispatch} from "react-redux";
+import {sendMessageToRoom} from "@/redux/slices/chatSlice.ts";
 
 export function StickerPreview(props: {src: string, preview: string}) {
     const [loading, setLoading] = useState(true);
@@ -10,17 +11,15 @@ export function StickerPreview(props: {src: string, preview: string}) {
         const newStickers = [{src: props.src, preview: props.preview}, ...stickers];
         localStorage.setItem("stickerHistory", JSON.stringify(newStickers));
         // FIXME: need change roomName
-        dispatch({
-            type: "socket/sendMessageToRoom",
-            payload: {
-                roomName: "Nhóm 77 Test WEB",
-                message: {
-                    type: "sticker",
-                    content: props.src,
-                    attachment: []
-                }
+        dispatch(sendMessageToRoom({
+            roomName: "Nhóm 77 Test WEB",
+            message: {
+                type: "sticker",
+                content: props.src,
+                attachment: []
             },
-        })
+            username: localStorage.getItem("userName") || "",
+        }))
     }
     
     return (

@@ -1,41 +1,72 @@
-import type {
-    ReceiveMsgGetChatPeoplePayload,
-    ReceiveMsgGetChatRoomPayload, ReceiveMsgGetUserListPayload
+import type { ChatDataRoom,
+    ReceiveMsgGetChatRoomPayload,
 } from "@/socket/types/WebsocketReceivePayload.ts";
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 
 interface ChatSlice {
-    userList: ReceiveMsgGetUserListPayload[] | null
-    currentChat: ReceiveMsgGetChatRoomPayload | ReceiveMsgGetChatPeoplePayload[] | null
-    typingContent: Record<string, string>
+    roomHistory: Record<string, ReceiveMsgGetChatRoomPayload>
+    isLoadingRoom: boolean
 }
 
 const initialState: ChatSlice = {
-    userList: null,
-    currentChat: null,
-    typingContent: {}
+    roomHistory: {},
+    isLoadingRoom: false
 }
 
 export const chatSlice = createSlice({
     name: "chatSlice",
     initialState,
     reducers: {
-        setRoomChat: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
-            state.currentChat = action.payload
+        updateRoomHistory: (state, action: PayloadAction<{target: string, value: ReceiveMsgGetChatRoomPayload}>) => {
+            const {target, value} = action.payload
+            state.roomHistory[target] = value;
+            state.isLoadingRoom = false;
         },
-        updateTypingContent: (state, action: PayloadAction<{id: string, text: string}>) => {
-            const { id, text } = action.payload
-            if(!state.typingContent[id]) {
-                state.typingContent[id] = text
-            } else {
-                state.typingContent[id] += text
+
+        receiveNewMessageFromRoom: (state, action: PayloadAction<{target: string, value: ChatDataRoom}>) => {
+            const { target, value } = action.payload;
+
+            if (!state.roomHistory[target]) {
+                state.roomHistory[target] = {
+                    id: 0,              
+                    name: target,      
+                    own: "",            
+                    userList: [],       
+                    chatData: []        
+                };
             }
+
+            const formattedMessage = {
+                ...value,
+                createAt: value.createAt || new Date().toISOString()
+            };
+
+            state.roomHistory[target].chatData.push(formattedMessage);
         },
-        clearTypingContent: (state, action: PayloadAction<string>) => {
-            delete state.typingContent[action.payload] 
+
+        getRoomChatMessage: (state, action: PayloadAction<{roomName: string, page: number}>) => {
+            state.isLoadingRoom = true
+        },
+        
+        sendMessageToRoom: (state, action: PayloadAction<{roomName: string, message: any, username: string}>) => {
+            const { roomName, message, username } = action.payload;
+
+            const optimisticMessage = {
+                id: Date.now(), //temp id
+                name: username,  
+                to: roomName,
+                mes: message, 
+                type: 1,
+                createAt: new Date().toISOString()
+            };
+
+            if (state.roomHistory[roomName]) {
+                state.roomHistory[roomName].chatData.push(optimisticMessage);
+            }
         }
     }
 })
 
-export const {setRoomChat, updateTypingContent} = chatSlice.actions
+export const {sendMessageToRoom, receiveNewMessageFromRoom,
+    getRoomChatMessage, updateRoomHistory} = chatSlice.actions
 export default chatSlice.reducer;

@@ -11,6 +11,7 @@ import { ConnectionLoading } from "../common/ConnectionLoading"
 import { authApi } from "@/api/auth"
 import { setCurrentUser } from "@/redux/slices/userSlice"
 import { AuthFooter } from "./Footer"
+import type { User } from "@/constants/User"
 
 export default function LoginComponent() {
     const dispatcher = useDispatch()
@@ -54,13 +55,6 @@ export default function LoginComponent() {
     }
 
     useEffect(() => {
-        dispatcher(resetAuthForm())
-        //Redirect to home page if logged in
-        if (currentUser.user) navigate("/")
-    }, [])
-
-
-    useEffect(() => {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, async (response) => {
             if (response.status === "success") {
                 const reloginCode = response.data.RE_LOGIN_CODE
@@ -71,7 +65,6 @@ export default function LoginComponent() {
                     isLoading(false)
                     return
                 }
-                localStorage.setItem("username", username)
 
                 let description = ""
                 try {
@@ -79,7 +72,7 @@ export default function LoginComponent() {
                 }
                 catch (_) { }
 
-                dispatcher(setCurrentUser({
+                const currentUser: User = {
                     username: username,
                     description,
                     displayName: username,
@@ -88,7 +81,10 @@ export default function LoginComponent() {
                         content: `${cloudinaryUrl}/banner/${username}`,
                         type: "image"
                     },
-                }))
+                }
+                
+                localStorage.setItem("user", JSON.stringify(currentUser))
+                dispatcher(setCurrentUser(currentUser))
 
                 setMessage("Đăng nhập thành công")
                 setTimeout(() => {

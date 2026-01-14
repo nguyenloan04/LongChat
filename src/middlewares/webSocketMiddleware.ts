@@ -26,12 +26,13 @@ export const socketMiddleware: Middleware = (store) => {
         //Auto login if possible
         const reloginCode = localStorage.getItem("RE_LOGIN_CODE")
         const state = store.getState()
-        const username = state.currentUser.user?.username || localStorage.getItem("username")
+        const rawUser = localStorage.getItem("user")
+        const user: User = rawUser ? JSON.parse(rawUser) as User : state.currentUser.user
 
-        if (reloginCode && username) {
+        if (reloginCode && user) {
             ws.send(WebSocketEvent.RE_LOGIN, {
                 code: reloginCode,
-                user: username
+                user: user.username
             })
         }
         else {
@@ -50,7 +51,7 @@ export const socketMiddleware: Middleware = (store) => {
             }
             //Server error
             case 1001: {
-
+                forceLogout(store)
                 break
             }
         }
@@ -69,9 +70,10 @@ export const socketMiddleware: Middleware = (store) => {
         }
         else {
             //Re login failed, end session and require login
-            localStorage.removeItem("RE_LOGIN_CODE")
-            localStorage.removeItem("username")
             store.dispatch(setCurrentUser(null))
+            if ((response as any).event === "ACTION_NOT_EXIT") return
+            localStorage.removeItem("RE_LOGIN_CODE")
+            localStorage.removeItem("user")
         }
     })
 

@@ -74,7 +74,7 @@ export function ChatSideBar() {
 
 const UserPopup = () => {
     const navigate = useNavigate()
-    
+
     const listFeature = [
         {
             title: "Thông tin của bạn",
@@ -107,7 +107,7 @@ const UserPopup = () => {
                     listFeature.map(ele => (
                         <div
                             className="flex gap-2 items-center cursor-pointer hover:bg-neutral-100 rounded p-1 active:bg-neutral-200"
-                            onClick={ele.action}    
+                            onClick={ele.action}
                         >
                             {ele.icon}
                             <span className="text-sm">{ele.title}</span>

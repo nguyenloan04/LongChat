@@ -6,7 +6,7 @@ import {useEffect, useRef, useState} from "react";
 import StickerPicker from "@/components/chat/StickerPicker.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import type {ReduxState} from "@/constants/ReduxState.ts";
-import {setOpenEmojiPicker, setOpenStickerPicker} from "@/redux/slices/chatPickerSlice.ts";
+import {setOpenEmojiPicker, setOpenStickerPicker} from "@/redux/slices/chatTriggerSlice.ts";
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 import {createMessagePayload} from "@/services/chatService.ts";
 import {sendPeopleChat} from "@/redux/slices/chatPeopleSlice.ts";

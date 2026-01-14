@@ -1,9 +1,13 @@
 import getTimeDifference from "locale-time-diff"
+
 import {Search, User} from "lucide-react"
 import {useEffect, useState} from "react"
 import {useDispatch, useSelector} from "react-redux";
 import type {ReduxState} from "@/constants/ReduxState.ts";
 import {getPeopleChatHistory, getUserList, setCurrentChatTarget} from "@/redux/slices/chatPeopleSlice.ts";
+// Room
+import RoomMenu from "@/components/room/RoomMenu.tsx";
+
 
 export function ChatMenuBar() {
     const dispatch = useDispatch();
@@ -36,7 +40,7 @@ export function ChatMenuBar() {
     return (
         <div className="h-full flex flex-col">
             {/* Header */}
-            <div className="px-2 py-2 h-fit border-b min-h-16">
+            <div className="flex gap-2 justify-center items-center px-2 py-2 h-fit border-b min-h-16">
                 <div
                     className={`flex items-center gap-1 border rounded-md bg-gray-200/60 ${isInputFocused && "border border-neutral-500"}`}
                     onClick={() => setInputFocusState(true)}
@@ -48,6 +52,7 @@ export function ChatMenuBar() {
                         type="text" placeholder="Tìm kiếm..."
                     />
                 </div>
+                <RoomMenu />
             </div>
             <div className="px-2 flex-1 overflow-y-auto">
                 {userList.length === 0 && <p className="text-center text-gray-400 mt-4">Chưa có tin nhắn nào</p>}

@@ -2,7 +2,7 @@
 
 import { Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User } from "lucide-react";
 import { Message } from "./Message";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import StickerPicker from "@/components/chat/StickerPicker.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import type { ReduxState } from "@/constants/ReduxState.ts";
@@ -112,7 +112,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
     if (!currentTarget) {
         return (
-            <div className="flex flex-col h-full items-center justify-center bg-gray-50">
+            <div className="overflow-auto flex flex-col h-full items-center justify-center bg-gray-50">
                 <p className="text-xl text-gray-500">Hãy chọn một đoạn chat để bắt đầu</p>
             </div>
         )

@@ -1,0 +1,33 @@
+table {
+    border-collapse: collapse;
+}
+
+thead {
+    border-bottom: 1px solid #e2e8f0;
+    background-color: transparent;
+}
+
+th {
+    height: 3rem;
+    padding: 0 1rem;
+    text-align: left;
+}
+
+tbody tr:last-child {
+    border-bottom: 0;
+}
+
+td {
+    padding: 0.5rem 1rem;
+    vertical-align: middle;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s ease;
+}
+
+td:last-child,
+th:last-child {
+    text-align: right;
+}

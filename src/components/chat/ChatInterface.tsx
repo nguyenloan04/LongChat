@@ -11,6 +11,8 @@ import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 import { createMessagePayload } from "@/services/chatService.ts";
 import { sendPeopleChat } from "@/redux/slices/chatSlice";
 import { ChatToolBar } from "./ChatToolBar";
+import { formatSendTime } from "@/utils/messageUtil";
+import "../../styles/chat-interface-style.css"
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
@@ -36,7 +38,6 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
     const SendMessageComponent = () => {
         const dispatch = useDispatch();
-        const textareaRef = useRef<HTMLTextAreaElement>(null);
         const [inputValue, setInputValue] = useState("");
 
         const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker)
@@ -103,7 +104,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         {openEmojiPicker && <EmojiCustomPicker />}
                     </div>
                     <div className="pt-0.5">
-                        <SendHorizonal size={"2.25rem"} className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />
+                        <SendHorizonal
+                            size={"2.25rem"} className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300"
+                            onClick={() => handleSendText()}
+                        />
                     </div>
                 </div>
             </div>
@@ -142,7 +146,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 </div>
             </div>
             {/* Main UI */}
-            <div className="flex-1 overflow-y-auto flex flex-col gap-1 w-full bg-gray-300/50 p-2">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-1 w-full bg-gray-300/50 p-2">
                 {messages.length === 0 && (
                     <p className="text-center text-gray-500 mt-10">Bắt đầu cuộc trò chuyện...</p>
                 )}
@@ -153,7 +157,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         rawMessage={ele.mes}
                         isOwner={ele.name === currentUser?.username}
                         username={ele.name}
-                        time={ele.createAt}
+                        time={formatSendTime(ele.createAt)}
                     />
                 ))}
                 <div ref={messagesEndRef} />

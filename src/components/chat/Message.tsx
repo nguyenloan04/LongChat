@@ -30,6 +30,7 @@
 // }
 import { User } from "lucide-react";
 import { extractMessageContent } from "@/services/chatService";
+import { displayMessageContent } from "@/utils/chatDisplayUtil";
 
 interface MessageProps {
     rawMessage: string;
@@ -60,12 +61,12 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
                         {contentObj.attachment?.map((url, idx) => (
                             <img key={idx} src={url} alt="Attachment" className="max-w-[200px] rounded-lg" />
                         ))}
-                        {contentObj.content && <p>{contentObj.content}</p>}
+                        {contentObj.content && displayMessageContent(contentObj)}
                     </div>
                 );
             case "chat":
             default:
-                return <p className="my-1 break-words">{contentObj.content}</p>;
+                return displayMessageContent(contentObj)
         }
     };
 
@@ -74,14 +75,13 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
             <div className={`flex gap-1 ${isOwner ? "justify-end" : "justify-start"}`}>
                 {!isOwner &&
                     <div className="w-10 h-10 my-1 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center bg-white shrink-0">
-                        <User size={20}/>
+                        <User size={20} />
                     </div>
                 }
                 <div className="max-w-[60%] lg:max-w-[50%]">
-                    <div className={`mt-1 p-2 px-3 rounded-2xl shadow-sm ${
-                        contentObj.type === "sticker" ? "bg-transparent shadow-none" :
-                            isOwner ? "bg-indigo-600 text-white" : "bg-white"
-                    }`}>
+                    <div className={`mt-1 p-2 px-3 rounded-2xl shadow-sm ${contentObj.type === "sticker" ? "bg-transparent shadow-none" :
+                        isOwner ? "bg-indigo-600 text-white" : "bg-white"
+                        }`}>
                         {!isOwner && contentObj.type !== "sticker" &&
                             <p className="text-gray-500 text-xs font-bold mb-1">
                                 {username}
@@ -92,7 +92,25 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
 
                         {contentObj.type !== "sticker" && (
                             <p className={`${isOwner ? "text-indigo-200" : "text-gray-400"} text-[10px] text-end mt-1`}>
-                                {time ? new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
+                                {time
+                                    ? new Date(time)
+                                        .toLocaleTimeString(
+                                            [],
+                                            {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                                ...(
+                                                    new Date(time).toDateString() !== new Date(Date.now()).toDateString()
+                                                    && {
+                                                        day: '2-digit',
+                                                        month: '2-digit',
+                                                        year: 'numeric'
+                                                    }
+                                                )
+                                            }
+                                        )
+                                    : ""
+                                }
                             </p>
                         )}
                     </div>

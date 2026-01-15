@@ -9,6 +9,7 @@ import editUserReducer from "./slices/editUserFormSlice.ts";
 import chatReducer from "@/redux/slices/chatSlice.ts";
 
 import chatTriggerSlice from "@/redux/slices/chatTriggerSlice.ts";
+import chatSlice from "@/redux/slices/chatSlice.ts";
 
 
 export const store = configureStore({

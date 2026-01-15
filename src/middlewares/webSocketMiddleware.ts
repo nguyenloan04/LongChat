@@ -7,8 +7,7 @@ import {forceLogout} from "@/utils/authUtil";
 import type {Middleware} from "@reduxjs/toolkit";
 import type {WsReceiveMessage} from "@/socket/types/WebSocketMessageReceive";
 import type {
-    ReceiveMsgGetChatPeoplePayload,
-    ReceiveMsgGetChatRoomPayload
+    ReceiveMsgGetChatPeoplePayload, ReceiveMsgSendChatRoomPayload
 } from "@/socket/types/WebsocketReceivePayload";
 import type {
     SendMsgGetChatPayload,
@@ -24,8 +23,8 @@ import {
     getPeopleChatHistory,
     getRoomChatHistory,
     sendPeopleChat,
-    getUserList
-} from "@/redux/slices/chatSlice.ts";
+    getUserList, receiveNewMessageFromRoom, sendMessageToRoom
+} from "@/redux/slices/chatSlice";
 
 const RECONNECT_TIMEOUT = 180000 // Timeout 3 mins for reconnect
 const RECONNECT_INTERVAL = 500 //Reconnect every 0.5s
@@ -102,19 +101,26 @@ export const socketMiddleware: Middleware = (store) => {
     //Global state
     ws.subscribe(WebSocketEvent.GET_ROOM_CHAT_MES, (response) => {
         if (response.status === "success") {
-            const roomData = response.data as unknown as ReceiveMsgGetChatRoomPayload;
-
-            // Dispatch action lưu toàn bộ object phòng
-            store.dispatch(updateRoomHistory(roomData));
+            const message = response.data
+            store.dispatch(updateRoomHistory(message))
         }
     })
 
     ws.subscribe(WebSocketEvent.SEND_CHAT_TO_ROOM, (response) => {
         if (response.status === "success") {
-            // const data = response.data
-            //Check does message come from owner here
-            //Insert action into store.dispatch()
-            // store.dispatch()
+            const message = response.data as unknown as ReceiveMsgSendChatRoomPayload;
+            const target = message.to;
+            const state = store.getState();
+
+            const currentRoom = state.chatSlice.roomHistory[target];
+            if (!currentRoom) {
+                 store.dispatch(getRoomChatHistory({
+                    name: target,
+                    page: 1
+                }))
+            } else {
+                store.dispatch(receiveNewMessageFromRoom(message));
+            }
         }
     })
 
@@ -210,11 +216,6 @@ export const socketMiddleware: Middleware = (store) => {
                 ws.send(WebSocketEvent.GET_PEOPLE_CHAT_MES, payload);
                 break;
             }
-            case getRoomChatHistory.type: {
-                const payload = action.payload as SendMsgGetChatPayload;
-                ws.send(WebSocketEvent.GET_ROOM_CHAT_MES, payload);
-                break;
-            }
             case 'socket/requestRelogin': {
                 try {
                     clearReconnectInterval()
@@ -251,6 +252,27 @@ export const socketMiddleware: Middleware = (store) => {
                     forceLogout(store)
                 }
                 break
+            }
+            case sendMessageToRoom.type: {
+                const { roomName, message } = action.payload;
+                if (ws.getSocket?.readyState === WebSocket.OPEN) {
+                    ws.send(WebSocketEvent.SEND_CHAT_TO_ROOM, {
+                        type: "room",
+                        to: roomName,
+                        mes: JSON.stringify(message)
+                    });
+                }
+                break;
+            }
+            case getRoomChatHistory.type: {
+                const { name, page } = action.payload;
+                if (ws.getSocket?.readyState === WebSocket.OPEN) {
+                    ws.send(WebSocketEvent.GET_ROOM_CHAT_MES, {
+                        name: name,
+                        page: page
+                    });
+                }
+                break;
             }
         }
 

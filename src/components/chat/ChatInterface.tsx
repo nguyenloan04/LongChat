@@ -9,10 +9,11 @@ import type { ReduxState } from "@/constants/ReduxState.ts";
 import { setOpenEmojiPicker, setOpenStickerPicker } from "@/redux/slices/chatTriggerSlice.ts";
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 import { createMessagePayload } from "@/services/chatService.ts";
-import { sendPeopleChat } from "@/redux/slices/chatSlice";
+import {getUserList, receiveNewMessageFromRoom, sendMessageToRoom, sendPeopleChat} from "@/redux/slices/chatSlice";
 import { ChatToolBar } from "./ChatToolBar";
 import { formatSendTime } from "@/utils/messageUtil";
 import "../../styles/chat-interface-style.css"
+import type {ReceiveMsgGetChatPeoplePayload} from "@/socket/types/WebsocketReceivePayload.ts";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
@@ -28,7 +29,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             return state.chatState.chatPeopleHistory[currentTarget.name] || [];
         } else {
             const roomData = state.chatState.roomHistory[currentTarget.name];
-            return roomData ? roomData.chatData : [];
+            return roomData ? roomData.chatData as ReceiveMsgGetChatPeoplePayload[] : [];
         }
     });
 
@@ -39,7 +40,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
     const SendMessageComponent = () => {
         const dispatch = useDispatch();
         const [inputValue, setInputValue] = useState("");
-
+        const userList = useSelector((state:ReduxState) => state.chatState.userList)
         const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker)
         const openEmojiPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openEmojiPicker)
 
@@ -53,15 +54,39 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
         const handleSendText = () => {
             if (!inputValue.trim() || !currentTarget) return;
-
+            if(!currentUser) return;
             const jsonMessage = createMessagePayload(inputValue.trim(), [], "chat");
-            // FIXME: this is just for people chat (currentTarget.type==0)
-            dispatch(sendPeopleChat({
-                type: 'people',
-                to: currentTarget.name,
-                mes: jsonMessage
-            }));
-
+            if(currentTarget.type === 0) {
+                dispatch(sendPeopleChat({
+                    type: 'people',
+                    to: currentTarget.name,
+                    mes: jsonMessage
+                }));
+            } else {
+                const message = {
+                    type: "chat",
+                    content: inputValue.trim(),
+                    attachment: []
+                }
+                dispatch(sendMessageToRoom({
+                    roomName: currentTarget.name,
+                    message: message,
+                    username: currentUser.username,
+                }))
+                if(userList[0].name !== currentTarget.name) {
+                    dispatch(getUserList({}))
+                }
+                setTimeout(() => {
+                    dispatch(receiveNewMessageFromRoom({
+                        id: Date.now(), //temp id
+                        name: currentUser.username,
+                        to: currentTarget.name,
+                        mes: JSON.stringify(message),
+                        type: 1,
+                        createAt: formatSendTime(new Date().toISOString())
+                    }))
+                }, 500)
+            }
             setInputValue("");
             if (textareaRef.current) textareaRef.current.style.height = 'auto';
         };

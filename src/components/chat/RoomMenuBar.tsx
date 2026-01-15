@@ -1,6 +1,7 @@
 import type { ReduxState } from "@/constants/ReduxState";
 import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
-import { ChevronDown, Copy, Settings, Share, User, UserPlus } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, ImageOff, Settings, Share, User, UserPlus } from "lucide-react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 
 export function RoomMenuBar() {
@@ -32,6 +33,10 @@ export function RoomMenuBar() {
         }
     ]
 
+    const [memberState, setMemberState] = useState(false)
+    const [attachmentState, setAttachmentState] = useState(false)
+    const [policyState, setPolicyState] = useState(false)
+
     if (!currentTarget) return null
 
     return (
@@ -56,58 +61,64 @@ export function RoomMenuBar() {
                     ))}
                 </div>
             </div>
-            {/* Temp */}
             {/* Member */}
             <div className="px-2">
                 {getRoomData && currentTarget.type === 1 ?
                     <div className="my-1">
-                        <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                        <div
+                            className="cursor-pointer p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200"
+                            onClick={() => setMemberState(!memberState)}
+                        >
                             <h5 className="font-semibold">Thành viên trong nhóm</h5>
-                            <ChevronDown />
+                            {memberState ? <ChevronUp /> : <ChevronDown />}
                         </div>
-                        <div className="flex flex-col overflow-y-auto h-40 border-b">
-                            {getRoomData.userList && getRoomData.userList?.map(user => (
-                                <div className="rounded cursor-pointer flex gap-2 items-center hover:bg-neutral-200 p-1">
-                                    <div className="my-1 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center bg-white shrink-0">
-                                        <User size={"1rem"} />
+                        {
+                            memberState &&
+                            <div className="flex flex-col overflow-y-auto h-40 border-b">
+                                {getRoomData.userList && getRoomData.userList?.map(user => (
+                                    <div className="rounded cursor-pointer flex gap-2 items-center hover:bg-neutral-200 p-1">
+                                        <div className="my-1 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center bg-white shrink-0">
+                                            <User size={"1rem"} />
+                                        </div>
+                                        <span>
+                                            {`${user.name} ${currentUser?.username === user.name ? "(Bạn)" : ""}`}
+                                        </span>
                                     </div>
-                                    <span>
-                                        {`${user.name} ${currentUser?.username === user.name ? "(Bạn)" : ""}`}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        }
                     </div>
                     : <></>
                 }
                 <div className="my-1">
-                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                    <div
+                        className="cursor-pointer p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200"
+                        onClick={() => setAttachmentState(!attachmentState)}
+                    >
                         <h5 className="font-semibold">Ảnh & Video</h5>
-                        <ChevronDown />
+                        {attachmentState ? <ChevronUp /> : <ChevronDown />}
                     </div>
-                    {/* <div className="gap-3">
-                        <div className="flex flex-col items-center justify-center gap-2">
-                            <ImageOff size={"2rem"} className="text-neutral-500" />
-                            <p className="text-center text-neutral-500 text-sm">Không có ảnh & video được gửi</p>
+                    {/* {
+                        attachmentState &&
+                        <div>
+                            {
+                                <div className="gap-3">
+                                    <div className="flex flex-col items-center justify-center gap-2">
+                                        <ImageOff size={"2rem"} className="text-neutral-500" />
+                                        <p className="text-center text-neutral-500 text-sm">Không có ảnh & video được gửi</p>
+                                    </div>
+                                </div>
+                            }
                         </div>
-                    </div> */}
+                    } */}
                 </div>
                 <div className="my-1">
-                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
-                        <h5 className="font-semibold">File</h5>
-                        <ChevronDown />
-                    </div>
-                    {/* <div className="gap-3">
-                        <div className="flex flex-col items-center justify-center gap-2">
-                            <FileX2 size={"2rem"} className="text-neutral-500" />
-                            <p className="text-center text-neutral-500 text-sm">Không có file được gửi</p>
-                        </div>
-                    </div> */}
-                </div>
-                <div className="my-1">
-                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                    <div
+                        className="cursor-pointer p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200"
+                        onClick={() => setPolicyState(!policyState)}
+                    >
                         <h5 className="font-semibold">Quyền riêng tư & hỗ trợ</h5>
-                        <ChevronDown />
+                        {policyState ? <ChevronUp /> : <ChevronDown />}
                     </div>
                 </div>
                 <div className="my-1 p-2">

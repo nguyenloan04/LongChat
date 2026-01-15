@@ -76,11 +76,11 @@ export function ChatMenuBar() {
             {/* Header */}
             <div className="flex gap-2 justify-center items-center px-2 py-2 h-fit border-b min-h-16">
                 <div
-                    className={`flex items-center gap-1 border rounded-md bg-gray-200/60 ${isInputFocused && "border border-neutral-500"}`}
+                    className={`w-full flex items-center gap-1 border rounded-md bg-gray-200/60 ${isInputFocused && "border border-neutral-500"}`}
                     onClick={() => setInputFocusState(true)}
                     onBlur={() => setInputFocusState(false)}
                 >
-                    <Search size={"1rem"} className="ms-2 me-1" />
+                    <Search size={"1rem"} className="ms-3 me-1" />
                     <input
                         className="w-full py-2 focus:outline-0 bg-transparent"
                         type="text"
@@ -134,7 +134,7 @@ export function ChatMenuBar() {
                                     {ele.name}
                                 </p>
                                 <p className="text-neutral-500 text-xs shrink-0">
-                                    {ele.actionTime ? getTimeDifference(new Date(ele.actionTime)).text : ""}
+                                    {getTimeDifference(new Date(ele.actionTime),  { locale: 'vi' }).text}
                                 </p>
                             </div>
                             <p className="text-neutral-500 text-sm truncate">

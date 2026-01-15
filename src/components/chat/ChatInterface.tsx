@@ -73,7 +73,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     message: message,
                     username: currentUser.username,
                 }))
-                if(userList[0].name !== currentTarget.name) {
+                if(!(userList[0].name === currentTarget.name && userList[0].type ===  currentTarget.type)) {
                     dispatch(getUserList({}))
                 }
                 setTimeout(() => {
@@ -83,7 +83,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         to: currentTarget.name,
                         mes: JSON.stringify(message),
                         type: 1,
-                        createAt: formatSendTime(new Date().toISOString())
+                        createAt: new Date().toISOString()
                     }))
                 }, 500)
             }

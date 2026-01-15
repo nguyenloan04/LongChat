@@ -87,8 +87,9 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
                                 {username}
                             </p>
                         }
-
-                        {renderContent()}
+                        <div className="overflow-x-auto ">
+                            {renderContent()}
+                        </div>
 
                         {contentObj.type !== "sticker" && (
                             <p className={`${isOwner ? "text-indigo-200" : "text-gray-400"} text-[10px] text-end mt-1`}>

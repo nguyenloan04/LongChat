@@ -12,6 +12,7 @@ import {
 } from "@/redux/slices/chatSlice.ts";
 // Room
 import RoomMenu from "@/components/room/RoomMenu.tsx";
+import type {ReceiveMsgGetUserListPayload} from "@/socket/types/WebsocketReceivePayload.ts";
 
 
 export function ChatMenuBar() {
@@ -23,6 +24,7 @@ export function ChatMenuBar() {
 
     const userList = useSelector((state: ReduxState) => state.chatState.userList);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
+    const roomHistory = useSelector((state:ReduxState) => state.chatState.roomHistory);
     // render user list
     useEffect(() => {
         if (isConnected) {
@@ -32,13 +34,15 @@ export function ChatMenuBar() {
         }
     }, [dispatch, isConnected]);
 
-    const handleSelectUser = (user: any) => {
-        dispatch(setCurrentChatTarget(user));
+    const handleSelectChat = (chat: ReceiveMsgGetUserListPayload) => {
+        dispatch(setCurrentChatTarget(chat));
 
-        if (user.type === 0) {
-            dispatch(getPeopleChatHistory({name: user.name, page: 1}));
+        if (chat.type === 0) {
+            dispatch(getPeopleChatHistory({name: chat.name, page: 1}));
         } else {
-            dispatch(getRoomChatHistory({name: user.name, page: 1}));
+            if(!roomHistory[chat.name]) {
+                dispatch(getRoomChatHistory({name: chat.name, page: 1}));
+            }
         }
         setSearchValue("");
     };
@@ -121,7 +125,7 @@ export function ChatMenuBar() {
                         className={`flex items-center gap-3 px-2 py-2 rounded-md my-2 cursor-pointer transition-colors ${
                             currentTarget?.name === ele.name ? "bg-indigo-100" : "hover:bg-neutral-100"
                         }`}
-                        onClick={() => handleSelectUser(ele)}
+                        onClick={() => handleSelectChat(ele)}
                     >
                         {/* Avatar Placeholder */}
                         <div className="w-10 h-10 border rounded-full bg-neutral-200 flex items-center justify-center shrink-0">

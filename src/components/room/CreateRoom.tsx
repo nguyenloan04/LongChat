@@ -3,6 +3,7 @@ import {WebsocketInstance} from "@/socket/WebsocketInstance.ts";
 import {WebSocketEvent} from "@/socket/types/WebSoketMessage.ts";
 import {setOpenCreateRoom} from "@/redux/slices/chatTriggerSlice.ts";
 import {useDispatch} from "react-redux";
+import {addNewUserToSidebar, setCurrentChatTarget, updateRoomHistory} from "@/redux/slices/chatSlice.ts";
 
 export function CreateRoom() {
     const [name, setName] = useState<string>('');
@@ -18,7 +19,7 @@ export function CreateRoom() {
         }
         setLoading(true)
         wsInstance.send(WebSocketEvent.CREATE_ROOM, {
-            name: name,
+            name: name.trim(),
         })
     }
 
@@ -26,8 +27,18 @@ export function CreateRoom() {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.CREATE_ROOM, (response) => {
             setLoading(false)
             if(response.status === "success") {
-                //Add response data into room list. {response.data}
-                console.log(response.data.id, response.data.name)
+                console.log(response.data)
+                dispatch(updateRoomHistory(response.data))
+                
+                const newChatTarget = {
+                    name: response.data.name,
+                    type: 1,
+                    actionTime: new Date().toISOString(),
+                }
+                
+                dispatch(addNewUserToSidebar(newChatTarget))
+                dispatch(setCurrentChatTarget(newChatTarget))
+                
                 dispatch(setOpenCreateRoom(false))
             } else {
                 setError(response.mes === 'Room Exist' ? "Đã tồn tại tên nhóm. Vui lòng đổi tên khác!" : "Đã có lỗi xảy ra!")

@@ -1,13 +1,14 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type {
     ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload,
-    ReceiveMsgGetUserListPayload
+    ReceiveMsgGetUserListPayload, ReceiveMsgSendChatRoomPayload
 } from "@/socket/types/WebsocketReceivePayload";
 import type {
     SendMsgGetChatPayload,
     SendMsgGetUserListPayload,
     SendMsgSendChatPayload
 } from "@/socket/types/WebsocketSendPayload";
+import {formatSendTime} from "@/utils/messageUtil.ts";
 
 interface ChatState {
     // Key: target user, Value: data received
@@ -69,11 +70,10 @@ const chatSlice = createSlice({
             state.isLoading = false;
         },
         updateRoomHistory: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
-            const roomData = action.payload;
-            if (roomData.chatData) {
-                roomData.chatData = [...roomData.chatData].reverse();
-            }
-            state.roomHistory[roomData.name] = roomData;
+            const payload = action.payload
+            const target = payload.name
+            state.roomHistory[target] = payload;
+            state.roomHistory[target].chatData.reverse()
             state.isLoading = false;
         },
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
@@ -119,6 +119,20 @@ const chatSlice = createSlice({
                 state.userList = [newUser, ...state.userList];
             }
         },
+        receiveNewMessageFromRoom: (state, action: PayloadAction<ReceiveMsgSendChatRoomPayload>) => {
+            const payload = action.payload;
+            const target = payload.to
+            if(state.roomHistory[target]) {
+                const formattedMessage = {
+                    ...payload,
+                    createAt: payload.createAt || formatSendTime(new Date().toISOString())
+                };
+
+                state.roomHistory[target].chatData.push(formattedMessage);
+            }
+        },
+        sendMessageToRoom: (state, action: PayloadAction<{roomName: string, message: any, username: string}>) => {
+        }
     },
 });
 
@@ -132,6 +146,8 @@ export const {
     setPeopleChatHistory,
     updateRoomHistory,
     receiveNewPeopleMessage,
+    receiveNewMessageFromRoom,
+    sendMessageToRoom,
     addNewUserToSidebar
 } = chatSlice.actions;
 

@@ -75,8 +75,11 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
         return (
             <div className="min-h-4 flex p-2 pt-0">
                 <textarea
+                    className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
+                    onChange={handleInput} //Temp
                     ref={textareaRef}
-                    className="w-full bg-transparent border-none outline-none resize-none max-h-[150px] py-2 px-2 text-sm"
+                    name=""
+                    id=""
                     rows={1}
                     placeholder="Nhập tin nhắn tới Group 77">
                 </textarea>

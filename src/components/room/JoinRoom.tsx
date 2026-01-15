@@ -1,4 +1,4 @@
-import {setOpenCreateRoom, setOpenJoinRoom} from "@/redux/slices/chatTriggerSlice.ts";
+import {setOpenJoinRoom} from "@/redux/slices/chatTriggerSlice.ts";
 import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {WebsocketInstance} from "@/socket/WebsocketInstance.ts";
@@ -37,7 +37,7 @@ export default function JoinRoom () {
                 dispatch(addNewUserToSidebar(newChatTarget))
                 dispatch(setCurrentChatTarget(newChatTarget))
 
-                dispatch(setOpenCreateRoom(false))
+                dispatch(setOpenJoinRoom(false))
             } else {
                 setError(response.mes === "Room not found" ? "Không tìm thấy nhóm. Vui lòng đổi tên khác!" : "Đã có lỗi xảy ra!")
             }

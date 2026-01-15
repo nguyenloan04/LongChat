@@ -112,7 +112,7 @@ export const socketMiddleware: Middleware = (store) => {
             const target = message.to;
             const state = store.getState();
 
-            const currentRoom = state.chatSlice.roomHistory[target];
+            const currentRoom = state.chatState.roomHistory[target];
             if (!currentRoom) {
                  store.dispatch(getRoomChatHistory({
                     name: target,
@@ -120,6 +120,9 @@ export const socketMiddleware: Middleware = (store) => {
                 }))
             } else {
                 store.dispatch(receiveNewMessageFromRoom(message));
+            }
+            if(!(state.chatState.userList[0].name === target && state.chatState.userList[0].type === message.type)) {
+                store.dispatch(getUserList({}))
             }
         }
     })

@@ -125,7 +125,7 @@ const chatSlice = createSlice({
             if(state.roomHistory[target]) {
                 const formattedMessage = {
                     ...payload,
-                    createAt: payload.createAt || formatSendTime(new Date().toISOString())
+                    createAt: payload.createAt || new Date().toISOString()
                 };
 
                 state.roomHistory[target].chatData.push(formattedMessage);

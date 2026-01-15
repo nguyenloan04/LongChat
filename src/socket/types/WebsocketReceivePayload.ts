@@ -3,7 +3,11 @@ export interface ReceiveMsgLoginPayload {
     RE_LOGIN_CODE: string
 }
 
-export interface ReceiveMsgReLoginPayload { }
+// export interface ReceiveMsgReLoginPayload { }
+
+export interface ReceiveMsgReLoginPayload {
+    RE_LOGIN_CODE: string
+}
 
 export interface ReceiveMsgRoomManagementPayload {
     id: number,

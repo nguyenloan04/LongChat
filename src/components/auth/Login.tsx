@@ -1,6 +1,6 @@
 import type { ReduxState } from "@/constants/ReduxState"
 import { useDispatch, useSelector } from "react-redux"
-import { resetAuthForm, setAuthFormValue } from "@/redux/slices/authSlice"
+import { setAuthFormValue } from "@/redux/slices/authSlice"
 import { useEffect, useRef, useState } from "react"
 import { validateForm } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
@@ -8,6 +8,7 @@ import { WebsocketInstance } from "@/socket/WebsocketInstance"
 import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 import { FormType } from "@/constants/AuthForm"
 import { ConnectionLoading } from "../common/ConnectionLoading"
+
 import { authApi } from "@/api/auth"
 import { setCurrentUser } from "@/redux/slices/userSlice"
 import { AuthFooter } from "./Footer"
@@ -17,7 +18,7 @@ export default function LoginComponent() {
     const dispatcher = useDispatch()
     const currentForm = useSelector((state: ReduxState) => state.authForm)
     const socketState = useSelector((state: ReduxState) => state.socketState)
-    const currentUser = useSelector((state: ReduxState) => state.currentUser)
+    // const currentUser = useSelector((state: ReduxState) => state.currentUser)
     //Redux state
     const pageLoading = socketState.isConnected
 
@@ -55,9 +56,11 @@ export default function LoginComponent() {
     }
 
     useEffect(() => {
+
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, async (response) => {
             if (response.status === "success") {
                 const reloginCode = response.data.RE_LOGIN_CODE
+                // const username = usernameRef.current;
                 localStorage.setItem("RE_LOGIN_CODE", reloginCode)
 
                 const username = usernameInputRef.current?.value
@@ -85,7 +88,6 @@ export default function LoginComponent() {
                 
                 localStorage.setItem("user", JSON.stringify(currentUser))
                 dispatcher(setCurrentUser(currentUser))
-
                 setMessage("Đăng nhập thành công")
                 setTimeout(() => {
                     navigate("/chat")
@@ -100,7 +102,7 @@ export default function LoginComponent() {
         })
 
         return () => unsubscribe()
-    }, [navigate, wsInstance])
+    }, [navigate, wsInstance,dispatcher])
 
 
     return (

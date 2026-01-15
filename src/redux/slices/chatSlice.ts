@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type {
-    ReceiveMsgGetChatPeoplePayload,
+    ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload,
     ReceiveMsgGetUserListPayload
 } from "@/socket/types/WebsocketReceivePayload";
 import type {
@@ -11,7 +11,9 @@ import type {
 
 interface ChatState {
     // Key: target user, Value: data received
-    peopleHistory: Record<string, ReceiveMsgGetChatPeoplePayload[]>;
+    chatPeopleHistory: Record<string, ReceiveMsgGetChatPeoplePayload[]>;
+    // Key: target room, Value: room info and chatData
+    roomHistory: Record<string, ReceiveMsgGetChatRoomPayload>;
     // get list users that account had chatted
     userList: ReceiveMsgGetUserListPayload[];
     // currentUser that account open
@@ -20,7 +22,8 @@ interface ChatState {
 }
 
 const initialState: ChatState = {
-    peopleHistory: {},
+    chatPeopleHistory: {},
+    roomHistory: {},
     userList: [],
     currentChatTarget: null,
     isLoading: false,
@@ -38,7 +41,8 @@ const chatSlice = createSlice({
         getPeopleChatHistory: (state, action: PayloadAction<SendMsgGetChatPayload>) => {
             state.isLoading = true;
         },
-
+        // request to get room info + message in room
+        getRoomChatHistory: (state, action: PayloadAction<SendMsgGetChatPayload>) => { state.isLoading = true; },
         // request to send message to user
         sendPeopleChat: (state, action: PayloadAction<SendMsgSendChatPayload>) => {
 
@@ -61,19 +65,26 @@ const chatSlice = createSlice({
         },
         setPeopleChatHistory: (state, action: PayloadAction<{ targetName: string, messages: ReceiveMsgGetChatPeoplePayload[] }>) => {
             const { targetName, messages } = action.payload;
-            // state.peopleHistory[targetName] = messages;
-            state.peopleHistory[targetName] = [...messages].reverse();
+            state.chatPeopleHistory[targetName] = [...messages].reverse();
+            state.isLoading = false;
+        },
+        updateRoomHistory: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
+            const roomData = action.payload;
+            if (roomData.chatData) {
+                roomData.chatData = [...roomData.chatData].reverse();
+            }
+            state.roomHistory[roomData.name] = roomData;
             state.isLoading = false;
         },
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
             const { targetName, message } = action.payload;
 
-            if (!state.peopleHistory[targetName]) {
-                state.peopleHistory[targetName] = [];
+            if (!state.chatPeopleHistory[targetName]) {
+                state.chatPeopleHistory[targetName] = [];
             }
-            const isExist = state.peopleHistory[targetName].find(m => m.id === message.id);
+            const isExist = state.chatPeopleHistory[targetName].find(m => m.id === message.id);
             if (!isExist) {
-                state.peopleHistory[targetName].push(message);
+                state.chatPeopleHistory[targetName].push(message);
             }
 
             const userIndex = state.userList.findIndex(u => u.name.toLowerCase() === targetName.toLowerCase());
@@ -100,17 +111,28 @@ const chatSlice = createSlice({
             }
             state.isLoading = false;
         },
+        addNewUserToSidebar: (state, action: PayloadAction<ReceiveMsgGetUserListPayload>) => {
+            const newUser = action.payload;
+            const exists = state.userList.find(u => u.name.toLowerCase() === newUser.name.toLowerCase());
+
+            if (!exists) {
+                state.userList = [newUser, ...state.userList];
+            }
+        },
     },
 });
 
 export const {
     getUserList,
     getPeopleChatHistory,
+    getRoomChatHistory,
     sendPeopleChat,
     setUserList,
     setCurrentChatTarget,
     setPeopleChatHistory,
-    receiveNewPeopleMessage
+    updateRoomHistory,
+    receiveNewPeopleMessage,
+    addNewUserToSidebar
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

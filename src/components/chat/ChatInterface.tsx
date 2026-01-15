@@ -9,7 +9,7 @@ import type { ReduxState } from "@/constants/ReduxState.ts";
 import { setOpenEmojiPicker, setOpenStickerPicker } from "@/redux/slices/chatTriggerSlice.ts";
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 import { createMessagePayload } from "@/services/chatService.ts";
-import { sendPeopleChat } from "@/redux/slices/chatPeopleSlice.ts";
+import { sendPeopleChat } from "@/redux/slices/chatSlice";
 import { ChatToolBar } from "./ChatToolBar";
 
 //Temp props, just used for display purpose
@@ -19,9 +19,16 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const messages = useSelector((state: ReduxState) =>
-        currentTarget ? (state.chatState.peopleHistory[currentTarget.name] || []) : []
-    );
+    const messages = useSelector((state: ReduxState) => {
+        if (!currentTarget) return [];
+
+        if (currentTarget.type === 0) {
+            return state.chatState.chatPeopleHistory[currentTarget.name] || [];
+        } else {
+            const roomData = state.chatState.roomHistory[currentTarget.name];
+            return roomData ? roomData.chatData : [];
+        }
+    });
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,7 +54,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             if (!inputValue.trim() || !currentTarget) return;
 
             const jsonMessage = createMessagePayload(inputValue.trim(), [], "chat");
-
+            // FIXME: this is just for people chat (currentTarget.type==0)
             dispatch(sendPeopleChat({
                 type: 'people',
                 to: currentTarget.name,

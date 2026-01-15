@@ -1,4 +1,4 @@
-import { insertMarkdown } from "@/utils/chatToolbarUtil";
+import { insertMarkdown } from "@/utils/chatToolBarUtil";
 import { Bold, Heading, Italic, Link, List, ListOrdered, TextQuote, Underline } from "lucide-react";
 import type { RefObject } from "react";
 

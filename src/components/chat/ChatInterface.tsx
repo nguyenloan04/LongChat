@@ -9,7 +9,7 @@ import type { ReduxState } from "@/constants/ReduxState.ts";
 import { setOpenEmojiPicker, setOpenStickerPicker } from "@/redux/slices/chatTriggerSlice.ts";
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 import { createMessagePayload } from "@/services/chatService.ts";
-import { sendPeopleChat } from "@/redux/slices/chatSlice";
+import {sendMessageToRoom, sendPeopleChat} from "@/redux/slices/chatSlice";
 import { ChatToolBar } from "./ChatToolBar";
 
 //Temp props, just used for display purpose
@@ -52,15 +52,27 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
         const handleSendText = () => {
             if (!inputValue.trim() || !currentTarget) return;
+            if(!currentUser) return;
 
             const jsonMessage = createMessagePayload(inputValue.trim(), [], "chat");
-            // FIXME: this is just for people chat (currentTarget.type==0)
-            dispatch(sendPeopleChat({
-                type: 'people',
-                to: currentTarget.name,
-                mes: jsonMessage
-            }));
-
+            if(currentTarget.type === 0) {
+                dispatch(sendPeopleChat({
+                    type: 'people',
+                    to: currentTarget.name,
+                    mes: jsonMessage
+                }));
+            } else {
+                const message = {
+                    type: "chat",
+                    content: inputValue.trim(),
+                    attachment: []
+                }
+                dispatch(sendMessageToRoom({
+                    roomName: currentTarget.name,
+                    message: message,
+                    username: currentUser.username,
+                }))
+            }
             setInputValue("");
             if (textareaRef.current) textareaRef.current.style.height = 'auto';
         };
@@ -103,7 +115,11 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         {openEmojiPicker && <EmojiCustomPicker />}
                     </div>
                     <div className="pt-0.5">
-                        <SendHorizonal size={"2.25rem"} className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300" />
+                        <SendHorizonal 
+                            size={"2.25rem"} 
+                            className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300"
+                            onClick={() => handleSendText()}
+                        />
                     </div>
                 </div>
             </div>

@@ -265,10 +265,10 @@ export const socketMiddleware: Middleware = (store) => {
                 break;
             }
             case getRoomChatHistory.type: {
-                const { roomName, page } = action.payload;
+                const { name, page } = action.payload;
                 if (ws.getSocket?.readyState === WebSocket.OPEN) {
                     ws.send(WebSocketEvent.GET_ROOM_CHAT_MES, {
-                        name: roomName,
+                        name: name,
                         page: page
                     });
                 }

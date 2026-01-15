@@ -8,7 +8,6 @@ import type {
     SendMsgGetUserListPayload,
     SendMsgSendChatPayload
 } from "@/socket/types/WebsocketSendPayload";
-import type {MessageContent} from "@/types/MessageContent.ts";
 
 interface ChatState {
     // Key: target user, Value: data received

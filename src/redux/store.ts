@@ -6,7 +6,7 @@ import userPageReducer from "./slices/userPageSlice.ts"
 import socketReducer from './slices/socketSlice'
 import editUserReducer from "./slices/editUserFormSlice.ts";
 
-import chatReducer from "@/redux/slices/chatPeopleSlice";
+import chatReducer from "@/redux/slices/chatSlice.ts";
 
 import chatTriggerSlice from "@/redux/slices/chatTriggerSlice.ts";
 import chatSlice from "@/redux/slices/chatSlice.ts";

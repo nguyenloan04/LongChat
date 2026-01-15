@@ -6,7 +6,10 @@ import {WebSocketEvent} from "@/socket/types/WebSoketMessage";
 import {forceLogout} from "@/utils/authUtil";
 import type {Middleware} from "@reduxjs/toolkit";
 import type {WsReceiveMessage} from "@/socket/types/WebSocketMessageReceive";
-import type {ReceiveMsgGetChatPeoplePayload} from "@/socket/types/WebsocketReceivePayload";
+import type {
+    ReceiveMsgGetChatPeoplePayload,
+    ReceiveMsgGetChatRoomPayload
+} from "@/socket/types/WebsocketReceivePayload";
 import type {
     SendMsgGetChatPayload,
     SendMsgGetUserListPayload,
@@ -16,18 +19,13 @@ import type {
 import {
     setUserList,
     setPeopleChatHistory,
+    updateRoomHistory,
     receiveNewPeopleMessage,
     getPeopleChatHistory,
+    getRoomChatHistory,
     sendPeopleChat,
     getUserList
 } from "@/redux/slices/chatPeopleSlice";
-import {
-    getRoomChatMessage,
-    receiveNewMessageFromRoom,
-    sendMessageToRoom,
-    updateRoomHistory
-} from "@/redux/slices/chatSlice.ts";
-import type {ChatDataRoom} from "@/socket/types/WebsocketReceivePayload.ts";
 
 const RECONNECT_TIMEOUT = 180000 // Timeout 3 mins for reconnect
 const RECONNECT_INTERVAL = 500 //Reconnect every 0.5s
@@ -138,7 +136,7 @@ export const socketMiddleware: Middleware = (store) => {
             const message = response.data as unknown as ReceiveMsgGetChatPeoplePayload;
 
             const state = store.getState();
-            const rawUsername = state.currentUser.user?.username || localStorage.getItem("username") || "";
+            const rawUsername = state.currentUser.user?.username  || "";
             const myUsername = rawUsername.trim();
 
             if (message && message.mes && myUsername) {
@@ -154,7 +152,7 @@ export const socketMiddleware: Middleware = (store) => {
                 store.dispatch(receiveNewPeopleMessage({ targetName, message }));
 
             } else {
-                console.warn("[WS] Error");
+                console.warn(" Error");
             }
         }
     })
@@ -166,7 +164,9 @@ export const socketMiddleware: Middleware = (store) => {
             let username = state.currentUser.user?.username;
 
             if (!username) {
-                username = localStorage.getItem("username") || undefined;
+                const rawUser = localStorage.getItem("user")
+                const user: User = rawUser ? JSON.parse(rawUser) as User : state.currentUser.user
+                username = user.username || undefined;
             }
 
 
@@ -221,6 +221,11 @@ export const socketMiddleware: Middleware = (store) => {
             case getPeopleChatHistory.type: {
                 const payload = action.payload as SendMsgGetChatPayload;
                 ws.send(WebSocketEvent.GET_PEOPLE_CHAT_MES, payload);
+                break;
+            }
+            case getRoomChatHistory.type: {
+                const payload = action.payload as SendMsgGetChatPayload;
+                ws.send(WebSocketEvent.GET_ROOM_CHAT_MES, payload);
                 break;
             }
             case 'socket/requestRelogin': {

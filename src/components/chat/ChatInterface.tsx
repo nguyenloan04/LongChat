@@ -107,7 +107,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     name=""
                     id=""
                     rows={1}
-                    placeholder="Nhập tin nhắn tới Group 77">
+                    placeholder="Nhập tin nhắn...">
                 </textarea>
                 <div
                     className="flex items-start px-3 justify-end gap-3"

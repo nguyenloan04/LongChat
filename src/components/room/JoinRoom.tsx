@@ -1,9 +1,9 @@
-import {setOpenJoinRoom} from "@/redux/slices/chatTriggerSlice.ts";
+import {setOpenCreateRoom, setOpenJoinRoom} from "@/redux/slices/chatTriggerSlice.ts";
 import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {WebsocketInstance} from "@/socket/WebsocketInstance.ts";
 import {WebSocketEvent} from "@/socket/types/WebSoketMessage.ts";
-import {updateRoomHistory} from "@/redux/slices/chatSlice.ts";
+import {addNewUserToSidebar, setCurrentChatTarget, updateRoomHistory} from "@/redux/slices/chatSlice.ts";
 
 export default function JoinRoom () {
     const [error, setError] = useState<string>('');
@@ -27,12 +27,17 @@ export default function JoinRoom () {
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.JOIN_ROOM, (response) => {
             setLoading(false);
             if(response.status === "success") {
-                console.log(response.data)
-                dispatch(updateRoomHistory({
-                    target: response.data.name,
-                    value: response.data
-                }))
-                dispatch(setOpenJoinRoom(false)) 
+                dispatch(updateRoomHistory(response.data))
+                const newChatTarget = {
+                    name: response.data.name,
+                    type: 1,
+                    actionTime: new Date().toISOString(),
+                }
+
+                dispatch(addNewUserToSidebar(newChatTarget))
+                dispatch(setCurrentChatTarget(newChatTarget))
+
+                dispatch(setOpenCreateRoom(false))
             } else {
                 setError(response.mes === "Room not found" ? "Không tìm thấy nhóm. Vui lòng đổi tên khác!" : "Đã có lỗi xảy ra!")
             }

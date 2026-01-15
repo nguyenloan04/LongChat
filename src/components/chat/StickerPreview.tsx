@@ -1,25 +1,39 @@
 import {useState} from "react";
-import {useDispatch} from "react-redux";
-import {sendMessageToRoom} from "@/redux/slices/chatSlice.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {sendMessageToRoom, sendPeopleChat} from "@/redux/slices/chatSlice.ts";
+import type {ReduxState} from "@/constants/ReduxState.ts";
 
 export function StickerPreview(props: {src: string, preview: string}) {
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
-    
+    const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
+    const currentChatTarget = useSelector((state:ReduxState) => state.chatState.currentChatTarget);
     const handleSticker = () => {
+        if(!currentUser || !currentChatTarget) return;
+        
         const stickers = JSON.parse(localStorage.getItem("stickerHistory") || "[]");
         const newStickers = [{src: props.src, preview: props.preview}, ...stickers];
         localStorage.setItem("stickerHistory", JSON.stringify(newStickers));
-        // FIXME: need change roomName
-        dispatch(sendMessageToRoom({
-            roomName: "Nhóm 77 Test WEB",
-            message: {
-                type: "sticker",
-                content: props.src,
-                attachment: []
-            },
-            username: localStorage.getItem("userName") || "",
-        }))
+        
+        const message = {
+            type: "sticker",
+            content: props.src,
+            attachment: []
+        }
+        
+        if(currentChatTarget.type === 0) {
+            dispatch(sendPeopleChat({
+                type: "people",
+                to: currentChatTarget.name,
+                mes: JSON.stringify(message)
+            }))
+        } else {
+            dispatch(sendMessageToRoom({
+                roomName: currentChatTarget.name,
+                message: message,
+                username: currentUser.username,
+            }))
+        }
     }
     
     return (

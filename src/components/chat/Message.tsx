@@ -100,12 +100,14 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
                                             {
                                                 hour: '2-digit',
                                                 minute: '2-digit',
+                                                hour12: false,
                                                 ...(
                                                     new Date(time).toDateString() !== new Date(Date.now()).toDateString()
                                                     && {
                                                         day: '2-digit',
                                                         month: '2-digit',
-                                                        year: 'numeric'
+                                                        year: 'numeric',
+                                                        hour12: false,
                                                     }
                                                 )
                                             }

@@ -3,7 +3,11 @@ export interface ReceiveMsgLoginPayload {
     RE_LOGIN_CODE: string
 }
 
-export interface ReceiveMsgReLoginPayload { }
+// export interface ReceiveMsgReLoginPayload { }
+
+export interface ReceiveMsgReLoginPayload {
+    RE_LOGIN_CODE: string
+}
 
 export interface ChatDataRoom { id: number, name: string, type: number, to: string, mes: string, createAt?: string }
 

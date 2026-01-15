@@ -147,6 +147,8 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             </div>
             {/* Main UI */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-1 w-full bg-gray-300/50 p-2">
+                <div className="mt-auto" />
+
                 {messages.length === 0 && (
                     <p className="text-center text-gray-500 mt-10">Bắt đầu cuộc trò chuyện...</p>
                 )}

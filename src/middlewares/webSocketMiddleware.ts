@@ -21,13 +21,6 @@ import {
     sendPeopleChat,
     getUserList
 } from "@/redux/slices/chatPeopleSlice";
-import type { User } from "@/constants/User";
-import { setConnected, setErrorMessage } from "@/redux/slices/socketSlice";
-import { setCurrentUser } from "@/redux/slices/userSlice";
-import { WebsocketInstance } from "@/socket/WebsocketInstance";
-import { WebSocketEvent } from "@/socket/types/WebSoketMessage";
-import { forceLogout } from "@/utils/authUtil";
-import type { Middleware } from "@reduxjs/toolkit";
 import {
     getRoomChatMessage,
     receiveNewMessageFromRoom,

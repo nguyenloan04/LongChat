@@ -8,6 +8,7 @@ import type {
     SendMsgGetUserListPayload,
     SendMsgSendChatPayload
 } from "@/socket/types/WebsocketSendPayload";
+import {formatSendTime} from "@/utils/messageUtil.ts";
 
 interface ChatState {
     // Key: target user, Value: data received
@@ -120,31 +121,17 @@ const chatSlice = createSlice({
         },
         receiveNewMessageFromRoom: (state, action: PayloadAction<ReceiveMsgSendChatRoomPayload>) => {
             const payload = action.payload;
-            const target = payload.name
+            const target = payload.to
             if(state.roomHistory[target]) {
                 const formattedMessage = {
                     ...payload,
-                    createAt: payload.createAt || new Date().toISOString()
+                    createAt: payload.createAt || formatSendTime(new Date().toISOString())
                 };
 
                 state.roomHistory[target].chatData.push(formattedMessage);
             }
         },
         sendMessageToRoom: (state, action: PayloadAction<{roomName: string, message: any, username: string}>) => {
-            const { roomName, message, username } = action.payload;
-
-            const optimisticMessage = {
-                id: Date.now(), //temp id
-                name: username,
-                to: roomName,
-                mes: message,
-                type: 1,
-                createAt: new Date().toISOString()
-            };
-
-            if (state.roomHistory[roomName]) {
-                state.roomHistory[roomName].chatData.push(optimisticMessage);
-            }
         }
     },
 });

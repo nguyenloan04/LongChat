@@ -50,7 +50,7 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
             case "sticker":
                 return (
                     <img
-                        src={contentObj.attachment?.[0] || ""}
+                        src={contentObj.content || ""}
                         alt="Sticker"
                         className="w-32 h-32 object-contain"
                     />

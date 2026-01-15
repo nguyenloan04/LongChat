@@ -1,13 +1,16 @@
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {sendMessageToRoom, sendPeopleChat} from "@/redux/slices/chatSlice.ts";
+import {getUserList, receiveNewMessageFromRoom, sendMessageToRoom, sendPeopleChat} from "@/redux/slices/chatSlice.ts";
 import type {ReduxState} from "@/constants/ReduxState.ts";
+import {setOpenStickerPicker} from "@/redux/slices/chatTriggerSlice.ts";
+import {formatSendTime} from "@/utils/messageUtil.ts";
 
 export function StickerPreview(props: {src: string, preview: string}) {
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
     const currentChatTarget = useSelector((state:ReduxState) => state.chatState.currentChatTarget);
+    const userList = useSelector((state:ReduxState) => state.chatState.userList)
     const handleSticker = () => {
         if(!currentUser || !currentChatTarget) return;
         
@@ -33,7 +36,21 @@ export function StickerPreview(props: {src: string, preview: string}) {
                 message: message,
                 username: currentUser.username,
             }))
+            if(userList[0].name !== currentChatTarget.name) {
+                dispatch(getUserList({}))
+            }
+            setTimeout(() => {
+                dispatch(receiveNewMessageFromRoom({
+                    id: Date.now(), //temp id
+                    name: currentUser.username,
+                    to: currentChatTarget.name,
+                    mes: JSON.stringify(message),
+                    type: 1,
+                    createAt: formatSendTime(new Date().toISOString())
+                }))
+            }, 500)
         }
+        dispatch(setOpenStickerPicker(false))
     }
     
     return (

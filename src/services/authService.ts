@@ -12,11 +12,6 @@ export function validateForm(formData: AuthFormSlice, formType: FormType): { res
         return { result: false, message: "Vui lòng nhập đầy đủ thông tin" };
     }
 
-    if (password.length < 8 || password.length > 32) return {
-        result: false,
-        message: "Mật khẩu phải chứa từ 8 - 32 ký tự"
-    }
-
     if (formType === FormType.REGISTER && password !== validatePassword) {
         return { result: false, message: "Xác nhận mật khẩu không khớp" };
     }

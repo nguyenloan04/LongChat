@@ -43,7 +43,7 @@ const options: MarkdownOptions<React.ReactNode> = {
             ),
 
             Paragraph: (_node, children) => (
-                <p className="mb-4 leading-7 text-gray-800">{children}</p>
+                <p className="">{children}</p>
             ),
 
             CodeBlock: (node) => {
@@ -60,13 +60,13 @@ const options: MarkdownOptions<React.ReactNode> = {
 
                 return (
                     <div className="my-6 rounded-lg overflow-hidden font-mono text-sm border border-gray-200 dark:border-gray-800 shadow-sm">
-                        <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-[#252525] border-b border-gray-200 dark:border-gray-800">
-                            <span className="text-gray-500 dark:text-gray-400 lowercase italic">{lang || 'text'}</span>
-                        </div>
-
                         <pre className="p-4 overflow-auto bg-gray-200 dark:bg-[#131313] text-gray-700 dark:text-gray-300 leading-relaxed scrollbar-thin dark:scrollbar-thumb-gray-800 scrollbar-thumb-gray-300">
                             <code className="whitespace-pre-wrap break-all">{content}</code>
                         </pre>
+
+                        <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-[#252525] border-b border-gray-200 dark:border-gray-800">
+                            <span className="text-gray-500 dark:text-gray-400 lowercase italic">{lang || 'text'}</span>
+                        </div>
                     </div>
                 );
             },
@@ -83,7 +83,31 @@ const options: MarkdownOptions<React.ReactNode> = {
                     </code>
                 );
             },
+            Quote: (_node, children) => (
+                <blockquote
+                    className="m-0 py-0 ps-2 border-l-4 border-l-neutral-400"
+                >
+                    {children}
+                </blockquote>
+            ),
+            Link: (node, _children) => (
+                <a
+                    target="_blank"
+                    rel="noopener"
+                    className="cursor-pointer underline text-blue-200 hover:text-blue-100"
+                    href={node.href?.startsWith("/") ? "about:blank" : node.href}
+                    title={node.href}
+                >
+                    {node.text}
+                </a>
+            ),
+            Bold: (_node, children) => (
+                <p className="font-semibold">{children}</p>
+            )
         }
+    },
+    converterOptions: {
+        allowDangerousHtml: false
     }
 };
 
@@ -127,7 +151,7 @@ const convertPlugin = [
         },
         {
             render: (_node, children) => (
-                <span key={Math.random()} style={{ textDecoration: "underline" }}>
+                <span style={{ textDecoration: "underline" }}>
                     {children}
                 </span>
             )
@@ -173,9 +197,11 @@ const convertPlugin = [
 ]
 
 export function displayMessageContent(message: MessageContent) {
-
-
     return (
-        <MarkdownComponent content={message.content} plugin={convertPlugin} options={options} />
+        <MarkdownComponent 
+            content={message.content} 
+            plugin={convertPlugin} 
+            options={options} 
+            />
     )
 }

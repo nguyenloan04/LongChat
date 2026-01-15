@@ -1,6 +1,24 @@
-import { ChevronDown, Copy, FileX2, ImageOff, Link, Settings, Share, User, UserPlus, Users } from "lucide-react";
+import type { ReduxState } from "@/constants/ReduxState";
+import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
+import { ChevronDown, Copy, Settings, Share, User, UserPlus } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export function RoomMenuBar() {
+    const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
+    const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
+
+    const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
+        if (!currentTarget) return null;
+        console.log("Current Name:", currentTarget.name);
+        console.log("Keys in History:", Object.keys(state.chatState.roomHistory));
+
+        if (currentTarget.type === 0) {
+            return null
+        } else {
+            const roomData = state.chatState.roomHistory[currentTarget.name];
+            return roomData
+        }
+    });
 
     const headerFeature = [
         {
@@ -14,6 +32,8 @@ export function RoomMenuBar() {
         }
     ]
 
+    if (!currentTarget) return null
+
     return (
         <div>
             {/* Header */}
@@ -21,7 +41,7 @@ export function RoomMenuBar() {
                 <div className="w-18 h-18 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
                     <User size={'2.5rem'} />
                 </div>
-                <p className="text-lg font-semibold">Group 77</p>
+                <p className="text-lg font-semibold">{currentTarget.name}</p>
 
                 <div className="mt-4 flex gap-1 justify-center items-start">
                     {headerFeature.map(ele => (
@@ -39,14 +59,27 @@ export function RoomMenuBar() {
             {/* Temp */}
             {/* Member */}
             <div className="px-2">
-                <div className="my-1">
-                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
-                        <h5 className="font-semibold">Thành viên trong nhóm</h5>
-                        <ChevronDown />
+                {getRoomData && currentTarget.type === 1 ?
+                    <div className="my-1">
+                        <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                            <h5 className="font-semibold">Thành viên trong nhóm</h5>
+                            <ChevronDown />
+                        </div>
+                        <div className="flex flex-col overflow-y-auto h-40 border-b">
+                            {getRoomData.userList && getRoomData.userList?.map(user => (
+                                <div className="rounded cursor-pointer flex gap-2 items-center hover:bg-neutral-200 p-1">
+                                    <div className="my-1 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center bg-white shrink-0">
+                                        <User size={"1rem"} />
+                                    </div>
+                                    <span>
+                                        {`${user.name} ${currentUser?.username === user.name ? "(Bạn)" : ""}`}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="flex flex-col gap-3">
-                    </div>
-                </div>
+                    : <></>
+                }
                 <div className="my-1">
                     <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
                         <h5 className="font-semibold">Ảnh & Video</h5>

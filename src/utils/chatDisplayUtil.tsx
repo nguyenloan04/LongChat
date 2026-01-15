@@ -23,7 +23,7 @@ const options: MarkdownOptions<React.ReactNode> = {
                     3: "text-xl font-medium mt-4 mb-2",
                     4: "text-lg font-medium mt-3 mb-1",
                     5: "text-base font-bold mt-2",
-                    6: "text-sm font-bold mt-2 text-gray-600",
+                    6: "text-sm font-bold mt-2",
                 };
 
                 const className = headerStyles[level || 6] || "text-base";

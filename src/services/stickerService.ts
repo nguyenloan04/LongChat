@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/stickers"
+const BASE_URL = import.meta.env.VITE_SERVER_URL
 
 export interface StickerResponse {
     data: {

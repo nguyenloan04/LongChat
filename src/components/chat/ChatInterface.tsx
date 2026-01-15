@@ -9,11 +9,11 @@ import type { ReduxState } from "@/constants/ReduxState.ts";
 import { setOpenEmojiPicker, setOpenStickerPicker } from "@/redux/slices/chatTriggerSlice.ts";
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 import { createMessagePayload } from "@/services/chatService.ts";
-import {getUserList, receiveNewMessageFromRoom, sendMessageToRoom, sendPeopleChat} from "@/redux/slices/chatSlice";
+import { getUserList, receiveNewMessageFromRoom, sendMessageToRoom, sendPeopleChat } from "@/redux/slices/chatSlice";
 import { ChatToolBar } from "./ChatToolBar";
 import { formatSendTime } from "@/utils/messageUtil";
 import "../../styles/chat-interface-style.css"
-import type {ReceiveMsgGetChatPeoplePayload} from "@/socket/types/WebsocketReceivePayload.ts";
+import type { ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload.ts";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
@@ -21,6 +21,16 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
+        if (!currentTarget) return null;
+        if (currentTarget.type === 0) {
+            return null
+        } else {
+            const roomData = state.chatState.roomHistory[currentTarget.name];
+            return roomData
+        }
+    });
 
     const messages = useSelector((state: ReduxState) => {
         if (!currentTarget) return [];
@@ -40,7 +50,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
     const SendMessageComponent = () => {
         const dispatch = useDispatch();
         const [inputValue, setInputValue] = useState("");
-        const userList = useSelector((state:ReduxState) => state.chatState.userList)
+        const userList = useSelector((state: ReduxState) => state.chatState.userList)
         const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker)
         const openEmojiPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openEmojiPicker)
 
@@ -54,9 +64,9 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
         const handleSendText = () => {
             if (!inputValue.trim() || !currentTarget) return;
-            if(!currentUser) return;
+            if (!currentUser) return;
             const jsonMessage = createMessagePayload(inputValue.trim(), [], "chat");
-            if(currentTarget.type === 0) {
+            if (currentTarget.type === 0) {
                 dispatch(sendPeopleChat({
                     type: 'people',
                     to: currentTarget.name,
@@ -73,7 +83,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     message: message,
                     username: currentUser.username,
                 }))
-                if(!(userList[0].name === currentTarget.name && userList[0].type ===  currentTarget.type)) {
+                if (!(userList[0].name === currentTarget.name && userList[0].type === currentTarget.type)) {
                     dispatch(getUserList({}))
                 }
                 setTimeout(() => {
@@ -107,7 +117,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     name=""
                     id=""
                     rows={1}
-                    placeholder="Nhập tin nhắn tới Group 77">
+                    placeholder={`Nhập tin nhắn tới ${currentTarget?.name}`}>
                 </textarea>
                 <div
                     className="flex items-start px-3 justify-end gap-3"
@@ -156,8 +166,11 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         <User />
                     </div>
                     <div>
-                        <p className="font-semibold text-xl">Group 77</p>
-                        <p>3 thành viên</p>
+                        <p className="font-semibold text-xl">{currentTarget.name}</p>
+                        <p>
+                            {currentTarget.type === 1 && getRoomData?.userList &&
+                                `${getRoomData.userList.length} thành viên`}
+                        </p>
                     </div>
                 </div>
                 <div className="flex gap-1">

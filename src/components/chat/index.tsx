@@ -23,7 +23,7 @@ export function MainChatUIComponent() {
             <div className="flex-1">
                 <ChatInterface closeTabState={roomMenuState} onCloseTab={closeTab} />
             </div>
-            <div className={`transition-all duration-300 ease-in-out ${roomMenuState ? `w-100` : 'w-0 opacity-0 pointer-events-none'}`}>
+            <div className={`border-l transition-all duration-300 ease-in-out ${roomMenuState ? `w-100` : 'w-0 opacity-0 pointer-events-none'}`}>
                 <RoomMenuBar />
             </div>
         </div>

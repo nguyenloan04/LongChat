@@ -48,7 +48,44 @@ const convertPlugin = [
                 </span>
             )
         }
-    )
+    ),
+    createPlugin<string, React.ReactNode>(
+        "Mention",
+        "inline",
+        {
+            match: (lexer) => lexer.peek() === "@",
+            emit: (lexer) => {
+                lexer.next();
+                let username = "";
+                const allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+                while (!lexer.isEndOfFile()) {
+                    const char = lexer.peek();
+                    if (char && allowedChars.includes(char)) {
+                        username += char;
+                        lexer.next();
+                    } else {
+                        break;
+                    }
+                }
+
+                if (username.length > 0) {
+                    lexer.listToken.push({ type: "Mention", value: username });
+                } else {
+                    lexer.listToken.push({ type: "text", value: "@" });
+                }
+            }
+        },
+        {
+            execute: (parser, token) => {
+                parser.next(1);
+                return { type: "Mention", value: token.value };
+            }
+        },
+        {
+            render: (node) => node.value && (<span className="text-blue-500">@{node.value}</span>)
+        }
+    ),
 ]
 
 export function displayMessageContent(message: MessageContent) {

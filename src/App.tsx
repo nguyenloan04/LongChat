@@ -4,6 +4,7 @@ import './App.css'
 import { useSelector } from "react-redux";
 import type { ReduxState } from "@/constants/ReduxState.ts";
 import { useEffect } from "react";
+import { ToastProvider } from './contexts/ToastContext.tsx';
 
 function App() {
     //FIXME: Implement a dialog to display websocket error
@@ -28,9 +29,9 @@ function App() {
     }, [theme]);
 
     return (
-        <>
+        <ToastProvider>
             <RouterProvider router={router} />
-        </>
+        </ToastProvider>
     )
 }
 

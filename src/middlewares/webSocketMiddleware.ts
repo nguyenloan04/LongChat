@@ -64,16 +64,20 @@ export const socketMiddleware: Middleware = (store) => {
         store.dispatch(setConnected(false))
         switch (code) {
             //Connection closed from connection error or timeout
-            case 1006: case 1001: {
+            case 1006: case 1001: case 1000: {
                 ws.connect()
                 store.dispatch({type: 'socket/requestRelogin'})
                 break
             }
-            //Server error
-            case 1000: {
+            default: {
                 forceLogout(store)
                 break
             }
+            //Server error
+            // case 1000: {
+            //     forceLogout(store)
+            //     break
+            // }
         }
     }
 

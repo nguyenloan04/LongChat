@@ -1,18 +1,16 @@
 import type { ReduxState } from "@/constants/ReduxState";
+import { useToast } from "@/contexts/ToastContext";
 import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
-import { ChevronDown, ChevronUp, Copy, ImageOff, Settings, Share, User, UserPlus } from "lucide-react";
+import { generateInviteLink } from "@/utils/messageUtil";
+import { ChevronDown, ChevronUp, CircleCheck, Copy, Settings, Share, User, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
 export function RoomMenuBar() {
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
-
     const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
         if (!currentTarget) return null;
-        console.log("Current Name:", currentTarget.name);
-        console.log("Keys in History:", Object.keys(state.chatState.roomHistory));
-
         if (currentTarget.type === 0) {
             return null
         } else {
@@ -20,6 +18,13 @@ export function RoomMenuBar() {
             return roomData
         }
     });
+
+    //Local state
+    const [memberState, setMemberState] = useState(false)
+    const [attachmentState, setAttachmentState] = useState(false)
+    const [policyState, setPolicyState] = useState(false)
+
+    const { showToast } = useToast()
 
     const headerFeature = [
         {
@@ -33,11 +38,18 @@ export function RoomMenuBar() {
         }
     ]
 
-    const [memberState, setMemberState] = useState(false)
-    const [attachmentState, setAttachmentState] = useState(false)
-    const [policyState, setPolicyState] = useState(false)
-
     if (!currentTarget) return null
+
+    const inviteGroupLink = currentTarget && currentTarget.type === 1 ? generateInviteLink(currentTarget.name) : ""
+
+    const handleCopy = async () => {
+        if (!inviteGroupLink) return;
+        try {
+            await navigator.clipboard.writeText(inviteGroupLink);
+            showToast("Đã sao chép link mời!", CircleCheck)
+        } catch (err) {
+        }
+    };
 
     return (
         <div>
@@ -125,18 +137,17 @@ export function RoomMenuBar() {
                     <h5 className="font-semibold">Link tham gia nhóm</h5>
                     <div className="flex flex-1 truncate justify-between items-center gap-4">
                         <a
-                            href="https://localhost:5713/g/group77"
+                            href={inviteGroupLink}
                             className="underline text-blue-500 hover:text-blue-400 active:text-blue-300 text-sm min-w-0"
                         >
-                            <p className="truncate">
-                                https://localhost:5713/g/group77
-                            </p>
+                            <p className="truncate">{inviteGroupLink}</p>
                         </a>
 
                         <div className="flex gap-2 justify-end shrink-0">
                             <div
                                 className="cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 w-10 h-10 flex justify-center items-center"
                                 title="Sao chép"
+                                onClick={handleCopy}
                             >
                                 <Copy size={'1.25rem'} />
                             </div>

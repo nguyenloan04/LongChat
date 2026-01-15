@@ -7,3 +7,7 @@ export function formatSendTime(time: string) {
         return ""
     }
 }
+
+export function generateInviteLink(roomName: string): string {
+    return `${window.location.origin}/g/${encodeURIComponent(roomName)}`
+}

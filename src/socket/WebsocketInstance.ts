@@ -76,8 +76,6 @@ export class WebsocketInstance {
         event: K,
         data: WsSendMsgPayloadMap[K]
     ) {
-        console.log(this.socket)
-        console.log(this.socket?.readyState)
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
             const message: WsSendMessage<K> = {
                 action: "onchat",

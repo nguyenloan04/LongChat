@@ -74,8 +74,8 @@ export const socketMiddleware: Middleware = (store) => {
             case 1001:
             case 1000:
             default: {
-                forceLogout(store)
                 store.dispatch(setToastMessage({ message: "Lỗi server, hãy đăng nhập lại!", icon: ToastKeys.SERVER_ERROR }))
+                forceLogout(store)
                 break
             }
         }
@@ -92,6 +92,7 @@ export const socketMiddleware: Middleware = (store) => {
         if (response.status === "success") {
             //Notice here
             localStorage.setItem("RE_LOGIN_CODE", response.data.RE_LOGIN_CODE)
+            store.dispatch(setToastMessage({ message: "Đăng nhập lại thành công", icon: ToastKeys.SUCCESS }))
         }
         else {
             //Re login failed, end session and require login

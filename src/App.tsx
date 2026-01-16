@@ -6,7 +6,7 @@ import type { ReduxState } from "@/constants/ReduxState.ts";
 import { useEffect } from "react";
 import { ToastProvider, useToast } from './contexts/ToastContext.tsx';
 import { clearToastMessage } from './redux/slices/socketSlice.ts';
-import { ToastIcons } from './constants/ToastIcon.ts';
+import { ToastIcons, ToastKeys, type ToastIconType } from './constants/ToastIcon.ts';
 
 const ToastListener = () => {
     const toast = useSelector((state: ReduxState) => state.socketState.socketToast);
@@ -14,12 +14,18 @@ const ToastListener = () => {
     const dispatcher = useDispatch()
 
     useEffect(() => {
-        if (toast) {
-            showToast(toast.message, toast.icon ? ToastIcons[toast.icon] : undefined);
-            setTimeout(() => {
+        if (!toast) return
+        const Icon = toast.icon ? ToastIcons[toast.icon] : undefined
+        showToast(toast.message, Icon)
+
+        const inCludeClearToastKey = new Set<ToastIconType>([ToastKeys.RECONNECT, ToastKeys.SERVER_ERROR])
+
+        const timer = setTimeout(() => {
+            if (toast.icon && !inCludeClearToastKey.has(toast.icon)) {
                 dispatcher(clearToastMessage())
-            }, 3000)
-        }
+            }
+        }, 3000)
+        return () => clearTimeout(timer)
     }, [toast]);
 
     return null;

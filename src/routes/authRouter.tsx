@@ -2,6 +2,7 @@
 // import ResetPasswordComponent from "@/components/auth/ResetPasswordForm";
 import LoginComponent from "@/components/auth/Login";
 import RegisterComponent from "@/components/auth/Register";
+import { ClearToastComponent } from "@/components/common/ClearToastComponent";
 import { redirect, type RouteObject } from "react-router-dom";
 
 const loginLoader = () => {
@@ -14,13 +15,18 @@ const loginLoader = () => {
 
 export const authRouter: RouteObject[] = [
     {
-        path: "/login",
-        loader: loginLoader,
-        element: <LoginComponent />
-    },
-    {
-        path: "/register",
-        element: <RegisterComponent />
+        element: <ClearToastComponent />,
+        children: [
+            {
+                path: "/login",
+                loader: loginLoader,
+                element: <LoginComponent />
+            },
+            {
+                path: "/register",
+                element: <RegisterComponent />
+            },
+        ]
     },
 
     /**

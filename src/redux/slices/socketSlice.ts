@@ -9,7 +9,7 @@ export interface ToastSlice {
 interface SocketSlice {
     isConnected: boolean
     isReconnecting: boolean
-    socketToast: ToastSlice | null
+    socketToast: ToastSlice & { id: number } | null
     errorMessage: string | null
 }
 
@@ -38,8 +38,8 @@ export const socketSlice = createSlice({
         },
 
         setToastMessage: (state, action: PayloadAction<ToastSlice>) => {
-            state.socketToast = action.payload
-
+            const { message, icon } = action.payload
+            state.socketToast = { message, icon, id: Date.now() }
         },
         clearToastMessage: (state) => {
             state.socketToast = null;

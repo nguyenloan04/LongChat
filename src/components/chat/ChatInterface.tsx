@@ -1,6 +1,6 @@
 //Props later
 
-import { Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User, X } from "lucide-react";
+import { Image, LoaderCircle, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User, X } from "lucide-react";
 import { Message } from "./Message";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -24,6 +24,7 @@ import type { ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload } fro
 // upload
 import { useUpload } from "@/hooks/useUpload";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
@@ -223,18 +224,21 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                             <button
                                 onClick={handleSendText}
                                 disabled={isUploading || (!inputValue.trim() && selectedFiles.length === 0)}
-                                className={`rounded-full p-2 transition-colors ${isUploading
+                                className={` cursor-pointer rounded-full p-2 transition-colors ${isUploading
                                     ? "bg-gray-300 cursor-not-allowed"
                                     : "bg-indigo-500 hover:bg-indigo-400 text-neutral-100"
                                     }`}
                             >
-                                {isUploading ? (
-                                    <div className="w-[2.25rem] h-[2.25rem] flex items-center justify-center">
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    </div>
-                                ) : (
-                                    <SendHorizonal size={"2.25rem"} />
-                                )}
+                                {isUploading
+                                    ?
+                                    <LoaderCircle
+                                        role="status"
+                                        aria-label="Loading"
+                                        className={"animate-spin border-neutral-400 text-white"}
+                                        size={"1.25rem"}
+                                    />
+                                    : <SendHorizonal size={"1.25rem"} />
+                                }
                             </button>
                         </div>
                     </div>

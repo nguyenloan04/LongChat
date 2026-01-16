@@ -6,6 +6,7 @@ import Privacy from "@/components/policy/Privacy.tsx";
 import { UserPage } from "@/components/user/UserPage.tsx";
 import Error from "@/components/error/Error.tsx";
 import ComingSoon from "@/components/comingsoon/ComingSoon.tsx";
+import { RouterConstant } from "@/constants/RouterConst";
 
 const route = createBrowserRouter(
     [
@@ -43,7 +44,7 @@ const route = createBrowserRouter(
 
     ],
     {
-        basename: "/LongChat",
+        basename: RouterConstant.BASE_NAME,
     }
 )
 

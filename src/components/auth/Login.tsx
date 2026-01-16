@@ -71,7 +71,8 @@ export default function LoginComponent() {
 
                 let description = ""
                 try {
-                    description = await authApi.getDescription(username).then(res => res.description)
+                    const res = await authApi.getDescription(username)
+                    description = res.description || ""
                 }
                 catch (_) { }
 
@@ -91,13 +92,13 @@ export default function LoginComponent() {
                 setMessage("Đăng nhập thành công")
                 setTimeout(() => {
                     navigate("/chat")
+                    unsubscribe()
                 }, 500)
             }
             else {
                 isLoading(false)
                 setMessage("Tên tài khoản hoặc mật khẩu sai")
                 console.log(response.mes)
-                //Send a message here
             }
         })
 

@@ -2,7 +2,7 @@ import type { ReduxState } from "@/constants/ReduxState";
 import { useToast } from "@/contexts/ToastContext";
 import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
 import { generateInviteLink } from "@/utils/messageUtil";
-import { ChevronDown, ChevronUp, CircleCheck, Copy, Settings, Share, User, UserPlus } from "lucide-react";
+import { ChevronDown, ChevronUp, CircleCheck, Copy, Share, User } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -103,9 +103,12 @@ export function RoomMenuBar() {
                     : <></>
                 }
                 <div className="my-1">
-                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                    <div
+                        className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200"
+                        onClick={() => setAttachmentState(!memberState)}
+                    >
                         <h5 className="font-semibold">Ảnh & Video</h5>
-                        <ChevronDown />
+                        {attachmentState ? <ChevronUp /> : <ChevronDown />}
                     </div>
                     {/* <div className="gap-3">
                         <div className="flex flex-col items-center justify-center gap-2">
@@ -114,33 +117,36 @@ export function RoomMenuBar() {
                         </div>
                     </div> */}
                 </div>
-                <div className="my-1">
+                {/* <div className="my-1">
                     <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
                         <h5 className="font-semibold">File</h5>
-                        <ChevronDown />
+                        {memberState ? <ChevronUp /> : <ChevronDown />}
                     </div>
-                    {/* <div className="gap-3">
+                    <div className="gap-3">
                         <div className="flex flex-col items-center justify-center gap-2">
                             <FileX2 size={"2rem"} className="text-neutral-500" />
                             <p className="text-center text-neutral-500 text-sm">Không có file được gửi</p>
                         </div>
-                    </div> */}
-                </div>
+                    </div>
+                </div> */}
                 <div className="my-1">
-                    <div className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200">
+                    <div
+                        className="p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200"
+                        onClick={() => setPolicyState(!policyState)}
+                    >
                         <h5 className="font-semibold">Quyền riêng tư & hỗ trợ</h5>
-                        <ChevronDown />
+                        {policyState ? <ChevronUp /> : <ChevronDown />}
                     </div>
                 </div>
                 <div className="my-1 p-2">
                     <h5 className="font-semibold">Link tham gia nhóm</h5>
                     <div className="flex flex-1 truncate justify-between items-center gap-4">
                         <a
-                            href="https://localhost:5713/g/group77"
+                            href={inviteGroupLink}
                             className="underline text-blue-500 hover:text-blue-400 active:text-blue-300 text-sm min-w-0"
                         >
                             <p className="truncate">
-                                https://localhost:5713/g/group77
+                                {inviteGroupLink}
                             </p>
                         </a>
 
@@ -148,6 +154,7 @@ export function RoomMenuBar() {
                             <div
                                 className="cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 w-10 h-10 flex justify-center items-center"
                                 title="Sao chép"
+                                onClick={handleCopy}
                             >
                                 <Copy size={'1.25rem'} />
                             </div>

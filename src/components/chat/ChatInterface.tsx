@@ -128,9 +128,8 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 }, 500)
             }
 
-            setInputValue("")
+            dispatch(setInputValue(""))
             setSelectedFiles([])
-
             if (textareaRef.current) textareaRef.current.style.height = 'auto';
         };
 

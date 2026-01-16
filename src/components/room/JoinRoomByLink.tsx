@@ -43,15 +43,25 @@ export function JoinRoomByLink() {
     }, [])
 
     useEffect(() => {
-        setTimeout(() => {
-            if (!roomName) return
-            if (!currentUser || !localStorage.getItem("user")) navigate("/")
+        const sendRequest = () => {
+            const instance = WebsocketInstance.getInstance();
+            const socket = instance.getSocket;
 
-            wsInstance.send(WebSocketEvent.JOIN_ROOM, {
-                name: roomName.trim()
-            })
-        }, 1000)
-    }, [roomName])
+            if (socket && socket.readyState === WebSocket.OPEN && roomName) {
+                wsInstance.send(WebSocketEvent.JOIN_ROOM, { name: roomName.trim() });
+            } else {
+                setTimeout(sendRequest, 100);
+            }
+        }
+
+        if (roomName && currentUser) {
+            sendRequest();
+        }
+
+        if (!currentUser && !localStorage.getItem("user")) {
+            navigate("/");
+        }
+    }, [roomName, currentUser]);
 
     return (
         error

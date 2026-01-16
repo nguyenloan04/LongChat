@@ -49,41 +49,61 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
                     </div>
                 }
                 <div className="max-w-[60%] lg:max-w-[50%]">
-                    <div className={`mt-1 p-2 px-3 rounded-2xl shadow-sm ${contentObj.type === "sticker" ? "bg-transparent shadow-none" :
-                        isOwner ? "bg-indigo-600 text-white" : "bg-white"
-                        }`}>
-                        {!isOwner && contentObj.type !== "sticker" &&
-                            <p className="text-gray-500 text-xs font-bold mb-1">
+                    <div
+                        className={`mt-1 p-2 rounded-2xl 
+                            ${contentObj.type === "sticker"
+                                ? "bg-transparent shadow-none ps-0 w-48"
+                                : ` shadow-sm px-3 ${isOwner
+                                    ? "bg-indigo-600 text-white"
+                                    : "bg-white"
+                                }`
+                            }`
+                        }
+                    >
+                        {!isOwner &&
+                            <p
+                                className={`w-fit text-gray-500 text-xs font-semibold mb-1 ${contentObj.type === "sticker" ? "bg-neutral-300 p-1 rounded-full px-2" : ""}`}
+                            >
                                 {username}
                             </p>
                         }
-                        <div className="overflow-x-auto ">
+                        <div className="overflow-x-auto">
                             {renderContent()}
                         </div>
 
-                        {contentObj.type !== "sticker" && (
-                            <p className={`${isOwner ? "text-indigo-200" : "text-gray-400"} text-[10px] text-end mt-1`}>
-                                {time
-                                    ? new Date(time)
-                                        .toLocaleTimeString(
-                                            "vi-VN",
-                                            {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: false,
-                                                ...(
-                                                    new Date(time).toDateString() !== new Date(Date.now()).toDateString()
-                                                    && {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric',
-                                                        hour12: false,
-                                                    }
-                                                )
-                                            }
-                                        )
-                                    : ""
-                                }
+                        {contentObj.type && (
+                            <p
+                                className={`
+                                    ${isOwner ? "text-indigo-200" : "text-gray-400"} text-[10px] text-end mt-1
+                                `}
+                            >
+                                <span
+                                    className={
+                                        `${contentObj.type === "sticker" ? "rounded-full px-1.5 p-0.5 bg-neutral-300 text-neutral-500" : ""}`
+                                    }
+                                >
+                                    {time
+                                        ? new Date(time)
+                                            .toLocaleTimeString(
+                                                "vi-VN",
+                                                {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false,
+                                                    ...(
+                                                        new Date(time).toDateString() !== new Date(Date.now()).toDateString()
+                                                        && {
+                                                            day: '2-digit',
+                                                            month: '2-digit',
+                                                            year: 'numeric',
+                                                            hour12: false,
+                                                        }
+                                                    )
+                                                }
+                                            )
+                                        : ""
+                                    }
+                                </span>
                             </p>
                         )}
                     </div>

@@ -4,6 +4,7 @@ import {getUserList, receiveNewMessageFromRoom, sendMessageToRoom, sendPeopleCha
 import type {ReduxState} from "@/constants/ReduxState.ts";
 import {setOpenStickerPicker} from "@/redux/slices/chatTriggerSlice.ts";
 import {formatSendTime} from "@/utils/messageUtil.ts";
+import {createMessagePayload} from "@/services/chatService.ts";
 
 export function StickerPreview(props: {src: string, preview: string}) {
     const [loading, setLoading] = useState(true);
@@ -18,22 +19,18 @@ export function StickerPreview(props: {src: string, preview: string}) {
         const newStickers = [{src: props.src, preview: props.preview}, ...stickers];
         localStorage.setItem("stickerHistory", JSON.stringify(newStickers));
         
-        const message = {
-            type: "sticker",
-            content: props.src,
-            attachment: []
-        }
+        const jsonMessage = createMessagePayload(props.src, [], "sticker");
         
         if(currentChatTarget.type === 0) {
             dispatch(sendPeopleChat({
                 type: "people",
                 to: currentChatTarget.name,
-                mes: JSON.stringify(message)
+                mes: jsonMessage
             }))
         } else {
             dispatch(sendMessageToRoom({
                 roomName: currentChatTarget.name,
-                message: message,
+                message: jsonMessage,
                 username: currentUser.username,
             }))
             if(userList[0].name !== currentChatTarget.name) {
@@ -44,7 +41,7 @@ export function StickerPreview(props: {src: string, preview: string}) {
                     id: Date.now(), //temp id
                     name: currentUser.username,
                     to: currentChatTarget.name,
-                    mes: JSON.stringify(message),
+                    mes: jsonMessage,
                     type: 1,
                     createAt: formatSendTime(new Date().toISOString())
                 }))

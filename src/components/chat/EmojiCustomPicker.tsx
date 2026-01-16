@@ -65,9 +65,7 @@ export default function EmojiCustomPicker() {
                              defaultCaption: "Chọn một biểu tượng...",
                              showPreview: true
                          }}
-                         onEmojiClick={(emojiData) =>
-                             dispatch(setEmojiInputValue(encoderEmoji(emojiData.emoji)))
-                         }
+                         onEmojiClick={(emojiData) => dispatch(setEmojiInputValue(encoderEmoji(emojiData.emoji)))}
             />
         </div>
     );

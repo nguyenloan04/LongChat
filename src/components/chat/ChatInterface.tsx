@@ -69,14 +69,9 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     mes: jsonMessage
                 }));
             } else {
-                const message = {
-                    type: "chat",
-                    content: inputValue.trim(),
-                    attachment: []
-                }
                 dispatch(sendMessageToRoom({
                     roomName: currentTarget.name,
-                    message: message,
+                    message: jsonMessage,
                     username: currentUser.username,
                 }))
                 if(!(userList[0].name === currentTarget.name && userList[0].type ===  currentTarget.type)) {
@@ -87,7 +82,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         id: Date.now(), //temp id
                         name: currentUser.username,
                         to: currentTarget.name,
-                        mes: JSON.stringify(message),
+                        mes: jsonMessage,
                         type: 1,
                         createAt: new Date().toISOString()
                     }))
@@ -110,6 +105,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
                     onChange={handleInput} //Temp
                     ref={textareaRef}
+                    value={inputValue}
                     name=""
                     id=""
                     rows={1}

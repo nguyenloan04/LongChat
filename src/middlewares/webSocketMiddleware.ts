@@ -262,7 +262,7 @@ export const socketMiddleware: Middleware = (store) => {
                     ws.send(WebSocketEvent.SEND_CHAT_TO_ROOM, {
                         type: "room",
                         to: roomName,
-                        mes: JSON.stringify(message)
+                        mes: message
                     });
                 }
                 break;

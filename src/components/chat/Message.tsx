@@ -96,7 +96,7 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
                                 {time
                                     ? new Date(time)
                                         .toLocaleTimeString(
-                                            [],
+                                            "vi-VN",
                                             {
                                                 hour: '2-digit',
                                                 minute: '2-digit',

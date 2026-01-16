@@ -1,0 +1,50 @@
+name: Deploy Web Client
+
+on:
+  push: 
+    branches: [ main ]
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses:  actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_CLOUD_NAME: ${{ secrets.VITE_CLOUD_NAME }}
+          VITE_CLOUDINARY_URL: ${{ secrets.VITE_CLOUDINARY_URL }}
+          VITE_SERVER_URL: ${{ secrets.VITE_CLOUDINARY_URL }}
+
+      - name: Setup Github Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

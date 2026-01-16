@@ -1,4 +1,4 @@
-import { ChevronDown, Copy, FileX2, ImageOff, Link, Settings, Share, User, UserPlus, Users } from "lucide-react";
+import { ChevronDown, Copy, Settings, Share, User, UserPlus } from "lucide-react";
 
 export function RoomMenuBar() {
 

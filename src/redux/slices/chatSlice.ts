@@ -8,7 +8,6 @@ import type {
     SendMsgGetUserListPayload,
     SendMsgSendChatPayload
 } from "@/socket/types/WebsocketSendPayload";
-import {formatSendTime} from "@/utils/messageUtil.ts";
 
 interface ChatState {
     // Key: target user, Value: data received
@@ -20,6 +19,7 @@ interface ChatState {
     // currentUser that account open
     currentChatTarget: ReceiveMsgGetUserListPayload | null;
     isLoading: boolean; //check for loading data from server
+    inputValue: string;
 }
 
 const initialState: ChatState = {
@@ -28,6 +28,7 @@ const initialState: ChatState = {
     userList: [],
     currentChatTarget: null,
     isLoading: false,
+    inputValue: ""
 };
 
 const chatSlice = createSlice({
@@ -35,17 +36,17 @@ const chatSlice = createSlice({
     initialState,
     reducers: {
         // request to get user list
-        getUserList: (state, action: PayloadAction<SendMsgGetUserListPayload>) => {
+        getUserList: (state, _action: PayloadAction<SendMsgGetUserListPayload>) => {
             state.isLoading = true;
         },
         // request to get message from chat
-        getPeopleChatHistory: (state, action: PayloadAction<SendMsgGetChatPayload>) => {
+        getPeopleChatHistory: (state, _action: PayloadAction<SendMsgGetChatPayload>) => {
             state.isLoading = true;
         },
         // request to get room info + message in room
-        getRoomChatHistory: (state, action: PayloadAction<SendMsgGetChatPayload>) => { state.isLoading = true; },
+        getRoomChatHistory: (state, _action: PayloadAction<SendMsgGetChatPayload>) => { state.isLoading = true; },
         // request to send message to user
-        sendPeopleChat: (state, action: PayloadAction<SendMsgSendChatPayload>) => {
+        sendPeopleChat: (_state, _action: PayloadAction<SendMsgSendChatPayload>) => {
 
         },
 
@@ -132,13 +133,19 @@ const chatSlice = createSlice({
             if(state.roomHistory[target]) {
                 const formattedMessage = {
                     ...payload,
-                    createAt: payload.createAt || formatSendTime(new Date().toISOString())
+                    createAt: payload.createAt || new Date().toISOString()
                 };
 
                 state.roomHistory[target].chatData.push(formattedMessage);
             }
         },
-        sendMessageToRoom: (state, action: PayloadAction<{roomName: string, message: any, username: string}>) => {
+        sendMessageToRoom: (_state, _action: PayloadAction<{roomName: string, message: any, username: string}>) => {
+        },
+        setInputValue: (state, action: PayloadAction<string>) => {
+            state.inputValue = action.payload;
+        },
+        setEmojiInputValue: (state, action: PayloadAction<string>) => {
+            state.inputValue += action.payload;
         }
     },
 });
@@ -155,7 +162,9 @@ export const {
     receiveNewPeopleMessage,
     receiveNewMessageFromRoom,
     sendMessageToRoom,
-    addNewUserToSidebar
+    addNewUserToSidebar,
+    setInputValue,
+    setEmojiInputValue
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

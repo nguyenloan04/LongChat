@@ -23,7 +23,7 @@ import {
     getPeopleChatHistory,
     getRoomChatHistory,
     sendPeopleChat,
-    getUserList, receiveNewMessageFromRoom, sendMessageToRoom
+    getUserList, receiveNewMessageFromRoom, sendMessageToRoom, receiveOldMessageRoom
 } from "@/redux/slices/chatSlice";
 
 const RECONNECT_TIMEOUT = 180000 // Timeout 3 mins for reconnect
@@ -102,7 +102,12 @@ export const socketMiddleware: Middleware = (store) => {
     ws.subscribe(WebSocketEvent.GET_ROOM_CHAT_MES, (response) => {
         if (response.status === "success") {
             const message = response.data
-            store.dispatch(updateRoomHistory(message))
+            const state = store.getState()
+            if(state.chatState.currentPageRoom[message.name] && state.chatState.roomHistory[message.name]) {
+                store.dispatch(receiveOldMessageRoom(message))
+            } else {
+                store.dispatch(updateRoomHistory(message))
+            }
         }
     })
 

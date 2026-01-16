@@ -20,6 +20,7 @@ interface ChatState {
     currentChatTarget: ReceiveMsgGetUserListPayload | null;
     isLoading: boolean; //check for loading data from server
     inputValue: string;
+    currentPageRoom: Record<string, {page: number, continue: boolean}>;
 }
 
 const initialState: ChatState = {
@@ -28,7 +29,8 @@ const initialState: ChatState = {
     userList: [],
     currentChatTarget: null,
     isLoading: false,
-    inputValue: ""
+    inputValue: "",
+    currentPageRoom: {}
 };
 
 const chatSlice = createSlice({
@@ -76,6 +78,12 @@ const chatSlice = createSlice({
             state.roomHistory[target] = payload;
             state.roomHistory[target].chatData.reverse()
             state.isLoading = false;
+            
+            state.currentPageRoom[target] = {
+                page: 1,
+                continue: true,
+            }
+            
         },
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
             const { targetName, message } = action.payload;
@@ -146,6 +154,18 @@ const chatSlice = createSlice({
         },
         setEmojiInputValue: (state, action: PayloadAction<string>) => {
             state.inputValue += action.payload;
+        },
+        receiveOldMessageRoom: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
+            const message = action.payload;
+            if(message.chatData.length === 0) {
+                state.currentPageRoom[message.name].continue = false
+            } else {
+                state.roomHistory[message.name].chatData = [
+                    ...message.chatData.reverse(),
+                    ...state.roomHistory[message.name].chatData
+                ]
+                state.currentPageRoom[message.name].page += 1;
+            }
         }
     },
 });
@@ -164,7 +184,8 @@ export const {
     sendMessageToRoom,
     addNewUserToSidebar,
     setInputValue,
-    setEmojiInputValue
+    setEmojiInputValue,
+    receiveOldMessageRoom
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

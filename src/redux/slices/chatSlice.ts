@@ -94,7 +94,14 @@ const chatSlice = createSlice({
             if (!state.chatPeopleHistory[targetName]) {
                 state.chatPeopleHistory[targetName] = [];
             }
-            const isExist = state.chatPeopleHistory[targetName].find(m => m.id === message.id);
+            const isExist = state.chatPeopleHistory[targetName].find(m => {
+                if (m.id !== 0 && message.id !== 0) {
+                    return m.id === message.id;
+                }
+
+                return m.createAt === message.createAt && m.mes === message.mes;
+            });
+
             if (!isExist) {
                 state.chatPeopleHistory[targetName].push(message);
             }

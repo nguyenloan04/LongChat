@@ -1,8 +1,9 @@
 //Props later
 
-import { Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User } from "lucide-react";
+import { Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User, X } from "lucide-react";
 import { Message } from "./Message";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import StickerPicker from "@/components/chat/StickerPicker.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import type { ReduxState } from "@/constants/ReduxState.ts";
@@ -20,13 +21,19 @@ import { ChatToolBar } from "./ChatToolBar";
 import { formatSendTime } from "@/utils/messageUtil";
 import "../../styles/chat-interface-style.css"
 import type { ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload.ts";
+// upload
+import { useUpload } from "@/hooks/useUpload";
+import { Input } from "@/components/ui/input";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
+
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    //upload multiple files
+    const { startMultipleUpload, isUploading } = useUpload();
 
     const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
         if (!currentTarget) return null;
@@ -55,8 +62,13 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
     const SendMessageComponent = () => {
         const dispatch = useDispatch();
-        const inputValue = useSelector((state:ReduxState) => state.chatState.inputValue)
-        const userList = useSelector((state:ReduxState) => state.chatState.userList)
+
+        // state for files
+        const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+        const fileInputRef = useRef<HTMLInputElement>(null);
+        const userList = useSelector((state: ReduxState) => state.chatState.userList)
+        const inputValue = useSelector((state: ReduxState) => state.chatState.inputValue)
+
         const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker)
         const openEmojiPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openEmojiPicker)
 
@@ -68,16 +80,44 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             }
         };
 
-        const handleSendText = () => {
-            if (!inputValue.trim() || !currentTarget) return;
-            if (!currentUser) return;
-            const jsonMessage = createMessagePayload(inputValue.trim(), [], "chat");
+        // handle choose file
+        const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+            if (e.target.files && e.target.files.length > 0) {
+                setSelectedFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+            }
+            // e.target.value = "";
+        };
+
+        const removeFile = (index: number) => {
+            setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+        };
+        const handleSendText = async () => {
+            if ((!inputValue.trim() && selectedFiles.length === 0) || !currentTarget || !currentUser) return;
+            if (isUploading) return;
+            //upload file
+            let uploadedUrls: string[] = [];
+            if (selectedFiles.length > 0) {
+                const uploadRes = await startMultipleUpload("chat_uploads", selectedFiles);
+                if (uploadRes.result) {
+                    uploadedUrls = uploadRes.urls;
+                } else {
+                    console.error("Upload failed:", uploadRes.message);
+                    alert("Gửi file thất bại: " + uploadRes.message);
+                    return;
+                }
+            }
+
+            const msgType = uploadedUrls.length > 0 ? "attachment" : "chat";
+            const contentText = inputValue.trim();
+
+            const jsonMessage = createMessagePayload(contentText, uploadedUrls, msgType);
             if (currentTarget.type === 0) {
                 dispatch(sendPeopleChat({
                     type: 'people',
                     to: currentTarget.name,
                     mes: jsonMessage
                 }));
+
             } else {
                 dispatch(sendMessageToRoom({
                     roomName: currentTarget.name,
@@ -87,9 +127,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 if (!(userList[0].name === currentTarget.name && userList[0].type === currentTarget.type)) {
                     dispatch(getUserList({}))
                 }
+
                 setTimeout(() => {
                     dispatch(receiveNewMessageFromRoom({
-                        id: Date.now(), //temp id
+                        id: Date.now(),
                         name: currentUser.username,
                         to: currentTarget.name,
                         mes: jsonMessage,
@@ -98,7 +139,9 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     }))
                 }, 500)
             }
+
             dispatch(setInputValue(""))
+            setSelectedFiles([])
             if (textareaRef.current) textareaRef.current.style.height = 'auto';
         };
 
@@ -110,41 +153,90 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
         // };
 
         return (
-            <div className="min-h-4 flex p-2 pt-0">
-                <textarea
-                    className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
-                    onChange={handleInput} //Temp
-                    ref={textareaRef}
-                    value={inputValue}
-                    name=""
-                    id=""
-                    rows={1}
-                    placeholder={`Nhập tin nhắn tới ${currentTarget?.name}`}>
-                </textarea>
-                <div
-                    className="flex items-start px-3 justify-end gap-3"
-                >
-                    <div className="flex items-start justify-end gap-3 pt-2">
-                        <Paperclip size={"1.5rem"}
-                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                        <Image size={"1.5rem"}
-                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
-                        <Sticker size={"1.5rem"}
-                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-                            onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
-                        />
-                        {openStickerPicker && <StickerPicker />}
-                        <Smile size={"1.5rem"}
-                            className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-                            onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
-                        />
-                        {openEmojiPicker && <EmojiCustomPicker />}
+            <div className="flex flex-col p-2 pt-0">
+                {selectedFiles.length > 0 && (
+                    <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
+                        {selectedFiles.map((file, index) => (
+                            <div key={index}
+                                className="relative w-16 h-16 shrink-0 border rounded-lg bg-gray-50 overflow-hidden group">
+                                <button
+                                    onClick={() => removeFile(index)}
+                                    className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-80 hover:opacity-100 z-10"
+                                >
+                                    <X size={12} />
+                                </button>
+                                {file.type.startsWith("image/") ? (
+                                    <img src={URL.createObjectURL(file)} alt="preview"
+                                        className="w-full h-full object-cover" />
+                                ) : (
+                                    <div
+                                        className="flex items-center justify-center h-full text-[10px] text-center p-1 break-all bg-white">
+                                        {file.name}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
                     </div>
-                    <div className="pt-0.5">
-                        <SendHorizonal
-                            size={"2.25rem"} className="bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-300 rounded-full p-2 cursor-pointer text-neutral-100 hover:text-neutral-200 active:text-neutral-300"
-                            onClick={() => handleSendText()}
-                        />
+                )}
+
+                <Input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    accept="image/*,video/*"
+                    onClick={(e) => { (e.target as HTMLInputElement).value = ""; }}
+                />
+                <div className="min-h-4 flex p-2 pt-0">
+                    <textarea
+                        className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
+                        onChange={handleInput}
+                        ref={textareaRef}
+                        value={inputValue}
+                        name=""
+                        id=""
+                        rows={1}
+                        placeholder={`Nhập tin nhắn ${currentTarget ? "tới" + currentTarget.name : "..."}`}>
+                    </textarea>
+                    <div
+                        className="flex items-start px-3 justify-end gap-3"
+                    >
+                        <div className="flex items-start justify-end gap-3 pt-2">
+                            <Paperclip size={"1.5rem"}
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
+                            <Image size={"1.5rem"}
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                                onClick={() => !isUploading && fileInputRef.current?.click()} />
+                            <Sticker size={"1.5rem"}
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                                onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
+                            />
+                            {openStickerPicker && <StickerPicker />}
+                            <Smile size={"1.5rem"}
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                                onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
+                            />
+                            {openEmojiPicker && <EmojiCustomPicker />}
+                        </div>
+                        <div className="pt-0.5">
+                            <button
+                                onClick={handleSendText}
+                                disabled={isUploading || (!inputValue.trim() && selectedFiles.length === 0)}
+                                className={`rounded-full p-2 transition-colors ${isUploading
+                                    ? "bg-gray-300 cursor-not-allowed"
+                                    : "bg-indigo-500 hover:bg-indigo-400 text-neutral-100"
+                                    }`}
+                            >
+                                {isUploading ? (
+                                    <div className="w-[2.25rem] h-[2.25rem] flex items-center justify-center">
+                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    </div>
+                                ) : (
+                                    <SendHorizonal size={"2.25rem"} />
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -164,7 +256,8 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             {/* Header */}
             <div className="flex justify-between items-center p-1 px-3 border border-gray-200 h-16">
                 <div className="flex gap-3 items-center">
-                    <div className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
+                    <div
+                        className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
                         <User />
                     </div>
                     <div>
@@ -176,8 +269,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     </div>
                 </div>
                 <div className="flex gap-1">
-                    <Search size={"2.25rem"} className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
-                    <Phone size={"2.25rem"} className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
+                    <Search size={"2.25rem"}
+                        className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
+                    <Phone size={"2.25rem"}
+                        className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
                     <PanelRight
                         size={"2.25rem"}
                         className={`rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400 ${props.closeTabState && "bg-indigo-200 text-indigo-700"}`}
@@ -206,7 +301,8 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             </div>
             {/* Message */}
             <ChatToolBar inputRef={textareaRef} />
-            <SendMessageComponent />
+            <SendMessageComponent
+            />
         </div>
     )
 }

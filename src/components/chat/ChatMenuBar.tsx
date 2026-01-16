@@ -1,4 +1,4 @@
-import getTimeDifference from "locale-time-diff"
+// import getTimeDifference from "locale-time-diff"
 
 import {MessageSquarePlus, Search, User} from "lucide-react"
 import {useEffect, useState} from "react"
@@ -13,6 +13,7 @@ import {
 // Room
 import RoomMenu from "@/components/room/RoomMenu.tsx";
 import type {ReceiveMsgGetUserListPayload} from "@/socket/types/WebsocketReceivePayload.ts";
+// import {formatSendTime} from "@/utils/messageUtil.ts";
 
 
 export function ChatMenuBar() {
@@ -138,7 +139,28 @@ export function ChatMenuBar() {
                                     {ele.name}
                                 </p>
                                 <p className="text-neutral-500 text-xs shrink-0">
-                                    {getTimeDifference(new Date(ele.actionTime),  { locale: 'vi' }).text}
+                                    {/*{formatSendTime(ele.actionTime)}*/}
+                                    {ele.actionTime
+                                        ? new Date(ele.actionTime)
+                                            .toLocaleTimeString(
+                                                "vi-VN",
+                                                {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false,
+                                                    ...(
+                                                        new Date(ele.actionTime).toDateString() !== new Date(Date.now()).toDateString()
+                                                        && {
+                                                            day: '2-digit',
+                                                            month: '2-digit',
+                                                            year: 'numeric',
+                                                            hour12: false,
+                                                        }
+                                                    )
+                                                }
+                                            )
+                                        : ""
+                                    }
                                 </p>
                             </div>
                             <p className="text-neutral-500 text-sm truncate">

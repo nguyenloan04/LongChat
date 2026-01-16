@@ -1,9 +1,10 @@
 import {useRef} from "react"
 import {motion, useScroll, useTransform} from "framer-motion"
 // image for parallax
-const img_1 = "src/assets/img/image_1.webp"
-const img_2 = "src/assets/img/image_2.webp"
-const img_3 = "src/assets/img/image_3.webp"
+import img_1 from "@/assets/img/image_1.webp"
+import img_2 from "@/assets/img/image_2.webp"
+import img_3 from "@/assets/img/image_3.webp"
+
 const features = [
     {
         id: 1,

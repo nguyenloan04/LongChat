@@ -8,35 +8,40 @@ import ComingSoon from "@/components/comingsoon/ComingSoon.tsx";
 import { userRouter } from "./userRouter";
 import { JoinRoomByLink } from "@/components/room/JoinRoomByLink";
 
-const route = createBrowserRouter([
+const route = createBrowserRouter(
+    [
+        {
+            path: "/",
+            element: <Home />,
+            // errorElement: <Error/>
+        },
+        {
+            path: "/chat",
+            element: <MainChatUIComponent />
+        },
+        //Other routes here
+        ...authRouter,
+        ...userRouter,
+        {
+            path: "/g/:roomName",
+            element: <JoinRoomByLink />
+        },
+        {
+            path: "/privacy-policy",
+            element: <Privacy />
+        },
+        {
+            path: "*",
+            element: <Error />
+        },
+        {
+            path: "/comingsoon",
+            element: <ComingSoon />
+        }
+    ],
     {
-        path: "/",
-        element: <Home />,
-        // errorElement: <Error/>
-    },
-    {
-        path: "/chat",
-        element: <MainChatUIComponent />
-    },
-    //Other routes here
-    ...authRouter,
-    ...userRouter,
-    {
-        path: "/g/:roomName",
-        element: <JoinRoomByLink />
-    },
-    {
-        path: "/privacy-policy",
-        element: <Privacy />
-    },
-    {
-        path: "*",
-        element: <Error />
-    },
-    {
-        path: "/comingsoon",
-        element: <ComingSoon />
+        basename: "/LongChat",
     }
-])
+)
 
 export default route

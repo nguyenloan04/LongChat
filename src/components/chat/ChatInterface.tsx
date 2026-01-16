@@ -101,12 +101,12 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             if (textareaRef.current) textareaRef.current.style.height = 'auto';
         };
 
-        const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendText();
-            }
-        };
+        // const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        //     if (e.key === 'Enter' && !e.shiftKey) {
+        //         e.preventDefault();
+        //         handleSendText();
+        //     }
+        // };
 
         return (
             <div className="min-h-4 flex p-2 pt-0">

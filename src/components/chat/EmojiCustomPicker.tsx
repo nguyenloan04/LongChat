@@ -3,6 +3,7 @@ import {X} from "lucide-react";
 import {setOpenEmojiPicker} from "@/redux/slices/chatTriggerSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import type {ReduxState} from "@/constants/ReduxState.ts";
+import {setEmojiInputValue} from "@/redux/slices/chatSlice.ts";
 
 export default function EmojiCustomPicker() {
     const dispatch = useDispatch();
@@ -13,7 +14,7 @@ export default function EmojiCustomPicker() {
     }
 
     return (
-        <div className="fixed overflow-hidden rounded-lg border bottom-14 index-99 bg-white dark:bg-gray-800 border">
+        <div className="fixed overflow-hidden rounded-lg border bottom-14 index-99 bg-white dark:bg-gray-800">
             <div className="relative mb-1">
                 <p className="shadow text-lg p-2 font-semibold text-center">Emoji</p>
                 <X className="absolute right-2 top-3 hover:bg-neutral-300/30 rounded"
@@ -64,10 +65,7 @@ export default function EmojiCustomPicker() {
                              defaultCaption: "Chọn một biểu tượng...",
                              showPreview: true
                          }}
-                         onEmojiClick={(emojiData) =>
-                             // FIXME: insert emoji to typing message
-                             console.log("emoji", encoderEmoji(emojiData.emoji))
-                         }
+                         onEmojiClick={(emojiData) => dispatch(setEmojiInputValue(encoderEmoji(emojiData.emoji)))}
             />
         </div>
     );

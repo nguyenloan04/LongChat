@@ -2,11 +2,11 @@ import {useRef} from "react"
 import {motion, useScroll, useTransform} from "framer-motion"
 import {Button} from "@/components/ui/button.tsx"
 import {useNavigate} from "react-router-dom"
-
 // Image for parallax
-const chatting_img = "src/assets/img/landing-main.webp"
-const cloud_img = "src/assets/img/landing-cloud.webp"
-const grass_img = "src/assets/img/landing-grass.webp"
+import chatting_img from "@/assets/img/landing-main.webp"
+import cloud_img from "@/assets/img/landing-cloud.webp"
+import grass_img from "@/assets/img/landing-grass.webp"
+
 export default function MainPage() {
     const containerRef = useRef<HTMLElement>(null);
     const {scrollYProgress} = useScroll({

@@ -6,7 +6,6 @@ import type {ReduxState} from "@/constants/ReduxState.ts";
 import {setChooseViewMenuUser} from "@/redux/slices/userPageSlice.ts";
 import UserProfile from "@/components/user/UserProfile.tsx";
 import Theme from "@/components/user/Theme.tsx";
-import {ConnectionLoading} from "@/components/common/ConnectionLoading.tsx";
 import {ChatSideBar} from "@/components/chat/ChatSideBar.tsx";
 import {AboutUs} from "@/components/user/AboutUs.tsx";
 
@@ -14,8 +13,6 @@ export function UserPage() {
     const chooseViewMenuUser = useSelector((state: ReduxState) => state.userPageState.chooseViewMenuUser);
     const dispatch = useDispatch();
     const params = useParams();
-    const isLoading = useSelector((state: ReduxState) => state.currentUser.isLoading)
-    if (isLoading) return <ConnectionLoading message="Đang tải dữ liệu..." />
     
     const renderContent = () => {
         switch (params.key) {

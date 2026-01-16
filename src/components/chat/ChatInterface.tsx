@@ -3,20 +3,26 @@
 import {Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User, X} from "lucide-react";
 import {Message} from "./Message";
 import React, {useEffect, useRef, useState} from "react";
+
 import StickerPicker from "@/components/chat/StickerPicker.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import type { ReduxState } from "@/constants/ReduxState.ts";
 import { setOpenEmojiPicker, setOpenStickerPicker } from "@/redux/slices/chatTriggerSlice.ts";
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 import { createMessagePayload } from "@/services/chatService.ts";
-import {getUserList, receiveNewMessageFromRoom, sendMessageToRoom, sendPeopleChat} from "@/redux/slices/chatSlice";
+import {
+    getUserList,
+    receiveNewMessageFromRoom,
+    sendMessageToRoom,
+    sendPeopleChat,
+    setInputValue
+} from "@/redux/slices/chatSlice";
 import { ChatToolBar } from "./ChatToolBar";
 import { formatSendTime } from "@/utils/messageUtil";
 import "../../styles/chat-interface-style.css"
 import type {ReceiveMsgGetChatPeoplePayload} from "@/socket/types/WebsocketReceivePayload.ts";
 // upload
 import {useUpload} from "@/hooks/useUpload";
-import type {MessageContent} from "@/types/MessageContent.ts";
 import {Input} from "@/components/ui/input";
 
 //Temp props, just used for display purpose
@@ -45,17 +51,18 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
     const SendMessageComponent = () => {
         const dispatch = useDispatch();
-        const [inputValue, setInputValue] = useState("");
 
         // state for files
         const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
         const fileInputRef = useRef<HTMLInputElement>(null);
         const userList = useSelector((state: ReduxState) => state.chatState.userList)
+        const inputValue = useSelector((state:ReduxState) => state.chatState.inputValue)
+
         const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker)
         const openEmojiPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openEmojiPicker)
 
         const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            setInputValue(e.target.value);
+            dispatch(setInputValue(e.target.value));
             if (textareaRef.current) {
                 textareaRef.current.style.height = 'auto';
                 textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
@@ -93,7 +100,6 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
             const jsonMessage = createMessagePayload(contentText, uploadedUrls, msgType);
             if (currentTarget.type === 0) {
-
                 dispatch(sendPeopleChat({
                     type: 'people',
                     to: currentTarget.name,
@@ -101,19 +107,13 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 }));
 
             } else {
-                const messageObj: MessageContent = {
-                    type: msgType,
-                    content: contentText,
-                    attachment: uploadedUrls
-                };
                 dispatch(sendMessageToRoom({
                     roomName: currentTarget.name,
-                    message: messageObj,
+                    message: jsonMessage,
                     username: currentUser.username,
-                }));
-
-                if (userList[0].name !== currentTarget.name) {
-                    dispatch(getUserList({}));
+                }))
+                if(!(userList[0].name === currentTarget.name && userList[0].type ===  currentTarget.type)) {
+                    dispatch(getUserList({}))
                 }
 
                 setTimeout(() => {
@@ -121,15 +121,16 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         id: Date.now(),
                         name: currentUser.username,
                         to: currentTarget.name,
-                        mes: JSON.stringify(messageObj),
+                        mes: jsonMessage,
                         type: 1,
-                        createAt: formatSendTime(new Date().toISOString())
-                    }));
-                }, 500);
+                        createAt: new Date().toISOString()
+                    }))
+                }, 500)
             }
 
-            setInputValue("");
-            setSelectedFiles([]);
+            setInputValue("")
+            setSelectedFiles([])
+
             if (textareaRef.current) textareaRef.current.style.height = 'auto';
         };
 
@@ -180,6 +181,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
                     onChange={handleInput}
                     ref={textareaRef}
+                    value={inputValue}
                     name=""
                     id=""
                     rows={1}

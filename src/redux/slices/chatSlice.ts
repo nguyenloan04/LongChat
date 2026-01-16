@@ -8,7 +8,6 @@ import type {
     SendMsgGetUserListPayload,
     SendMsgSendChatPayload
 } from "@/socket/types/WebsocketSendPayload";
-import {formatSendTime} from "@/utils/messageUtil.ts";
 
 interface ChatState {
     // Key: target user, Value: data received
@@ -20,6 +19,7 @@ interface ChatState {
     // currentUser that account open
     currentChatTarget: ReceiveMsgGetUserListPayload | null;
     isLoading: boolean; //check for loading data from server
+    inputValue: string;
 }
 
 const initialState: ChatState = {
@@ -28,6 +28,7 @@ const initialState: ChatState = {
     userList: [],
     currentChatTarget: null,
     isLoading: false,
+    inputValue: ""
 };
 
 const chatSlice = createSlice({
@@ -132,6 +133,12 @@ const chatSlice = createSlice({
             }
         },
         sendMessageToRoom: (state, action: PayloadAction<{roomName: string, message: any, username: string}>) => {
+        },
+        setInputValue: (state, action: PayloadAction<string>) => {
+            state.inputValue = action.payload;
+        },
+        setEmojiInputValue: (state, action: PayloadAction<string>) => {
+            state.inputValue += action.payload;
         }
     },
 });
@@ -148,7 +155,9 @@ export const {
     receiveNewPeopleMessage,
     receiveNewMessageFromRoom,
     sendMessageToRoom,
-    addNewUserToSidebar
+    addNewUserToSidebar,
+    setInputValue,
+    setEmojiInputValue
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

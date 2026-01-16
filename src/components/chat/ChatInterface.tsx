@@ -1,8 +1,8 @@
 //Props later
 
-import {Image, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User, X} from "lucide-react";
-import {Message} from "./Message";
-import React, {useEffect, useRef, useState} from "react";
+import { Image, LoaderCircle, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User, X } from "lucide-react";
+import { Message } from "./Message";
+import React, { useEffect, useRef, useState } from "react";
 
 import StickerPicker from "@/components/chat/StickerPicker.tsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,20 +20,29 @@ import {
 import { ChatToolBar } from "./ChatToolBar";
 import { formatSendTime } from "@/utils/messageUtil";
 import "../../styles/chat-interface-style.css"
-import type {ReceiveMsgGetChatPeoplePayload} from "@/socket/types/WebsocketReceivePayload.ts";
+import type { ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload.ts";
 // upload
-import {useUpload} from "@/hooks/useUpload";
-import {Input} from "@/components/ui/input";
+import { useUpload } from "@/hooks/useUpload";
+import { Input } from "@/components/ui/input";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
-
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     //upload multiple files
-    const {startMultipleUpload, isUploading} = useUpload();
+    const { startMultipleUpload, isUploading } = useUpload();
+
+    const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
+        if (!currentTarget) return null;
+        if (currentTarget.type === 0) {
+            return null
+        } else {
+            const roomData = state.chatState.roomHistory[currentTarget.name];
+            return roomData
+        }
+    });
 
     const messages = useSelector((state: ReduxState) => {
         if (!currentTarget) return [];
@@ -47,7 +56,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
     });
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
     const SendMessageComponent = () => {
@@ -57,7 +66,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
         const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
         const fileInputRef = useRef<HTMLInputElement>(null);
         const userList = useSelector((state: ReduxState) => state.chatState.userList)
-        const inputValue = useSelector((state:ReduxState) => state.chatState.inputValue)
+        const inputValue = useSelector((state: ReduxState) => state.chatState.inputValue)
 
         const openStickerPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openStickerPicker)
         const openEmojiPicker = useSelector((state: ReduxState) => state.chatTriggerSlice.openEmojiPicker)
@@ -69,6 +78,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
             }
         };
+
         // handle choose file
         const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (e.target.files && e.target.files.length > 0) {
@@ -113,7 +123,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     message: jsonMessage,
                     username: currentUser.username,
                 }))
-                if(!(userList[0].name === currentTarget.name && userList[0].type ===  currentTarget.type)) {
+                if (!(userList[0].name === currentTarget.name && userList[0].type === currentTarget.type)) {
                     dispatch(getUserList({}))
                 }
 
@@ -142,21 +152,21 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
         // };
 
         return (
-            <div className="flex flex-col p-2 pt-0">
+            <div className="flex flex-col p-1 pt-0">
                 {selectedFiles.length > 0 && (
                     <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
                         {selectedFiles.map((file, index) => (
                             <div key={index}
-                                 className="relative w-16 h-16 shrink-0 border rounded-lg bg-gray-50 overflow-hidden group">
+                                className="relative w-16 h-16 shrink-0 border rounded-lg bg-gray-50 overflow-hidden group">
                                 <button
                                     onClick={() => removeFile(index)}
                                     className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-80 hover:opacity-100 z-10"
                                 >
-                                    <X size={12}/>
+                                    <X size={12} />
                                 </button>
                                 {file.type.startsWith("image/") ? (
                                     <img src={URL.createObjectURL(file)} alt="preview"
-                                         className="w-full h-full object-cover"/>
+                                        className="w-full h-full object-cover" />
                                 ) : (
                                     <div
                                         className="flex items-center justify-center h-full text-[10px] text-center p-1 break-all bg-white">
@@ -178,54 +188,55 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     onClick={(e) => { (e.target as HTMLInputElement).value = ""; }}
                 />
                 <div className="min-h-4 flex p-2 pt-0">
-                <textarea
-                    className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
-                    onChange={handleInput}
-                    ref={textareaRef}
-                    value={inputValue}
-                    name=""
-                    id=""
-                    rows={1}
-                    placeholder="Nhập tin nhắn..."
-                    disabled={isUploading}>
-                </textarea>
+                    <textarea
+                        className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
+                        onChange={handleInput}
+                        ref={textareaRef}
+                        value={inputValue}
+                        name=""
+                        id=""
+                        rows={1}
+                        placeholder={`Nhập tin nhắn ${currentTarget ? "tới" + currentTarget.name : "..."}`}>
+                    </textarea>
                     <div
                         className="flex items-start px-3 justify-end gap-3"
                     >
                         <div className="flex items-start justify-end gap-3 pt-2">
                             <Paperclip size={"1.5rem"}
-                                       className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"/>
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
                             <Image size={"1.5rem"}
-                                   className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-                                   onClick={() => !isUploading && fileInputRef.current?.click()}/>
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                                onClick={() => !isUploading && fileInputRef.current?.click()} />
                             <Sticker size={"1.5rem"}
-                                     className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-                                     onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                                onClick={() => dispatch(setOpenStickerPicker(!openStickerPicker))}
                             />
-                            {openStickerPicker && <StickerPicker/>}
+                            {openStickerPicker && <StickerPicker />}
                             <Smile size={"1.5rem"}
-                                   className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
-                                   onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
+                                onClick={() => dispatch(setOpenEmojiPicker(!openEmojiPicker))}
                             />
-                            {openEmojiPicker && <EmojiCustomPicker/>}
+                            {openEmojiPicker && <EmojiCustomPicker />}
                         </div>
                         <div className="pt-0.5">
                             <button
                                 onClick={handleSendText}
                                 disabled={isUploading || (!inputValue.trim() && selectedFiles.length === 0)}
-                                className={`rounded-full p-2 transition-colors ${
-                                    isUploading
-                                        ? "bg-gray-300 cursor-not-allowed"
-                                        : "bg-indigo-500 hover:bg-indigo-400 text-neutral-100"
-                                }`}
+                                className={` cursor-pointer rounded-full p-2 transition-colors ${isUploading
+                                    ? "bg-gray-300 cursor-not-allowed"
+                                    : "bg-indigo-500 hover:bg-indigo-400 text-neutral-100"
+                                    }`}
                             >
-                                {isUploading ? (
-                                    <div className="w-[2.25rem] h-[2.25rem] flex items-center justify-center">
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    </div>
-                                ) : (
-                                    <SendHorizonal size={"2.25rem"} />
-                                )}
+                                {isUploading
+                                    ?
+                                    <LoaderCircle
+                                        role="status"
+                                        aria-label="Loading"
+                                        className={"animate-spin border-neutral-400 text-white"}
+                                        size={"1.25rem"}
+                                    />
+                                    : <SendHorizonal size={"1.25rem"} />
+                                }
                             </button>
                         </div>
                     </div>
@@ -249,18 +260,21 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 <div className="flex gap-3 items-center">
                     <div
                         className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
-                        <User/>
+                        <User />
                     </div>
                     <div>
-                        <p className="font-semibold text-xl">Group 77</p>
-                        <p>3 thành viên</p>
+                        <p className="font-semibold text-xl">{currentTarget.name}</p>
+                        <p>
+                            {currentTarget.type === 1 && getRoomData?.userList &&
+                                `${getRoomData.userList.length} thành viên`}
+                        </p>
                     </div>
                 </div>
                 <div className="flex gap-1">
                     <Search size={"2.25rem"}
-                            className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400"/>
+                        className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
                     <Phone size={"2.25rem"}
-                           className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400"/>
+                        className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
                     <PanelRight
                         size={"2.25rem"}
                         className={`rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400 ${props.closeTabState && "bg-indigo-200 text-indigo-700"}`}
@@ -270,7 +284,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             </div>
             {/* Main UI */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-1 w-full bg-gray-300/50 p-2">
-                <div className="mt-auto"/>
+                <div className="mt-auto" />
 
                 {messages.length === 0 && (
                     <p className="text-center text-gray-500 mt-10">Bắt đầu cuộc trò chuyện...</p>
@@ -285,10 +299,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         time={formatSendTime(ele.createAt)}
                     />
                 ))}
-                <div ref={messagesEndRef}/>
+                <div ref={messagesEndRef} />
             </div>
             {/* Message */}
-            <ChatToolBar inputRef={textareaRef}/>
+            <ChatToolBar inputRef={textareaRef} />
             <SendMessageComponent
             />
         </div>

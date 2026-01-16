@@ -1,11 +1,13 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { authRouter } from "./authRouter";
 import Home from '@/components/home/Home';
 import { MainChatUIComponent } from "@/components/chat";
 import Privacy from "@/components/policy/Privacy.tsx";
-import { UserPage } from "@/components/user/UserPage.tsx";
 import Error from "@/components/error/Error.tsx";
 import ComingSoon from "@/components/comingsoon/ComingSoon.tsx";
+import { userRouter } from "./userRouter";
+import { JoinRoomByLink } from "@/components/room/JoinRoomByLink";
+import { RouterBase } from "@/constants/RouterBase";
 
 const route = createBrowserRouter(
     [
@@ -20,17 +22,14 @@ const route = createBrowserRouter(
         },
         //Other routes here
         ...authRouter,
+        ...userRouter,
+        {
+            path: "/g/:roomName",
+            element: <JoinRoomByLink />
+        },
         {
             path: "/privacy-policy",
             element: <Privacy />
-        },
-        {
-            path: "/user",
-            element: <Navigate to="/user/user-profile" replace />,
-        },
-        {
-            path: "/user/:key",
-            element: <UserPage />,
         },
         {
             path: "*",
@@ -39,11 +38,10 @@ const route = createBrowserRouter(
         {
             path: "/comingsoon",
             element: <ComingSoon />
-        },
-
+        }
     ],
     {
-        basename: "/LongChat",
+        basename: RouterBase.BASE_NAME,
     }
 )
 

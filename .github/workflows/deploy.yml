@@ -35,7 +35,7 @@ jobs:
         env:
           VITE_CLOUD_NAME: ${{ secrets.VITE_CLOUD_NAME }}
           VITE_CLOUDINARY_URL: ${{ secrets.VITE_CLOUDINARY_URL }}
-          VITE_SERVER_URL: ${{ secrets.VITE_CLOUDINARY_URL }}
+          VITE_SERVER_URL: ${{ secrets.VITE_SERVER_URL }}
 
       - name: Setup Github Pages
         uses: actions/configure-pages@v4

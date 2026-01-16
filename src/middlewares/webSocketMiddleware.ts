@@ -1,11 +1,11 @@
-import type {User} from "@/constants/User";
-import {setConnected, setErrorMessage} from "@/redux/slices/socketSlice";
-import {setCurrentUser} from "@/redux/slices/userSlice";
-import {WebsocketInstance} from "@/socket/WebsocketInstance";
-import {WebSocketEvent} from "@/socket/types/WebSoketMessage";
-import {forceLogout} from "@/utils/authUtil";
-import type {Middleware} from "@reduxjs/toolkit";
-import type {WsReceiveMessage} from "@/socket/types/WebSocketMessageReceive";
+import type { User } from "@/constants/User";
+import { setConnected, setErrorMessage, setToastMessage } from "@/redux/slices/socketSlice";
+import { setCurrentUser } from "@/redux/slices/userSlice";
+import { WebsocketInstance } from "@/socket/WebsocketInstance";
+import { WebSocketEvent } from "@/socket/types/WebSoketMessage";
+import { forceLogout } from "@/utils/authUtil";
+import type { Middleware } from "@reduxjs/toolkit";
+import type { WsReceiveMessage } from "@/socket/types/WebSocketMessageReceive";
 import type {
     ReceiveMsgGetChatPeoplePayload, ReceiveMsgSendChatRoomPayload
 } from "@/socket/types/WebsocketReceivePayload";
@@ -25,6 +25,7 @@ import {
     sendPeopleChat,
     getUserList, receiveNewMessageFromRoom, sendMessageToRoom
 } from "@/redux/slices/chatSlice";
+import { ToastKeys } from "@/constants/ToastIcon";
 
 const RECONNECT_TIMEOUT = 180000 // Timeout 3 mins for reconnect
 const RECONNECT_INTERVAL = 500 //Reconnect every 0.5s
@@ -66,11 +67,14 @@ export const socketMiddleware: Middleware = (store) => {
             //Connection closed from connection error or timeout
             case 1006: {
                 ws.connect()
-                store.dispatch({type: 'socket/requestRelogin'})
+                store.dispatch({ type: 'socket/requestRelogin' })
+                store.dispatch(setToastMessage({ message: "Mất kết nối, đang đăng nhập lại!", icon: ToastKeys.RECONNECT }))
                 break
             }
-            //Server error
-            case 1001: {
+            case 1001:
+            case 1000:
+            default: {
+                store.dispatch(setToastMessage({ message: "Lỗi server, hãy đăng nhập lại!", icon: ToastKeys.SERVER_ERROR }))
                 forceLogout(store)
                 break
             }
@@ -88,6 +92,7 @@ export const socketMiddleware: Middleware = (store) => {
         if (response.status === "success") {
             //Notice here
             localStorage.setItem("RE_LOGIN_CODE", response.data.RE_LOGIN_CODE)
+            store.dispatch(setToastMessage({ message: "Đăng nhập lại thành công", icon: ToastKeys.SUCCESS }))
         }
         else {
             //Re login failed, end session and require login
@@ -114,14 +119,14 @@ export const socketMiddleware: Middleware = (store) => {
 
             const currentRoom = state.chatState.roomHistory[target];
             if (!currentRoom) {
-                 store.dispatch(getRoomChatHistory({
+                store.dispatch(getRoomChatHistory({
                     name: target,
                     page: 1
                 }))
             } else {
                 store.dispatch(receiveNewMessageFromRoom(message));
             }
-            if(!(state.chatState.userList[0].name === target && state.chatState.userList[0].type === message.type)) {
+            if (!(state.chatState.userList[0].name === target && state.chatState.userList[0].type === message.type)) {
                 store.dispatch(getUserList({}))
             }
         }
@@ -132,7 +137,7 @@ export const socketMiddleware: Middleware = (store) => {
             const message = response.data as unknown as ReceiveMsgGetChatPeoplePayload;
 
             const state = store.getState();
-            const rawUsername = state.currentUser.user?.username  || "";
+            const rawUsername = state.currentUser.user?.username || "";
             const myUsername = rawUsername.trim();
 
             if (message && message.mes && myUsername) {
@@ -177,7 +182,7 @@ export const socketMiddleware: Middleware = (store) => {
                 }
 
                 // Dispatch action lưu vào Redux Store
-                store.dispatch(setPeopleChatHistory({targetName, messages}));
+                store.dispatch(setPeopleChatHistory({ targetName, messages }));
             }
         }
     })
@@ -198,7 +203,7 @@ export const socketMiddleware: Middleware = (store) => {
             case sendPeopleChat.type: {
                 const payload = action.payload as SendMsgSendChatPayload;
 
-                ws.send(WebSocketEvent.SEND_CHAT_TO_PEOPLE, {...payload, type: 'people'});
+                ws.send(WebSocketEvent.SEND_CHAT_TO_PEOPLE, { ...payload, type: 'people' });
 
                 setTimeout(() => {
 

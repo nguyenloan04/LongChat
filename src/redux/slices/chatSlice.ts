@@ -8,6 +8,7 @@ import type {
     SendMsgGetUserListPayload,
     SendMsgSendChatPayload
 } from "@/socket/types/WebsocketSendPayload";
+import type { MessageContent } from "@/types/MessageContent";
 
 interface ChatState {
     // Key: target user, Value: data received
@@ -20,6 +21,7 @@ interface ChatState {
     currentChatTarget: ReceiveMsgGetUserListPayload | null;
     isLoading: boolean; //check for loading data from server
     inputValue: string;
+    attachmentHistory: Record<string, string[]>
 }
 
 const initialState: ChatState = {
@@ -28,7 +30,8 @@ const initialState: ChatState = {
     userList: [],
     currentChatTarget: null,
     isLoading: false,
-    inputValue: ""
+    inputValue: "",
+    attachmentHistory: {}
 };
 
 const chatSlice = createSlice({
@@ -53,12 +56,22 @@ const chatSlice = createSlice({
         // update store
         //get user list account had chatted
         setUserList: (state, action: PayloadAction<ReceiveMsgGetUserListPayload[]>) => {
+            action.payload.forEach(msg => {
+                if (msg.actionTime && !msg.actionTime.includes('T')) {
+                    msg.actionTime = msg.actionTime.replace(" ", "T") + "Z";
+                }
+            });
             state.userList = action.payload;
             const sortedList = [...action.payload].sort((a, b) => {
                 return new Date(b.actionTime || 0).getTime() - new Date(a.actionTime || 0).getTime();
             });
             state.userList = sortedList;
             state.isLoading = false;
+            sortedList.forEach(ele => {
+                if (!state.attachmentHistory[ele.name]) {
+                    state.attachmentHistory[ele.name] = [];
+                }
+            });
         },
 
         // Choose one to read chat history and chat
@@ -67,19 +80,53 @@ const chatSlice = createSlice({
         },
         setPeopleChatHistory: (state, action: PayloadAction<{ targetName: string, messages: ReceiveMsgGetChatPeoplePayload[] }>) => {
             const { targetName, messages } = action.payload;
-            state.chatPeopleHistory[targetName] = [...messages].reverse();
+            const reverseMessages = [...messages].reverse();
+            state.chatPeopleHistory[targetName] = reverseMessages
+            //Reset to avoid duplicate
+            state.attachmentHistory[targetName] = []
+            reverseMessages.forEach((msg) => {
+                try {
+                    if (!msg.mes.startsWith("{")) return
+                    const parsedMessage = JSON.parse(msg.mes) as MessageContent
+                    if (parsedMessage.attachment) {
+                        state.attachmentHistory[targetName].push(...parsedMessage.attachment)
+                    }
+                }
+                catch (_) { }
+            })
             state.isLoading = false;
         },
         updateRoomHistory: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
             const payload = action.payload
             const target = payload.name
-            state.roomHistory[target] = payload;
-            state.roomHistory[target].chatData.reverse()
+
+            const processedChatData = [...payload.chatData].reverse().map((msg) => ({
+                ...msg,
+                createAt: msg.createAt && !msg.createAt.includes("T")
+                    ? msg.createAt.replace(" ", "T") + "Z"
+                    : msg.createAt
+            }))
+
+            const newAttachments = new Set<string>()
+            processedChatData.forEach((msg) => {
+                try {
+                    if (!msg.mes.startsWith("{")) return
+                    const parsedMessage = JSON.parse(msg.mes) as MessageContent
+                    parsedMessage.attachment.forEach(url => newAttachments.add(url));
+                }
+                catch (_) { }
+            })
+            state.roomHistory[target] = {
+                ...payload,
+                chatData: processedChatData
+            }
+            state.attachmentHistory[target] = Array.from(newAttachments)
             state.isLoading = false;
         },
+
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
             const { targetName, message } = action.payload;
-
+            message.createAt = message.createAt.replace(" ", "T") + "Z"
             if (!state.chatPeopleHistory[targetName]) {
                 state.chatPeopleHistory[targetName] = [];
             }
@@ -130,23 +177,24 @@ const chatSlice = createSlice({
         receiveNewMessageFromRoom: (state, action: PayloadAction<ReceiveMsgSendChatRoomPayload>) => {
             const payload = action.payload;
             const target = payload.to
-            if(state.roomHistory[target]) {
+            if (state.roomHistory[target]) {
                 const formattedMessage = {
                     ...payload,
                     createAt: payload.createAt || new Date().toISOString()
                 };
-
+                const msg = JSON.parse(payload.mes) as MessageContent
+                state.attachmentHistory[target].push(...msg.attachment)
                 state.roomHistory[target].chatData.push(formattedMessage);
             }
         },
-        sendMessageToRoom: (_state, _action: PayloadAction<{roomName: string, message: any, username: string}>) => {
+        sendMessageToRoom: (_state, _action: PayloadAction<{ roomName: string, message: any, username: string }>) => {
         },
         setInputValue: (state, action: PayloadAction<string>) => {
             state.inputValue = action.payload;
         },
         setEmojiInputValue: (state, action: PayloadAction<string>) => {
             state.inputValue += action.payload;
-        }
+        },
     },
 });
 
@@ -164,7 +212,7 @@ export const {
     sendMessageToRoom,
     addNewUserToSidebar,
     setInputValue,
-    setEmojiInputValue
+    setEmojiInputValue,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

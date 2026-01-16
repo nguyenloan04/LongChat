@@ -10,7 +10,7 @@ const ToastContext = createContext({
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     const [toast, setToast] = useState<ToastState | null>(null);
     const [isVisible, setIsVisible] = useState(false);  //Animation
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const showToast = (message: string, icon?: LucideIcon) => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);

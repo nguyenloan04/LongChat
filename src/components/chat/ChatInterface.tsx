@@ -27,7 +27,6 @@ import { Input } from "@/components/ui/input";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
-
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
@@ -153,7 +152,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
         // };
 
         return (
-            <div className="flex flex-col p-2 pt-0">
+            <div className="flex flex-col p-1 pt-0">
                 {selectedFiles.length > 0 && (
                     <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
                         {selectedFiles.map((file, index) => (

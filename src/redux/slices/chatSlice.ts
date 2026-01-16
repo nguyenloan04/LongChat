@@ -182,7 +182,8 @@ const chatSlice = createSlice({
                     ...payload,
                     createAt: payload.createAt || new Date().toISOString()
                 };
-
+                const msg = JSON.parse(payload.mes) as MessageContent
+                state.attachmentHistory[target].push(...msg.attachment)
                 state.roomHistory[target].chatData.push(formattedMessage);
             }
         },
@@ -193,7 +194,7 @@ const chatSlice = createSlice({
         },
         setEmojiInputValue: (state, action: PayloadAction<string>) => {
             state.inputValue += action.payload;
-        }
+        },
     },
 });
 
@@ -211,7 +212,7 @@ export const {
     sendMessageToRoom,
     addNewUserToSidebar,
     setInputValue,
-    setEmojiInputValue
+    setEmojiInputValue,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

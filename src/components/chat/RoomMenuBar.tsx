@@ -128,7 +128,7 @@ export function RoomMenuBar() {
                                             <p className="text-center text-neutral-500 text-sm">Không có ảnh & video được gửi</p>
                                         </div>
                                     </div>
-                                    : <div className="grid grid-cols-4 gap-1 w-full">
+                                    : <div className="grid grid-cols-4 gap-1 w-full max-h-47 overflow-y-auto">
                                         {roomAttachments.map((attachment, index) => (
                                             <div key={index} className="w-full aspect-square overflow-hidden rounded-lg">
                                                 <img
@@ -154,33 +154,35 @@ export function RoomMenuBar() {
                         {policyState ? <ChevronUp /> : <ChevronDown />}
                     </div>
                 </div>
-                <div className="my-1 p-2">
-                    <h5 className="font-semibold">Link tham gia nhóm</h5>
-                    <div className="flex flex-1 truncate justify-between items-center gap-4">
-                        <a
-                            href={inviteGroupLink}
-                            className="underline text-blue-500 hover:text-blue-400 active:text-blue-300 text-sm min-w-0"
-                        >
-                            <p className="truncate">{inviteGroupLink}</p>
-                        </a>
+                {currentTarget.type === 1 &&
+                    <div className="my-1 p-2">
+                        <h5 className="font-semibold">Link tham gia nhóm</h5>
+                        <div className="flex flex-1 truncate justify-between items-center gap-4">
+                            <a
+                                href={inviteGroupLink}
+                                className="underline text-blue-500 hover:text-blue-400 active:text-blue-300 text-sm min-w-0"
+                            >
+                                <p className="truncate">{inviteGroupLink}</p>
+                            </a>
 
-                        <div className="flex gap-2 justify-end shrink-0">
-                            <div
-                                className="cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 w-10 h-10 flex justify-center items-center"
-                                title="Sao chép"
-                                onClick={handleCopy}
-                            >
-                                <Copy size={'1.25rem'} />
-                            </div>
-                            <div
-                                className="cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 w-10 h-10 flex justify-center items-center"
-                                title="Chia sẻ"
-                            >
-                                <Share size={'1.25rem'} />
+                            <div className="flex gap-2 justify-end shrink-0">
+                                <div
+                                    className="cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 w-10 h-10 flex justify-center items-center"
+                                    title="Sao chép"
+                                    onClick={handleCopy}
+                                >
+                                    <Copy size={'1.25rem'} />
+                                </div>
+                                <div
+                                    className="cursor-pointer rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 w-10 h-10 flex justify-center items-center"
+                                    title="Chia sẻ"
+                                >
+                                    <Share size={'1.25rem'} />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     )

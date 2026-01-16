@@ -169,3 +169,9 @@ export async function uploadMultipleAttachments(
         return { result: false, message: "Lỗi ngoại lệ.", urls: [] };
     }
 }
+
+
+export const getThumbnail = (url: string, width = 200) => {
+  if (!url.includes("cloudinary.com")) return url;
+  return url.replace("/upload/", `/upload/c_scale,w_${width},f_auto,q_auto/`);
+};

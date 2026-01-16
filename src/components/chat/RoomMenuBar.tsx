@@ -1,9 +1,10 @@
 import type { ReduxState } from "@/constants/ReduxState";
 import { ToastKeys } from "@/constants/ToastIcon";
 import { setToastMessage } from "@/redux/slices/socketSlice";
+import { getThumbnail } from "@/services/storageService";
 import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
 import { generateInviteLink } from "@/utils/messageUtil";
-import { ChevronDown, ChevronUp, Cloud, Copy, Share, User } from "lucide-react";
+import { ChevronDown, ChevronUp, Cloud, Copy, ImageOff, Share, User } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -11,6 +12,7 @@ export function RoomMenuBar() {
     const dispatcher = useDispatch()
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
+    const listRoomAttachments = useSelector((state: ReduxState) => state.chatState.attachmentHistory)
     const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
         if (!currentTarget) return null;
         if (currentTarget.type === 0) {
@@ -25,6 +27,8 @@ export function RoomMenuBar() {
     const [memberState, setMemberState] = useState(false)
     const [attachmentState, setAttachmentState] = useState(false)
     const [policyState, setPolicyState] = useState(false)
+
+    const roomAttachments = currentTarget ? listRoomAttachments[currentTarget.name] : []
 
     // const headerFeature = [
     //     {
@@ -113,19 +117,33 @@ export function RoomMenuBar() {
                         <h5 className="font-semibold">Ảnh & Video</h5>
                         {attachmentState ? <ChevronUp /> : <ChevronDown />}
                     </div>
-                    {/* {
+                    {
                         attachmentState &&
-                        <div>
+                        <div className="mt-2">
                             {
-                                <div className="gap-3">
-                                    <div className="flex flex-col items-center justify-center gap-2">
-                                        <ImageOff size={"2rem"} className="text-neutral-500" />
-                                        <p className="text-center text-neutral-500 text-sm">Không có ảnh & video được gửi</p>
+                                roomAttachments.length === 0
+                                    ? <div className="gap-3">
+                                        <div className="flex flex-col items-center justify-center gap-2 h-40">
+                                            <ImageOff size={"2rem"} className="text-neutral-500" />
+                                            <p className="text-center text-neutral-500 text-sm">Không có ảnh & video được gửi</p>
+                                        </div>
                                     </div>
-                                </div>
+                                    : <div className="grid grid-cols-4 gap-1 w-full">
+                                        {roomAttachments.map((attachment, index) => (
+                                            <div key={index} className="w-full aspect-square overflow-hidden rounded-lg">
+                                                <img
+                                                    className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                                                    src={getThumbnail(attachment)}
+                                                    alt={`attachment-${index}`}
+                                                    onClick={() => window.open(attachment, "_blank")}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+
                             }
                         </div>
-                    } */}
+                    }
                 </div>
                 <div className="my-1">
                     <div

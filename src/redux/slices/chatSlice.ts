@@ -8,6 +8,7 @@ import type {
     SendMsgGetUserListPayload,
     SendMsgSendChatPayload
 } from "@/socket/types/WebsocketSendPayload";
+import type { MessageContent } from "@/types/MessageContent";
 
 interface ChatState {
     // Key: target user, Value: data received
@@ -20,6 +21,7 @@ interface ChatState {
     currentChatTarget: ReceiveMsgGetUserListPayload | null;
     isLoading: boolean; //check for loading data from server
     inputValue: string;
+    attachmentHistory: Record<string, string[]>
 }
 
 const initialState: ChatState = {
@@ -28,7 +30,8 @@ const initialState: ChatState = {
     userList: [],
     currentChatTarget: null,
     isLoading: false,
-    inputValue: ""
+    inputValue: "",
+    attachmentHistory: {}
 };
 
 const chatSlice = createSlice({
@@ -64,6 +67,11 @@ const chatSlice = createSlice({
             });
             state.userList = sortedList;
             state.isLoading = false;
+            sortedList.forEach(ele => {
+                if (!state.attachmentHistory[ele.name]) {
+                    state.attachmentHistory[ele.name] = [];
+                }
+            });
         },
 
         // Choose one to read chat history and chat
@@ -72,22 +80,50 @@ const chatSlice = createSlice({
         },
         setPeopleChatHistory: (state, action: PayloadAction<{ targetName: string, messages: ReceiveMsgGetChatPeoplePayload[] }>) => {
             const { targetName, messages } = action.payload;
-            state.chatPeopleHistory[targetName] = [...messages].reverse();
+            const reverseMessages = [...messages].reverse();
+            state.chatPeopleHistory[targetName] = reverseMessages
+            //Reset to avoid duplicate
+            state.attachmentHistory[targetName] = []
+            reverseMessages.forEach((msg) => {
+                try {
+                    if (!msg.mes.startsWith("{")) return
+                    const parsedMessage = JSON.parse(msg.mes) as MessageContent
+                    if (parsedMessage.attachment) {
+                        state.attachmentHistory[targetName].push(...parsedMessage.attachment)
+                    }
+                }
+                catch (_) { }
+            })
             state.isLoading = false;
         },
         updateRoomHistory: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
-            action.payload.chatData.forEach(msg => {
-                if (msg.createAt && !msg.createAt.includes('T')) {
-                    msg.createAt = msg.createAt.replace(" ", "T") + "Z";
-                }
-            });
-
             const payload = action.payload
             const target = payload.name
-            state.roomHistory[target] = payload;
-            state.roomHistory[target].chatData.reverse()
+
+            const processedChatData = [...payload.chatData].reverse().map((msg) => ({
+                ...msg,
+                createAt: msg.createAt && !msg.createAt.includes("T")
+                    ? msg.createAt.replace(" ", "T") + "Z"
+                    : msg.createAt
+            }))
+
+            const newAttachments = new Set<string>()
+            processedChatData.forEach((msg) => {
+                try {
+                    if (!msg.mes.startsWith("{")) return
+                    const parsedMessage = JSON.parse(msg.mes) as MessageContent
+                    parsedMessage.attachment.forEach(url => newAttachments.add(url));
+                }
+                catch (_) { }
+            })
+            state.roomHistory[target] = {
+                ...payload,
+                chatData: processedChatData
+            }
+            state.attachmentHistory[target] = Array.from(newAttachments)
             state.isLoading = false;
         },
+
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
             const { targetName, message } = action.payload;
             message.createAt = message.createAt.replace(" ", "T") + "Z"

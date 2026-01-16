@@ -32,8 +32,7 @@ const initialState: ChatState = {
     currentChatTarget: null,
     isLoading: false,
     inputValue: "",
-    attachmentHistory: {}
-    inputValue: "",
+    attachmentHistory: {},
     currentPageRoom: {}
 };
 
@@ -206,13 +205,13 @@ const chatSlice = createSlice({
         },
         receiveOldMessageRoom: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
             const message = action.payload;
+            state.roomHistory[message.name].chatData = [
+                ...message.chatData.reverse(),
+                ...state.roomHistory[message.name].chatData
+            ]
             if(message.chatData.length === 0) {
                 state.currentPageRoom[message.name].continue = false
             } else {
-                state.roomHistory[message.name].chatData = [
-                    ...message.chatData.reverse(),
-                    ...state.roomHistory[message.name].chatData
-                ]
                 state.currentPageRoom[message.name].page += 1;
             }
         }

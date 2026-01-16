@@ -53,6 +53,11 @@ const chatSlice = createSlice({
         // update store
         //get user list account had chatted
         setUserList: (state, action: PayloadAction<ReceiveMsgGetUserListPayload[]>) => {
+            action.payload.forEach(msg => {
+                if (msg.actionTime && !msg.actionTime.includes('T')) {
+                    msg.actionTime = msg.actionTime.replace(" ", "T") + "Z";
+                }
+            });
             state.userList = action.payload;
             const sortedList = [...action.payload].sort((a, b) => {
                 return new Date(b.actionTime || 0).getTime() - new Date(a.actionTime || 0).getTime();
@@ -71,6 +76,12 @@ const chatSlice = createSlice({
             state.isLoading = false;
         },
         updateRoomHistory: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
+            action.payload.chatData.forEach(msg => {
+                if (msg.createAt && !msg.createAt.includes('T')) {
+                    msg.createAt = msg.createAt.replace(" ", "T") + "Z";
+                }
+            });
+
             const payload = action.payload
             const target = payload.name
             state.roomHistory[target] = payload;
@@ -79,7 +90,7 @@ const chatSlice = createSlice({
         },
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
             const { targetName, message } = action.payload;
-
+            message.createAt = message.createAt.replace(" ", "T") + "Z"
             if (!state.chatPeopleHistory[targetName]) {
                 state.chatPeopleHistory[targetName] = [];
             }
@@ -123,7 +134,7 @@ const chatSlice = createSlice({
         receiveNewMessageFromRoom: (state, action: PayloadAction<ReceiveMsgSendChatRoomPayload>) => {
             const payload = action.payload;
             const target = payload.to
-            if(state.roomHistory[target]) {
+            if (state.roomHistory[target]) {
                 const formattedMessage = {
                     ...payload,
                     createAt: payload.createAt || new Date().toISOString()
@@ -132,7 +143,7 @@ const chatSlice = createSlice({
                 state.roomHistory[target].chatData.push(formattedMessage);
             }
         },
-        sendMessageToRoom: (_state, _action: PayloadAction<{roomName: string, message: any, username: string}>) => {
+        sendMessageToRoom: (_state, _action: PayloadAction<{ roomName: string, message: any, username: string }>) => {
         },
         setInputValue: (state, action: PayloadAction<string>) => {
             state.inputValue = action.payload;

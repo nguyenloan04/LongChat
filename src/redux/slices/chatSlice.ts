@@ -22,6 +22,7 @@ interface ChatState {
     isLoading: boolean; //check for loading data from server
     inputValue: string;
     attachmentHistory: Record<string, string[]>
+    currentPageRoom: Record<string, {page: number, continue: boolean}>;
 }
 
 const initialState: ChatState = {
@@ -31,7 +32,8 @@ const initialState: ChatState = {
     currentChatTarget: null,
     isLoading: false,
     inputValue: "",
-    attachmentHistory: {}
+    attachmentHistory: {},
+    currentPageRoom: {}
 };
 
 const chatSlice = createSlice({
@@ -122,6 +124,12 @@ const chatSlice = createSlice({
             }
             state.attachmentHistory[target] = Array.from(newAttachments)
             state.isLoading = false;
+            
+            state.currentPageRoom[target] = {
+                page: 1,
+                continue: true,
+            }
+            
         },
 
         receiveNewPeopleMessage: (state, action: PayloadAction<{ targetName: string, message: ReceiveMsgGetChatPeoplePayload }>) => {
@@ -195,6 +203,18 @@ const chatSlice = createSlice({
         setEmojiInputValue: (state, action: PayloadAction<string>) => {
             state.inputValue += action.payload;
         },
+        receiveOldMessageRoom: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
+            const message = action.payload;
+            state.roomHistory[message.name].chatData = [
+                ...message.chatData.reverse(),
+                ...state.roomHistory[message.name].chatData
+            ]
+            if(message.chatData.length === 0) {
+                state.currentPageRoom[message.name].continue = false
+            } else {
+                state.currentPageRoom[message.name].page += 1;
+            }
+        }
     },
 });
 
@@ -213,6 +233,7 @@ export const {
     addNewUserToSidebar,
     setInputValue,
     setEmojiInputValue,
+    receiveOldMessageRoom
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

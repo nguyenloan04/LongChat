@@ -11,6 +11,7 @@ import { setOpenEmojiPicker, setOpenStickerPicker } from "@/redux/slices/chatTri
 import EmojiCustomPicker from "@/components/chat/EmojiCustomPicker.tsx";
 import { createMessagePayload } from "@/services/chatService.ts";
 import {
+    getRoomChatHistory,
     getUserList,
     receiveNewMessageFromRoom,
     sendMessageToRoom,
@@ -27,12 +28,16 @@ import { Input } from "@/components/ui/input";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [isFetchingOldMessages, setIsFetchingOldMessages] = useState(false);
+    const pageRoom = useSelector((state:ReduxState) => state.chatState.currentPageRoom)
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     //upload multiple files
-    const { startMultipleUpload, isUploading } = useUpload();
+    const {startMultipleUpload, isUploading} = useUpload();
+    const dispatch = useDispatch();
 
     const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
         if (!currentTarget) return null;
@@ -54,10 +59,50 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             return roomData ? roomData.chatData as ReceiveMsgGetChatPeoplePayload[] : [];
         }
     });
-
+    const isLoadingOlder = useRef(false);
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if(isLoadingOlder.current) {
+            isLoadingOlder.current = false
+            return;
+        }
+        messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
     }, [messages]);
+
+    const handleScroll = async (e: React.UIEvent<HTMLDivElement>) => {
+        if(!currentTarget) return;
+        const container = e.currentTarget;
+        
+        if (container.scrollTop === 0 && !isFetchingOldMessages) {
+            if(currentTarget.type === 0) {
+                
+            } else {
+                const currentPage = pageRoom[currentTarget.name];
+                if(!currentPage.continue) return;
+                
+                setIsFetchingOldMessages(true);
+                isLoadingOlder.current = true;
+                const scrollHeightBefore = scrollContainerRef.current ? scrollContainerRef.current.scrollHeight : 0;
+                 dispatch(getRoomChatHistory({
+                    name: currentTarget.name,
+                    page: currentPage.page + 1,
+                }))
+
+                setIsFetchingOldMessages(false);
+
+                setTimeout(() => {
+                    if (scrollContainerRef.current) {
+                        const scrollHeightAfter = scrollContainerRef.current.scrollHeight;
+                        scrollContainerRef.current.scrollTo({
+                            top: scrollHeightAfter - scrollHeightBefore - 10, 
+                            behavior: 'instant'
+                        });
+
+                        setIsFetchingOldMessages(false);
+                    }
+                }, 500);
+            }
+        }
+    };
 
     const SendMessageComponent = () => {
         const dispatch = useDispatch();
@@ -283,8 +328,15 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 </div>
             </div>
             {/* Main UI */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-1 w-full bg-gray-300/50 p-2">
-                <div className="mt-auto" />
+            <div ref={scrollContainerRef}
+                 onScroll={handleScroll}
+                className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-1 w-full bg-gray-300/50 p-2">
+                <div className="mt-auto"/>
+                {isFetchingOldMessages && (
+                    <div className="text-center p-2 text-sm text-gray-500 animate-pulse">
+                        Đang tải tin nhắn cũ...
+                    </div>
+                )}
 
                 {messages.length === 0 && (
                     <p className="text-center text-gray-500 mt-10">Bắt đầu cuộc trò chuyện...</p>

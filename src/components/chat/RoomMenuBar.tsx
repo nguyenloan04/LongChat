@@ -1,12 +1,14 @@
 import type { ReduxState } from "@/constants/ReduxState";
-import { useToast } from "@/contexts/ToastContext";
+import { ToastKeys } from "@/constants/ToastIcon";
+import { setToastMessage } from "@/redux/slices/socketSlice";
 import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
 import { generateInviteLink } from "@/utils/messageUtil";
-import { ChevronDown, ChevronUp, CircleCheck, Copy, Share, User } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Share, User } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export function RoomMenuBar() {
+    const dispatcher = useDispatch()
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
     const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
@@ -23,8 +25,6 @@ export function RoomMenuBar() {
     const [memberState, setMemberState] = useState(false)
     const [attachmentState, setAttachmentState] = useState(false)
     const [policyState, setPolicyState] = useState(false)
-
-    const { showToast } = useToast()
 
     // const headerFeature = [
     //     {
@@ -46,7 +46,7 @@ export function RoomMenuBar() {
         if (!inviteGroupLink) return;
         try {
             await navigator.clipboard.writeText(inviteGroupLink);
-            showToast("Đã sao chép link mời!", CircleCheck)
+            dispatcher(setToastMessage({ message: "Đã sao chép link mời", icon: ToastKeys.SUCCESS }))
         } catch (err) {
         }
     };

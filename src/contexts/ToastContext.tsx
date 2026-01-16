@@ -1,14 +1,8 @@
-import type { LucideProps } from "lucide-react";
-import { createContext, useContext, useRef, useState, type ForwardRefExoticComponent, type RefAttributes } from "react";
+import type { ToastState } from "@/types/ToastState";
+import type { LucideIcon } from "lucide-react";
+import { createContext, useContext, useRef, useState } from "react";
 
 //Use Context for display toast without passing it through component
-type LucideIcon = ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
-
-interface ToastState {
-    message: string;
-    icon?: LucideIcon;
-}
-
 const ToastContext = createContext({
     showToast: (_msg: string, _icon?: LucideIcon) => { }
 })

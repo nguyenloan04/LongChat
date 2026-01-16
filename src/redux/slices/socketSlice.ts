@@ -1,15 +1,23 @@
+import type { ToastIconType } from "@/constants/ToastIcon";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
+
+export interface ToastSlice {
+    message: string;
+    icon?: ToastIconType
+}
 
 interface SocketSlice {
     isConnected: boolean
     isReconnecting: boolean
+    socketToast: ToastSlice | null
     errorMessage: string | null
 }
 
 const initialState: SocketSlice = {
     isConnected: false,
     isReconnecting: false,
-    errorMessage: null
+    errorMessage: null,
+    socketToast: null
 }
 
 export const socketSlice = createSlice({
@@ -27,9 +35,17 @@ export const socketSlice = createSlice({
 
         setErrorMessage: (state, action: PayloadAction<string | null>) => {
             state.errorMessage = action.payload
+        },
+
+        setToastMessage: (state, action: PayloadAction<ToastSlice>) => {
+            state.socketToast = action.payload
+
+        },
+        clearToastMessage: (state) => {
+            state.socketToast = null;
         }
     }
 })
 
 export default socketSlice.reducer
-export const { setConnected, setErrorMessage, setReconnecting } = socketSlice.actions
+export const { setConnected, setErrorMessage, setReconnecting, setToastMessage, clearToastMessage } = socketSlice.actions

@@ -1,9 +1,7 @@
-// import getTimeDifference from "locale-time-diff"
-
-import {MessageSquarePlus, Search, User} from "lucide-react"
-import {useEffect, useState} from "react"
-import {useDispatch, useSelector} from "react-redux";
-import type {ReduxState} from "@/constants/ReduxState.ts";
+import { Cloud, MessageSquarePlus, Search, User } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux";
+import type { ReduxState } from "@/constants/ReduxState.ts";
 import {
     getPeopleChatHistory,
     getUserList,
@@ -12,8 +10,7 @@ import {
 } from "@/redux/slices/chatSlice.ts";
 // Room
 import RoomMenu from "@/components/room/RoomMenu.tsx";
-import type {ReceiveMsgGetUserListPayload} from "@/socket/types/WebsocketReceivePayload.ts";
-// import {formatSendTime} from "@/utils/messageUtil.ts";
+import type { ReceiveMsgGetUserListPayload } from "@/socket/types/WebsocketReceivePayload.ts";
 
 
 export function ChatMenuBar() {
@@ -25,7 +22,8 @@ export function ChatMenuBar() {
 
     const userList = useSelector((state: ReduxState) => state.chatState.userList);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
-    const roomHistory = useSelector((state:ReduxState) => state.chatState.roomHistory);
+    const currentUser = useSelector((state: ReduxState) => state.currentUser.user)
+    const roomHistory = useSelector((state: ReduxState) => state.chatState.roomHistory);
     // render user list
     useEffect(() => {
         if (isConnected) {
@@ -39,10 +37,10 @@ export function ChatMenuBar() {
         dispatch(setCurrentChatTarget(chat));
 
         if (chat.type === 0) {
-            dispatch(getPeopleChatHistory({name: chat.name, page: 1}));
+            dispatch(getPeopleChatHistory({ name: chat.name, page: 1 }));
         } else {
-            if(!roomHistory[chat.name]) {
-                dispatch(getRoomChatHistory({name: chat.name, page: 1}));
+            if (!roomHistory[chat.name]) {
+                dispatch(getRoomChatHistory({ name: chat.name, page: 1 }));
             }
         }
         setSearchValue("");
@@ -73,7 +71,7 @@ export function ChatMenuBar() {
 
         dispatch(setCurrentChatTarget(newUser));
         // for make sure never chatted before
-        dispatch(getPeopleChatHistory({name: targetName, page: 1}));
+        dispatch(getPeopleChatHistory({ name: targetName, page: 1 }));
         setSearchValue("");
     };
     return (
@@ -96,7 +94,7 @@ export function ChatMenuBar() {
                         onBlur={() => setInputFocusState(false)}
                     />
                 </div>
-                <RoomMenu/>
+                <RoomMenu />
             </div>
             <div className="px-2 flex-1 overflow-y-auto">
                 {/* Create new chat */}
@@ -123,20 +121,22 @@ export function ChatMenuBar() {
                 {filteredUserList.map((ele) => (
                     <div
                         key={ele.name}
-                        className={`flex items-center gap-3 px-2 py-2 rounded-md my-2 cursor-pointer transition-colors ${
-                            currentTarget?.name === ele.name ? "bg-indigo-100" : "hover:bg-neutral-100"
-                        }`}
+                        className={`flex items-center gap-3 px-2 py-2 rounded-md my-2 cursor-pointer transition-colors ${currentTarget?.name === ele.name ? "bg-indigo-100" : "hover:bg-neutral-100"
+                            }`}
                         onClick={() => handleSelectChat(ele)}
                     >
                         {/* Avatar Placeholder */}
-                        <div className="w-10 h-10 border rounded-full bg-neutral-200 flex items-center justify-center shrink-0">
-                            <User size="1.2rem" className="text-gray-500"/>
+                        <div className={`w-10 h-10 border rounded-full flex items-center justify-center shrink-0 ${ele.name === currentUser?.username ? "bg-blue-400" : "bg-neutral-200"}`}>
+                            {ele.name === currentUser?.username ?
+                                <Cloud size="1.2rem" className="text-white" fill={"white"} />
+                                : <User size="1.2rem" className="text-gray-500" />
+                            }
                         </div>
 
                         <div className="w-full overflow-hidden">
                             <div className="flex justify-between mb-1">
                                 <p className="font-medium truncate max-w-[70%]">
-                                    {ele.name}
+                                    {ele.name === currentUser?.username ? "My Document" : ele.name}
                                 </p>
                                 <p className="text-neutral-500 text-xs shrink-0">
                                     {/*{formatSendTime(ele.actionTime)}*/}
@@ -164,7 +164,7 @@ export function ChatMenuBar() {
                                 </p>
                             </div>
                             <p className="text-neutral-500 text-sm truncate">
-                                {ele.type === 0 ? "Người dùng" : "Nhóm chat"}
+                                {ele.name === currentUser?.username ? "" : ele.type === 0 ? "Người dùng" : "Nhóm chat"}
                             </p>
                         </div>
                     </div>

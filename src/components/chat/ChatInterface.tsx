@@ -24,7 +24,6 @@ import type { ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload } fro
 // upload
 import { useUpload } from "@/hooks/useUpload";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {

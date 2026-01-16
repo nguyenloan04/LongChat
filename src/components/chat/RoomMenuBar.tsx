@@ -3,7 +3,7 @@ import { ToastKeys } from "@/constants/ToastIcon";
 import { setToastMessage } from "@/redux/slices/socketSlice";
 import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
 import { generateInviteLink } from "@/utils/messageUtil";
-import { ChevronDown, ChevronUp, Copy, Share, User } from "lucide-react";
+import { ChevronDown, ChevronUp, Cloud, Copy, Share, User } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -55,10 +55,13 @@ export function RoomMenuBar() {
         <div>
             {/* Header */}
             <div className="flex items-center justify-center flex-col gap-1 p-4">
-                <div className="w-18 h-18 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
-                    <User size={'2.5rem'} />
+                <div className={`w-18 h-18 rounded-full border p-2 flex justify-center items-center ${currentTarget.name === currentUser?.username ? "bg-blue-400 " : "bg-gray-150 border-black "}`}>
+                    {currentTarget.name === currentUser?.username ?
+                        <Cloud size="2.5rem" className="text-white" fill={"white"} />
+                        : <User size="2.5rem" />
+                    }
                 </div>
-                <p className="text-lg font-semibold">{currentTarget.name}</p>
+                <p className="text-lg font-semibold">{currentTarget.name === currentUser?.username ? "My Document" : currentTarget.name}</p>
 
                 {/* <div className="mt-4 flex gap-1 justify-center items-start">
                     {headerFeature.map(ele => (

@@ -7,6 +7,7 @@ import Error from "@/components/error/Error.tsx";
 import ComingSoon from "@/components/comingsoon/ComingSoon.tsx";
 import { userRouter } from "./userRouter";
 import { JoinRoomByLink } from "@/components/room/JoinRoomByLink";
+import { RouterBase } from "@/constants/RouterBase";
 
 const route = createBrowserRouter(
     [
@@ -40,7 +41,7 @@ const route = createBrowserRouter(
         }
     ],
     {
-        basename: "/LongChat",
+        basename: RouterBase.BASE_NAME,
     }
 )
 

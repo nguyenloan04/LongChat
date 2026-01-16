@@ -2,7 +2,7 @@ import type { ReduxState } from "@/constants/ReduxState";
 import { useToast } from "@/contexts/ToastContext";
 import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
 import { generateInviteLink } from "@/utils/messageUtil";
-import { ChevronDown, ChevronUp, CircleCheck, Copy, Settings, Share, User, UserPlus } from "lucide-react";
+import { ChevronDown, ChevronUp, CircleCheck, Copy, Share, User } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -26,17 +26,17 @@ export function RoomMenuBar() {
 
     const { showToast } = useToast()
 
-    const headerFeature = [
-        {
-            //Used room type in redux to decide
-            name: "Thêm thành viên",
-            icon: <UserPlus strokeWidth={1.5} size={"1.25rem"} />
-        },
-        {
-            name: "Cài đặt",
-            icon: <Settings strokeWidth={1.5} size={"1.25rem"} />
-        }
-    ]
+    // const headerFeature = [
+    //     {
+    //         //Used room type in redux to decide
+    //         name: "Thêm thành viên",
+    //         icon: <UserPlus strokeWidth={1.5} size={"1.25rem"} />
+    //     },
+    //     {
+    //         name: "Cài đặt",
+    //         icon: <Settings strokeWidth={1.5} size={"1.25rem"} />
+    //     }
+    // ]
 
     if (!currentTarget) return null
 
@@ -60,7 +60,7 @@ export function RoomMenuBar() {
                 </div>
                 <p className="text-lg font-semibold">{currentTarget.name}</p>
 
-                <div className="mt-4 flex gap-1 justify-center items-start">
+                {/* <div className="mt-4 flex gap-1 justify-center items-start">
                     {headerFeature.map(ele => (
                         <div className="flex flex-col items-center w-24">
                             <div className="cursor-pointer bg-gray-200 hover:bg-gray-300 active:bg-gray-400 p-2.5 rounded-full border flex justify-center items-center">
@@ -71,7 +71,7 @@ export function RoomMenuBar() {
                             </p>
                         </div>
                     ))}
-                </div>
+                </div> */}
             </div>
             {/* Member */}
             <div className="px-2">

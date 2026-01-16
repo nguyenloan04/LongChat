@@ -4,7 +4,7 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
 export const authApi = {
     getDescription: async (username: string) => {
-        return await axios.get(`${SERVER_URL}/user/get-description?username=${username}`).then(response => {
+        return await axios.get(`${SERVER_URL}user/get-description?username=${username}`).then(response => {
             try {
                 const data = response.data
                 return JSON.parse(data) as { result: boolean, description: string }
@@ -15,7 +15,7 @@ export const authApi = {
         })
     },
     register: async (username: string) => {
-        return await axios.post(`${SERVER_URL}/create`, { username }).then(response => {
+        return await axios.post(`${SERVER_URL}create`, { username }).then(response => {
             try {
                 return JSON.parse(response.data) as { result: boolean }
             }
@@ -25,7 +25,7 @@ export const authApi = {
         })
     },
     updateDescription: async (username: string, description: string) => {
-        return await axios.post(`${SERVER_URL}/update-description`, { username, description }).then(response => {
+        return await axios.post(`${SERVER_URL}update-description`, { username, description }).then(response => {
             try {
                 return JSON.parse(response.data) as { result: boolean, description: string }
             }

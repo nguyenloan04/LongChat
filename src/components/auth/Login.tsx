@@ -58,51 +58,61 @@ export default function LoginComponent() {
     useEffect(() => {
 
         const unsubscribe = wsInstance.subscribe(WebSocketEvent.LOGIN, async (response) => {
-            if (response.status === "success") {
-                const reloginCode = response.data.RE_LOGIN_CODE
-                // const username = usernameRef.current;
-                localStorage.setItem("RE_LOGIN_CODE", reloginCode)
+            try {
+                if (response.status === "success") {
+                    const reloginCode = response.data.RE_LOGIN_CODE
+                    // const username = usernameRef.current;
+                    localStorage.setItem("RE_LOGIN_CODE", reloginCode)
 
-                const username = usernameInputRef.current?.value
-                if (!username) {
+                    const username = usernameInputRef.current?.value
+                    if (!username) {
+                        isLoading(false)
+                        return
+                    }
+
+                    let description = ""
+                    try {
+                        const res = await authApi.getDescription(username)
+                        description = res.description || ""
+                    }
+                    catch (_) { }
+
+                    const currentUser: User = {
+                        username: username,
+                        description,
+                        displayName: username,
+                        avatar: `${cloudinaryUrl}/avatar/${username}`,
+                        banner: {
+                            content: `${cloudinaryUrl}/banner/${username}`,
+                            type: "image"
+                        },
+                    }
+
+                    localStorage.setItem("user", JSON.stringify(currentUser))
+                    dispatcher(setCurrentUser(currentUser))
+                    setMessage("Đăng nhập thành công")
+                    setTimeout(() => {
+                        navigate("/chat")
+                    }, 500)
+                }
+                else {
                     isLoading(false)
-                    return
+                    setMessage("Tên tài khoản hoặc mật khẩu sai")
+                    console.log(response.mes)
+                    //Send a message here
                 }
-
-                let description = ""
-                try {
-                    description = await authApi.getDescription(username).then(res => res.description)
-                }
-                catch (_) { }
-
-                const currentUser: User = {
-                    username: username,
-                    description,
-                    displayName: username,
-                    avatar: `${cloudinaryUrl}/avatar/${username}`,
-                    banner: {
-                        content: `${cloudinaryUrl}/banner/${username}`,
-                        type: "image"
-                    },
-                }
-                
-                localStorage.setItem("user", JSON.stringify(currentUser))
-                dispatcher(setCurrentUser(currentUser))
-                setMessage("Đăng nhập thành công")
-                setTimeout(() => {
-                    navigate("/chat")
-                }, 500)
             }
-            else {
+            catch (e) {
+                console.log(e)
                 isLoading(false)
+                localStorage.removeItem("RE_LOGIN_CODE")
+                localStorage.removeItem("user")
                 setMessage("Tên tài khoản hoặc mật khẩu sai")
-                console.log(response.mes)
-                //Send a message here
             }
         })
 
         return () => unsubscribe()
-    }, [navigate, wsInstance,dispatcher])
+    }, [navigate, wsInstance, dispatcher])
 
 
     return (

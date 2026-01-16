@@ -1,4 +1,4 @@
-import { uploadAttachment } from "@/services/storateService";
+import { uploadAttachment, uploadMultipleAttachments } from "@/services/storageService";
 import { useState } from "react";
 
 export function useUpload() {
@@ -12,6 +12,12 @@ export function useUpload() {
         setIsUploading(false)
         return result
     }
-
-    return { progress, isUploading, startUpload }
+    const startMultipleUpload = async (folder: string, files: File[]): Promise<{ result:boolean, message:string, urls: string[] }> => {
+        setIsUploading(true);
+        setProgress(0);
+        const result = await uploadMultipleAttachments(folder, files, (p) => setProgress(p));
+        setIsUploading(false);
+        return result;
+    }
+    return { progress, isUploading, startUpload , startMultipleUpload}
 }

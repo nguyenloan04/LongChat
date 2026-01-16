@@ -9,7 +9,7 @@ import { WebSocketEvent } from "@/socket/types/WebSoketMessage"
 import { FormType } from "@/constants/AuthForm"
 import { ConnectionLoading } from "../common/ConnectionLoading"
 
-import { authApi } from "@/api/auth"
+// import { authApi } from "@/api/auth"
 import { setCurrentUser } from "@/redux/slices/userSlice"
 import { AuthFooter } from "./Footer"
 import type { User } from "@/constants/User"
@@ -71,11 +71,11 @@ export default function LoginComponent() {
                     }
 
                     let description = ""
-                    try {
-                        const res = await authApi.getDescription(username)
-                        description = res.description || ""
-                    }
-                    catch (_) { }
+                    // try {
+                    //     const res = await authApi.getDescription(username)
+                    //     description = res.description || ""
+                    // }
+                    // catch (_) { }
 
                     const currentUser: User = {
                         username: username,

@@ -6,6 +6,7 @@ import type { ReduxState } from "@/constants/ReduxState.ts";
 import { useEffect } from "react";
 import { ToastProvider, useToast } from './contexts/ToastContext.tsx';
 import { clearToastMessage } from './redux/slices/socketSlice.ts';
+import { ToastIcons } from './constants/ToastIcon.ts';
 
 const ToastListener = () => {
     const toast = useSelector((state: ReduxState) => state.socketState.socketToast);
@@ -14,7 +15,7 @@ const ToastListener = () => {
 
     useEffect(() => {
         if (toast) {
-            showToast(toast.message, toast.icon);
+            showToast(toast.message, toast.icon ? ToastIcons[toast.icon] : undefined);
             setTimeout(() => {
                 dispatcher(clearToastMessage())
             }, 3000)

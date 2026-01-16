@@ -14,7 +14,7 @@ export default function EmojiCustomPicker() {
     }
 
     return (
-        <div className="fixed overflow-hidden rounded-lg border bottom-14 index-99 bg-white dark:bg-gray-800 border">
+        <div className="fixed overflow-hidden rounded-lg border bottom-14 index-99 bg-white dark:bg-gray-800">
             <div className="relative mb-1">
                 <p className="shadow text-lg p-2 font-semibold text-center">Emoji</p>
                 <X className="absolute right-2 top-3 hover:bg-neutral-300/30 rounded"

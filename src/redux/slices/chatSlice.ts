@@ -36,17 +36,17 @@ const chatSlice = createSlice({
     initialState,
     reducers: {
         // request to get user list
-        getUserList: (state, action: PayloadAction<SendMsgGetUserListPayload>) => {
+        getUserList: (state, _action: PayloadAction<SendMsgGetUserListPayload>) => {
             state.isLoading = true;
         },
         // request to get message from chat
-        getPeopleChatHistory: (state, action: PayloadAction<SendMsgGetChatPayload>) => {
+        getPeopleChatHistory: (state, _action: PayloadAction<SendMsgGetChatPayload>) => {
             state.isLoading = true;
         },
         // request to get room info + message in room
-        getRoomChatHistory: (state, action: PayloadAction<SendMsgGetChatPayload>) => { state.isLoading = true; },
+        getRoomChatHistory: (state, _action: PayloadAction<SendMsgGetChatPayload>) => { state.isLoading = true; },
         // request to send message to user
-        sendPeopleChat: (state, action: PayloadAction<SendMsgSendChatPayload>) => {
+        sendPeopleChat: (_state, _action: PayloadAction<SendMsgSendChatPayload>) => {
 
         },
 
@@ -132,7 +132,7 @@ const chatSlice = createSlice({
                 state.roomHistory[target].chatData.push(formattedMessage);
             }
         },
-        sendMessageToRoom: (state, action: PayloadAction<{roomName: string, message: any, username: string}>) => {
+        sendMessageToRoom: (_state, _action: PayloadAction<{roomName: string, message: any, username: string}>) => {
         },
         setInputValue: (state, action: PayloadAction<string>) => {
             state.inputValue = action.payload;

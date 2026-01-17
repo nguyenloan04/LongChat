@@ -32,6 +32,9 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
                             alt="Sticker"
                             className="w-32 h-32 object-contain"
                         />
+                        <div className="w-full flex justify-end">
+                            {renderSendTime()}
+                        </div>
                     </div>
                 );
             case "attachment":
@@ -73,14 +76,18 @@ export function Message({ rawMessage, isOwner, username, time }: MessageProps) {
     };
 
     const renderSendTime = () => (
-        <p className={`${isOwner
-            ? contentObj.type !== "chat" && !contentObj.content
-                ? "text-gray-500"
-                : "text-indigo-200"
+        <p className={`${isOwner && contentObj.type !== "sticker" && contentObj.content
+            ? "text-indigo-200"
             : "text-gray-500"
             } text-end rounded text-[10px] mt-2`}
         >
-            <span className={`w-fit p-1 rounded-lg ${contentObj.type !== "chat" && !contentObj.content ? "bg-neutral-300" : ""}`}>
+            <span className={`w-fit p-1 rounded-lg 
+                ${(contentObj.type !== "chat" && !contentObj.content) || contentObj.type === "sticker"
+                    ? "bg-neutral-300"
+                    : ""
+                }`
+            }
+            >
                 {time
                     ? new Date(time)
                         .toLocaleTimeString(

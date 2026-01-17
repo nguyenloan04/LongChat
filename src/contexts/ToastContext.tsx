@@ -30,7 +30,8 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
             {toast && (
                 <div
                     className={
-                        `fixed bottom-5 right-5 z-100 transition-all duration-300 transform 
+                        `fixed bottom-2 lg:right-5 z-100 transition-all duration-300 transform
+                        left-1/2 -translate-x-1/2 
                         ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
                         `
                     }

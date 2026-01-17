@@ -263,7 +263,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         <User />
                     </div>
                     <div>
-                        <p className="font-semibold text-xl">{currentTarget.name}</p>
+                        <p className="font-semibold text-lg">{currentTarget.name}</p>
                         <p>
                             {currentTarget.type === 1 && getRoomData?.userList &&
                                 `${getRoomData.userList.length} thành viên`}

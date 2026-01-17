@@ -17,11 +17,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 
         setToast({ message, icon });
         setIsVisible(true);
-
-        timeoutRef.current = setTimeout(() => {
-            setIsVisible(false);
-            setTimeout(() => setToast(null), 300);
-        }, 3000);
+        setIsVisible(false);
     };
     return (
         <ToastContext.Provider value={{ showToast }}>

@@ -14,19 +14,20 @@ const ToastListener = () => {
     const dispatcher = useDispatch()
 
     useEffect(() => {
-        if (!toast) return
-        const Icon = toast.icon ? ToastIcons[toast.icon] : undefined
-        showToast(toast.message, Icon)
+        if (!toast) return;
 
-        const inCludeClearToastKey = new Set<ToastIconType>([ToastKeys.RECONNECT, ToastKeys.SERVER_ERROR])
+        const Icon = toast.icon ? ToastIcons[toast.icon] : undefined;
+        showToast(toast.message, Icon);
 
-        const timer = setTimeout(() => {
-            if (toast.icon && !inCludeClearToastKey.has(toast.icon)) {
-                dispatcher(clearToastMessage())
-            }
-        }, 3000)
-        return () => clearTimeout(timer)
-    }, [toast]);
+        const includeShowToast: ToastIconType[] = [ToastKeys.RECONNECT, ToastKeys.SERVER_ERROR]
+        if (!toast.icon || !includeShowToast.includes(toast.icon)) {
+            const timer = setTimeout(() => {
+                dispatcher(clearToastMessage());
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [toast?.id]);    //Use Id for identify toast properly
 
     return null;
 };

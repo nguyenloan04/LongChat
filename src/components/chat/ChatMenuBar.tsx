@@ -12,8 +12,10 @@ import {
 import RoomMenu from "@/components/room/RoomMenu.tsx";
 import type { ReceiveMsgGetUserListPayload } from "@/socket/types/WebsocketReceivePayload.ts";
 
-
-export function ChatMenuBar() {
+interface ChatMenuBarProps {
+    onChatSelect?: () => void;
+}
+export function ChatMenuBar({ onChatSelect }: ChatMenuBarProps) {
     const dispatch = useDispatch();
     const [isInputFocused, setInputFocusState] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -44,6 +46,9 @@ export function ChatMenuBar() {
             }
         }
         setSearchValue("");
+        if (onChatSelect) {
+            onChatSelect();
+        }
     };
     // chat to new user
 

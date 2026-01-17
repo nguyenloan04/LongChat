@@ -1,6 +1,19 @@
 //Props later
 
-import { Image, LoaderCircle, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User, X } from "lucide-react";
+import {
+    ArrowLeft,
+    Image,
+    LoaderCircle, Menu,
+    PanelRight,
+    Paperclip,
+    Phone,
+    Search,
+    SendHorizonal,
+    Smile,
+    Sticker,
+    User,
+    X
+} from "lucide-react";
 import { Message } from "./Message";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -26,7 +39,7 @@ import { useUpload } from "@/hooks/useUpload";
 import { Input } from "@/components/ui/input";
 
 //Temp props, just used for display purpose
-export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
+export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void , onOpenMenu: () => void }) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
@@ -249,8 +262,16 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
     if (!currentTarget) {
         return (
-            <div className="overflow-auto flex flex-col h-full items-center justify-center bg-gray-50">
-                <p className="text-xl text-gray-500">Hãy chọn một đoạn chat để bắt đầu</p>
+
+            <div className="overflow-auto flex flex-col h-full items-center justify-center bg-gray-50 relative">
+                <Menu size={"2.0rem"}
+                      onClick={props.onOpenMenu}
+                      className="absolute top-4 left-4 lg:block p-3 bg-appchat-bluesky rounded-full shadow-md text-white active:bg-gray-100 hover:text-indigo-600 transition-colors"
+                />
+                <div className="text-center p-4">
+                    <p className="text-xl font-semibold text-gray-700">Chào mừng đến với LongChat</p>
+                    <p className="text-gray-500 mt-2">Nhấn vào nút Menu góc trái để bắt đầu cuộc trò chuyện.</p>
+                </div>
             </div>
         )
     }
@@ -260,6 +281,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             {/* Header */}
             <div className="flex justify-between items-center p-1 px-3 border border-gray-200 h-16">
                 <div className="flex gap-3 items-center">
+                    <ArrowLeft size={"1.5rem"}
+                        onClick={props.onOpenMenu}
+                        className="lg:hidden mr-1 text-gray-600 hover:text-black p-2 rounded-full active:bg-gray-200"
+                    />
                     <div
                         className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
                         <User />

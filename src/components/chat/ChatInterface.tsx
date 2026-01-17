@@ -189,14 +189,16 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 />
                 <div className="min-h-4 flex p-2 pt-0">
                     <textarea
-                        className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
+                        className="min-w-0 text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
                         onChange={handleInput}
                         ref={textareaRef}
                         value={inputValue}
                         name=""
                         id=""
                         rows={1}
-                        placeholder={`Nhập tin nhắn ${currentTarget ? "tới " + currentTarget.name : "..."}`}>
+                        placeholder="Nhập tin nhắn..."
+                    // placeholder={`Nhập tin nhắn ${currentTarget ? "tới " + currentTarget.name : "..."}`}
+                    >
                     </textarea>
                     <div
                         className="flex items-start px-3 justify-end gap-3"
@@ -302,9 +304,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 <div ref={messagesEndRef} />
             </div>
             {/* Message */}
-            <ChatToolBar inputRef={textareaRef} />
-            <SendMessageComponent
-            />
+            <div className="mb-16 lg:mb-0">
+                <ChatToolBar inputRef={textareaRef} />
+                <SendMessageComponent />
+            </div>
         </div>
     )
 }

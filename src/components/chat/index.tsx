@@ -21,7 +21,7 @@ export function MainChatUIComponent() {
     }
     return (
         <div className="flex w-full h-screen overflow-hidden">
-            <div className="w-100 flex">
+            <div className="w-0 lg:w-100 flex">
                 <div className="w-[15%]">
                     <ChatSideBar />
                 </div>
@@ -29,10 +29,10 @@ export function MainChatUIComponent() {
                     <ChatMenuBar />
                 </div>
             </div>
-            <div className="flex-1">
+            <div className="w-full lg:flex-1">
                 <ChatInterface closeTabState={roomMenuState} onCloseTab={closeTab} />
             </div>
-            <div className={`border-l transition-all duration-300 ease-in-out ${roomMenuState ? `w-100` : 'w-0 opacity-0 pointer-events-none'}`}>
+            <div className={`border-l transition-all duration-300 ease-in-out ${roomMenuState ? `absolute lg:relative w-screen lg:opacity-100 lg:w-100` : 'w-0 opacity-0 pointer-events-none'}`}>
                 <RoomMenuBar />
             </div>
             {viewAttachment.state && <DisplayAttachment index={viewAttachment.index} listAttachments={roomAttachments} />}

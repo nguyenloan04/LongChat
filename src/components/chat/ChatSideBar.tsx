@@ -64,7 +64,7 @@ export function ChatSideBar() {
                     </Popover>
                 </div>
             </div>
-            <div className="bg-indigo-500 lg:hidden shadow w-full h-16 fixed bottom-0">
+            <div className="z-100 bg-indigo-500 block lg:hidden shadow w-full h-16 fixed bottom-0">
                 <div className="flex justify-between px-4">
                     <div className="flex flex-1 h-16 gap-6 justify-center">
                         {listFeature.map((ele, index) => (

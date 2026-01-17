@@ -1,7 +1,4 @@
-//Props later
-
 import {
-    ArrowLeft,
     Image,
     LoaderCircle, Menu,
     PanelRight,
@@ -38,8 +35,12 @@ import type { ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload } fro
 import { useUpload } from "@/hooks/useUpload";
 import { Input } from "@/components/ui/input";
 
-//Temp props, just used for display purpose
-export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void , onOpenMenu: () => void }) {
+export function ChatInterface(props: {
+    closeTabState: boolean,
+    onCloseTab: () => void,
+    onOpenMenu: () => void,
+    onOpenMenuBar: () => void
+}) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
@@ -264,8 +265,8 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
         return (
             <div className="overflow-auto flex flex-col h-full items-center justify-center bg-gray-50 relative">
                 <Menu size={"2.0rem"}
-                      onClick={props.onOpenMenu}
-                      className="absolute top-4 left-4 lg:hidden p-3 bg-appchat-bluesky rounded-full shadow-md text-white active:bg-gray-100 hover:text-indigo-600 transition-colors"
+                    onClick={props.onOpenMenu}
+                    className="absolute top-4 left-4 lg:hidden p-3 bg-appchat-bluesky rounded-full shadow-md text-white active:bg-gray-100 hover:text-indigo-600 transition-colors"
                 />
                 <div className="text-center p-4">
                     <p className="text-xl font-semibold text-gray-700">Chào mừng đến với LongChat</p>
@@ -280,8 +281,8 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             {/* Header */}
             <div className="flex justify-between items-center p-1 px-3 border border-gray-200 h-16">
                 <div className="flex gap-3 items-center">
-                    <ArrowLeft size={"1.5rem"}
-                        onClick={props.onOpenMenu}
+                    <Menu size={"2.5rem"}
+                        onClick={props.onOpenMenuBar}
                         className="lg:hidden mr-1 text-gray-600 hover:text-black p-2 rounded-full active:bg-gray-200"
                     />
                     <div

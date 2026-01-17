@@ -6,7 +6,6 @@ import { RoomMenuBar } from "./RoomMenuBar";
 import { DisplayAttachment } from "../common/DisplayAttachment";
 import { useSelector } from "react-redux";
 import type { ReduxState } from "@/constants/ReduxState";
-import {ArrowRight} from "lucide-react";
 
 export function MainChatUIComponent() {
     const viewAttachment = useSelector((state: ReduxState) => state.chatState.currentViewAttachment)
@@ -24,10 +23,12 @@ export function MainChatUIComponent() {
     return (
         <div className="flex w-full h-screen overflow-hidden">
             <div className={`
-                ${menuState ? 'flex w-full z-40' : 'hidden'} 
-                lg:flex lg:w-100 h-full transition-all duration-300
+                lg:flex lg:w-[400px] h-full transition-all duration-300
             `}>
-                <div className="w-0 lg:w-[15%]">
+                <div className={`
+                    ${!menuState ? 'flex w-full z-40' : 'hidden'} 
+                    w-0 lg:w-[15%] z-10`
+                }>
                     <ChatSideBar />
                 </div>
 
@@ -59,10 +60,6 @@ export function MainChatUIComponent() {
                 : "lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-none"
             }
             `}>
-                <ArrowRight
-                    onClick={() => setRoomMenuState(false)}
-                    className="lg:hidden absolute top-2 left-2 p-2 bg-gray-200 rounded-full z-50"
-                />
                 <RoomMenuBar setRoomMenuState={setRoomMenuState} />
             </div>
             {viewAttachment.state && <DisplayAttachment index={viewAttachment.index} listAttachments={roomAttachments} />}

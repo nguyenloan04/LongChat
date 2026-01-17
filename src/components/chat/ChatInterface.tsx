@@ -262,11 +262,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
     if (!currentTarget) {
         return (
-
             <div className="overflow-auto flex flex-col h-full items-center justify-center bg-gray-50 relative">
                 <Menu size={"2.0rem"}
                       onClick={props.onOpenMenu}
-                      className="absolute top-4 left-4 lg:block p-3 bg-appchat-bluesky rounded-full shadow-md text-white active:bg-gray-100 hover:text-indigo-600 transition-colors"
+                      className="absolute top-4 left-4 lg:hidden p-3 bg-appchat-bluesky rounded-full shadow-md text-white active:bg-gray-100 hover:text-indigo-600 transition-colors"
                 />
                 <div className="text-center p-4">
                     <p className="text-xl font-semibold text-gray-700">Chào mừng đến với LongChat</p>

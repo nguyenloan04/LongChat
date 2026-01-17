@@ -12,7 +12,10 @@ export function MainChatUIComponent() {
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const listRoomAttachments = useSelector((state: ReduxState) => state.chatState.attachmentHistory)
     const [roomMenuState, setRoomMenuState] = useState(false)
-    const [chatMenuState, setChatMenuState] = useState(true)
+
+    const featureIndex = useSelector((state: ReduxState) => state.featureSlice.activeIndex)
+    const chatMenuState = useSelector((state: ReduxState) => state.featureSlice.menuState)
+
 
     const roomAttachments = currentTarget ? listRoomAttachments[currentTarget.name] : []
 
@@ -47,21 +50,18 @@ export function MainChatUIComponent() {
                         }
                     `}
                 >
-                    <ChatMenuBar onChatSelect={() => {
-                        setChatMenuState(false)
-                    }}
-                    />
+                    <ChatMenuBar />
                 </div>
             </div>
             <div className={`
                 w-full lg:flex lg:flex-1 z-0
             `}>
-                <ChatInterface
-                    closeTabState={roomMenuState}
-                    onCloseTab={closeTab}
-                    onOpenMenu={() => setChatMenuState(true)}
-                    onOpenMenuBar={() => setChatMenuState(true)}
-                />
+                {featureIndex === 0 &&
+                    <ChatInterface
+                        closeTabState={roomMenuState}
+                        onCloseTab={closeTab}
+                    />
+                }
             </div>
             <div className={`
                 fixed bg-white h-full inset-y-0 z-50

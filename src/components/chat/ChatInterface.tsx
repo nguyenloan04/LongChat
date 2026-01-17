@@ -2,9 +2,9 @@ import {
     Image,
     LoaderCircle, Menu,
     PanelRight,
-    Paperclip,
-    Phone,
-    Search,
+    // Paperclip,
+    // Phone,
+    // Search,
     SendHorizonal,
     Smile,
     Sticker,
@@ -34,12 +34,11 @@ import type { ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload } fro
 // upload
 import { useUpload } from "@/hooks/useUpload";
 import { Input } from "@/components/ui/input";
+import { setMenuState } from "@/redux/slices/featureSlice";
 
 export function ChatInterface(props: {
     closeTabState: boolean,
     onCloseTab: () => void,
-    onOpenMenu: () => void,
-    onOpenMenuBar: () => void
 }) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
@@ -47,6 +46,8 @@ export function ChatInterface(props: {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     //upload multiple files
     const { startMultipleUpload, isUploading } = useUpload();
+
+    const dispatcher = useDispatch()
 
     const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
         if (!currentTarget) return null;
@@ -218,8 +219,8 @@ export function ChatInterface(props: {
                         className="flex items-start px-3 justify-end gap-3"
                     >
                         <div className="flex items-start justify-end gap-3 pt-2">
-                            <Paperclip size={"1.5rem"}
-                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
+                            {/* <Paperclip size={"1.5rem"}
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" /> */}
                             <Image size={"1.5rem"}
                                 className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
                                 onClick={() => !isUploading && fileInputRef.current?.click()} />
@@ -265,7 +266,7 @@ export function ChatInterface(props: {
         return (
             <div className="overflow-auto flex flex-col h-full items-center justify-center bg-gray-50 relative">
                 <Menu size={"2.0rem"}
-                    onClick={props.onOpenMenu}
+                    onClick={() => dispatcher(setMenuState(true))}
                     className="absolute top-4 left-4 lg:hidden p-3 bg-appchat-bluesky rounded-full shadow-md text-white active:bg-gray-100 hover:text-indigo-600 transition-colors"
                 />
                 <div className="text-center p-4">
@@ -282,7 +283,7 @@ export function ChatInterface(props: {
             <div className="flex justify-between items-center p-1 px-3 border border-gray-200 h-16">
                 <div className="flex gap-3 items-center">
                     <Menu size={"2.5rem"}
-                        onClick={props.onOpenMenuBar}
+                        onClick={() => dispatcher(setMenuState(true))}
                         className="lg:hidden mr-1 text-gray-600 hover:text-black p-2 rounded-full active:bg-gray-200"
                     />
                     <div
@@ -298,10 +299,10 @@ export function ChatInterface(props: {
                     </div>
                 </div>
                 <div className="flex gap-1">
-                    <Search size={"2.25rem"}
+                    {/* <Search size={"2.25rem"}
                         className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
                     <Phone size={"2.25rem"}
-                        className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
+                        className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" /> */}
                     <PanelRight
                         size={"2.25rem"}
                         className={`rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400 ${props.closeTabState && "bg-indigo-200 text-indigo-700"}`}

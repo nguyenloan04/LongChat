@@ -116,7 +116,7 @@ export default function LoginComponent() {
 
 
     return (
-        <div className="flex justify-between items-center flex-col relative" style={{ width: "100%", height: "100vh" }}>
+        <div className="flex dark:bg-gray-800 dark:text-white justify-between items-center flex-col relative" style={{ width: "100%", height: "100vh" }}>
             <div className="w-100 h-full flex justify-center p-8 bg-white dark:bg-gray-900">
                 {pageLoading ?
                     <div>

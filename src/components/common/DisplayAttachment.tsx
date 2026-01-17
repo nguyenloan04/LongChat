@@ -53,7 +53,7 @@ export function DisplayAttachment(props: DisplayProps) {
                     </button>
                 </div>
 
-                <div className="flex h-[85%] w-full py-2">
+                <div className="flex flex-col lg:flex-row h-[85%] w-full py-2">
                     <div className="flex-1 relative flex justify-center items-center overflow-hidden">
                         <motion.img
                             key={props.index}
@@ -80,6 +80,7 @@ export function DisplayAttachment(props: DisplayProps) {
                         />
                     </div>
                     <div className={`
+                            hidden lg:block
                             overflow-y-auto p-2
                             transition-all duration-500 ease-in-out transform
                             no-scrollbar
@@ -92,6 +93,33 @@ export function DisplayAttachment(props: DisplayProps) {
                             {props.listAttachments.map((attachment, index) => (
                                 <img
                                     className={`w-28 h-28 object-cover cursor-pointer hover:opacity-60 transition-opacity ${index !== viewAttachment.index ? "opacity-40" : ""}`}
+                                    src={getThumbnail(attachment)}
+                                    alt={`attachment-${index}`}
+                                    onClick={() => {
+                                        dispatcher(setViewAttachmentIndex({
+                                            state: true,
+                                            index: index
+                                        }))
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                    {/* List attachment in mobile */}
+                    <div className={`
+                            lg:hidden
+                            overflow-y-auto p-2
+                            transition-all duration-500 ease-in-out transform
+                            no-scrollbar
+                            ${tabState
+                            ? "w-full translate-y-0 opacity-100"
+                            : "h-0 opacity-0 translate-y-full overflow-hidden"
+                        }`}
+                    >
+                        <div className=" flex gap-4">
+                            {props.listAttachments.map((attachment, index) => (
+                                <img
+                                    className={`w-20 h-20 object-cover cursor-pointer hover:opacity-60 transition-opacity ${index !== viewAttachment.index ? "opacity-40" : ""}`}
                                     src={getThumbnail(attachment)}
                                     alt={`attachment-${index}`}
                                     onClick={() => {
@@ -141,7 +169,7 @@ export function DisplayAttachment(props: DisplayProps) {
                             </div>
                         </div>
                     </div>
-                    <p>
+                    <p className="hidden lg:block">
                         Double click hoặc nhấn vào ảnh để Zoom
                     </p>
                     <div className="absolute right-8">

@@ -4,7 +4,7 @@ import { createContext, useContext, useRef, useState } from "react";
 
 //Use Context for display toast without passing it through component
 const ToastContext = createContext({
-    showToast: (_msg: string, _icon?: LucideIcon) => { }
+    showToast: (_msg: string, _icon?: LucideIcon, _duration?: number) => { }
 })
 
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
@@ -12,12 +12,17 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     const [isVisible, setIsVisible] = useState(false);  //Animation
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const showToast = (message: string, icon?: LucideIcon) => {
+    const showToast = (message: string, icon?: LucideIcon, duration: number = 3000) => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
         setToast({ message, icon });
         setIsVisible(true);
-        setIsVisible(false);
+        if (duration > 0) {
+            timeoutRef.current = setTimeout(() => {
+                setIsVisible(false);
+                setTimeout(() => setToast(null), 300);
+            }, duration);
+        }
     };
     return (
         <ToastContext.Provider value={{ showToast }}>

@@ -196,7 +196,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                         name=""
                         id=""
                         rows={1}
-                        placeholder={`Nhập tin nhắn ${currentTarget ? "tới" + currentTarget.name : "..."}`}>
+                        placeholder={`Nhập tin nhắn ${currentTarget ? "tới " + currentTarget.name : "..."}`}>
                     </textarea>
                     <div
                         className="flex items-start px-3 justify-end gap-3"

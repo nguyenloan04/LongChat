@@ -17,10 +17,12 @@ const ToastListener = () => {
         if (!toast) return;
 
         const Icon = toast.icon ? ToastIcons[toast.icon] : undefined;
-        showToast(toast.message, Icon);
-
         const includeShowToast: ToastIconType[] = [ToastKeys.RECONNECT, ToastKeys.SERVER_ERROR]
-        if (!toast.icon || !includeShowToast.includes(toast.icon)) {
+        const isShowToast = toast.icon && includeShowToast.includes(toast.icon)
+        showToast(toast.message, Icon, isShowToast ? 0 : 3000);
+
+        //Remove toast in redux
+        if (!isShowToast) {
             const timer = setTimeout(() => {
                 dispatcher(clearToastMessage());
             }, 3000);

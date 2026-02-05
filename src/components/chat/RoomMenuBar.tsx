@@ -60,19 +60,6 @@ export function RoomMenuBar({ setRoomMenuState }: { setRoomMenuState: (state: bo
                     }
                 </div>
                 <p className="text-lg font-semibold">{currentTarget.name === currentUser?.username ? "My Document" : currentTarget.name}</p>
-
-                {/* <div className="mt-4 flex gap-1 justify-center items-start">
-                    {headerFeature.map(ele => (
-                        <div className="flex flex-col items-center w-24">
-                            <div className="cursor-pointer bg-gray-200 hover:bg-gray-300 active:bg-gray-400 p-2.5 rounded-full border flex justify-center items-center">
-                                {ele.icon}
-                            </div>
-                            <p className="text-xs text-center mt-1">
-                                {ele.name}
-                            </p>
-                        </div>
-                    ))}
-                </div> */}
             </div>
             {/* Member */}
             <div className="px-2 overflow-y-auto">

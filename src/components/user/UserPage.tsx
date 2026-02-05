@@ -1,5 +1,5 @@
 import MenuUser from "@/components/user/MenuUser.tsx";
-import { Navigate, useLocation, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { MenuIcon, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ReduxState } from "@/constants/ReduxState.ts";
@@ -13,8 +13,6 @@ export function UserPage() {
     const chooseViewMenuUser = useSelector((state: ReduxState) => state.userPageState.chooseViewMenuUser);
     const dispatch = useDispatch();
     const params = useParams();
-
-    const location = useLocation()
 
     const renderContent = () => {
         switch (params.key) {

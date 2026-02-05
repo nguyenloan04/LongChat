@@ -1,7 +1,8 @@
 import { storageApi } from "@/api/storage"
 import { UploadLimit } from "@/constants/UploadLimit"
 import { convertImageToWebp } from "@/utils/storageUtil"
-import {store} from "@/redux/store.ts";
+import { store } from "@/redux/store.ts";
+
 const BASE_CLOUDINARY_URL = `${import.meta.env.VITE_CLOUDINARY_URL}`
 // function handle filename
 function sanitizeFileName(originalName: string): string {
@@ -15,9 +16,9 @@ export async function uploadAttachment(
     folder: string,
     file: File,
     onProgress?: (percent: number) => void
-): Promise<{ result: boolean, message: string, url:string }> {
+): Promise<{ result: boolean, message: string, url: string }> {
     const [format, extension] = file.type.split("/")
-    const defaultResult = { result: false, message: "Upload thất bại" ,url:""}
+    const defaultResult = { result: false, message: "Upload thất bại", url: "" }
 
     const limit = format === "image"
         ? UploadLimit.IMAGE
@@ -29,12 +30,12 @@ export async function uploadAttachment(
         return {
             result: false,
             message: `Chỉ được upload ${format === "image" ? "hình ảnh" : "video"} tối đa ${limit / Math.pow(1024, 2)}MB`,
-            url:""
+            url: ""
         }
     }
 
     if (format !== "image" && format !== "video") {
-        return { result: false, message: "Định dạng không hỗ trợ", url:"" }
+        return { result: false, message: "Định dạng không hỗ trợ", url: "" }
     }
 
     try {
@@ -47,7 +48,7 @@ export async function uploadAttachment(
             if (!excludeFormat.has(extension)) {
                 try {
                     uploadFile = await convertImageToWebp(file) as Blob
-                } catch (e) {}
+                } catch (e) { }
             }
         }
 
@@ -76,7 +77,7 @@ export async function uploadAttachment(
                 }
             }
         }
-        return { result: false, message: "Lỗi server upload." ,url:""}
+        return { result: false, message: "Lỗi server upload.", url: "" }
     }
     catch (error) {
         console.error("Upload error:", error)
@@ -87,18 +88,19 @@ export async function uploadMultipleAttachments(
     folder: string,
     files: File[],
     onProgress?: (percent: number) => void // Progress này sẽ là tương đối cho cả batch
-): Promise< {result: boolean, message: string, urls:string[]}> {
+): Promise<{ result: boolean, message: string, urls: string[] }> {
 
     // 1. Check Auth
     const state = store.getState();
     if (!state.currentUser.user) {
-        return { result: false, message: "Vui lòng đăng nhập." ,urls:[]};
+        return { result: false, message: "Vui lòng đăng nhập.", urls: [] };
     }
 
     if (files.length === 0) return { result: false, message: "Không có file.", urls: [] };
 
     try {
-        const processedFiles: { file: File | Blob; finalName: string; format: "image" | "video" }[] = [];
+        const excludeFormat = new Set(["webp", "gif", "svg+xml"]);
+        const processedFiles: { file: File | Blob; finalName: string; format: "image" | "video", extension: string }[] = [];
 
         for (const file of files) {
             const [typeStr, extension] = file.type.split("/");
@@ -111,7 +113,6 @@ export async function uploadMultipleAttachments(
             const cleanName = sanitizeFileName(file.name);
 
             if (format === "image") {
-                const excludeFormat = new Set(["webp", "gif", "svg+xml"]);
                 if (!excludeFormat.has(extension)) {
                     try {
                         uploadFile = await convertImageToWebp(file) as Blob;
@@ -120,7 +121,7 @@ export async function uploadMultipleAttachments(
                     }
                 }
             }
-            processedFiles.push({ file: uploadFile, finalName: cleanName, format });
+            processedFiles.push({ file: uploadFile, finalName: cleanName, format, extension });
         }
 
         if (processedFiles.length === 0) {
@@ -144,11 +145,11 @@ export async function uploadMultipleAttachments(
             formData.append("file", pToken.file, pToken.finalName);
 
             const success = await storageApi.upload(formData, pToken.format, onProgress);
-                if (success) {
-                    let ext = "webp";
-                    return `${BASE_CLOUDINARY_URL}${folder}/${pToken.finalName}.${ext}`;
-                }
-                return null;
+            if (success) {
+                let ext = excludeFormat.has(pToken.extension) ? pToken.extension : "webp";
+                return `${BASE_CLOUDINARY_URL}${folder}/${pToken.finalName}.${ext}`;
+            }
+            return null;
         });
 
         const results = await Promise.all(uploadPromises);
@@ -172,6 +173,29 @@ export async function uploadMultipleAttachments(
 
 
 export const getThumbnail = (url: string, width = 200) => {
-  if (!url.includes("cloudinary.com")) return url;
-  return url.replace("/upload/", `/upload/c_scale,w_${width},f_auto,q_auto/`);
+    if (!url.includes("cloudinary.com")) return url;
+    return url.replace("/upload/", `/upload/c_scale,w_${width},f_auto,q_auto/`);
 };
+
+
+export const downloadImage = async (imageUrl: string, fileName: string) => {
+    try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);   //Create url for blob to put in a tag
+
+        //Create an <a> tag, set download for <a> and click it
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+
+        document.body.appendChild(link);
+        link.click();
+
+        //Clear memory by delete url and used <a>
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error("Download failed", error);
+    }
+}

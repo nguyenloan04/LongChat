@@ -4,11 +4,12 @@ import { setToastMessage } from "@/redux/slices/socketSlice";
 import { getThumbnail } from "@/services/storageService";
 import type { ReceiveMsgGetChatRoomPayload } from "@/socket/types/WebsocketReceivePayload";
 import { generateInviteLink } from "@/utils/messageUtil";
-import { ChevronDown, ChevronUp, Cloud, Copy, ImageOff, Share, User } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronUp, Cloud, Copy, ImageOff, Share, User } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { setViewAttachmentIndex } from "@/redux/slices/chatSlice";
 
-export function RoomMenuBar() {
+export function RoomMenuBar({ setRoomMenuState }: { setRoomMenuState: (state: boolean) => void }) {
     const dispatcher = useDispatch()
     const currentTarget = useSelector((state: ReduxState) => state.chatState.currentChatTarget);
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
@@ -22,25 +23,11 @@ export function RoomMenuBar() {
             return roomData
         }
     });
-
     //Local state
     const [memberState, setMemberState] = useState(false)
     const [attachmentState, setAttachmentState] = useState(false)
-    const [policyState, setPolicyState] = useState(false)
 
     const roomAttachments = currentTarget ? listRoomAttachments[currentTarget.name] : []
-
-    // const headerFeature = [
-    //     {
-    //         //Used room type in redux to decide
-    //         name: "Thêm thành viên",
-    //         icon: <UserPlus strokeWidth={1.5} size={"1.25rem"} />
-    //     },
-    //     {
-    //         name: "Cài đặt",
-    //         icon: <Settings strokeWidth={1.5} size={"1.25rem"} />
-    //     }
-    // ]
 
     if (!currentTarget) return null
 
@@ -58,6 +45,13 @@ export function RoomMenuBar() {
     return (
         <div>
             {/* Header */}
+            <div className="px-4 pt-4 lg:p-0 lg:hidden">
+                <ChevronLeft
+                    size={"1.75rem"}
+                    className="cursor-pointer dark:text-white hover:text-neutral-400 dark:hover:text-neutral-500"
+                    onClick={() => setRoomMenuState(false)}
+                />
+            </div>
             <div className="flex items-center justify-center flex-col gap-1 p-4">
                 <div className={`w-18 h-18 rounded-full border p-2 flex justify-center items-center ${currentTarget.name === currentUser?.username ? "bg-blue-400 " : "bg-gray-150 border-black "}`}>
                     {currentTarget.name === currentUser?.username ?
@@ -81,7 +75,7 @@ export function RoomMenuBar() {
                 </div> */}
             </div>
             {/* Member */}
-            <div className="px-2">
+            <div className="px-2 overflow-y-auto">
                 {getRoomData && currentTarget.type === 1 ?
                     <div className="my-1">
                         <div
@@ -135,24 +129,19 @@ export function RoomMenuBar() {
                                                     className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
                                                     src={getThumbnail(attachment)}
                                                     alt={`attachment-${index}`}
-                                                    onClick={() => window.open(attachment, "_blank")}
+                                                    onClick={() => {
+                                                        dispatcher(setViewAttachmentIndex({
+                                                            state: true,
+                                                            index: index
+                                                        }))
+                                                    }}
                                                 />
                                             </div>
                                         ))}
                                     </div>
-
                             }
                         </div>
                     }
-                </div>
-                <div className="my-1">
-                    <div
-                        className="cursor-pointer p-2 rounded-lg flex justify-between hover:bg-neutral-100 active:bg-neutral-200"
-                        onClick={() => setPolicyState(!policyState)}
-                    >
-                        <h5 className="font-semibold">Quyền riêng tư & hỗ trợ</h5>
-                        {policyState ? <ChevronUp /> : <ChevronDown />}
-                    </div>
                 </div>
                 {currentTarget.type === 1 &&
                     <div className="my-1 p-2">

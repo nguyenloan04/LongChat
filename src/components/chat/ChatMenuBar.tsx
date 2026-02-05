@@ -12,8 +12,10 @@ import {
 import RoomMenu from "@/components/room/RoomMenu.tsx";
 import type { ReceiveMsgGetUserListPayload } from "@/socket/types/WebsocketReceivePayload.ts";
 
-
-export function ChatMenuBar() {
+interface ChatMenuBarProps {
+    onChatSelect?: () => void;
+}
+export function ChatMenuBar({ onChatSelect }: ChatMenuBarProps) {
     const dispatch = useDispatch();
     const [isInputFocused, setInputFocusState] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -44,6 +46,9 @@ export function ChatMenuBar() {
             }
         }
         setSearchValue("");
+        if (onChatSelect) {
+            onChatSelect();
+        }
     };
     // chat to new user
 
@@ -75,7 +80,7 @@ export function ChatMenuBar() {
         setSearchValue("");
     };
     return (
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col mb-12 lg:mb-0">
             {/* Header */}
             <div className="flex gap-2 justify-center items-center px-2 py-2 h-fit border-b min-h-16">
                 <div

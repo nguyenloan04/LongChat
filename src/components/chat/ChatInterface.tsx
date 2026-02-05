@@ -1,6 +1,16 @@
-//Props later
-
-import { Image, LoaderCircle, PanelRight, Paperclip, Phone, Search, SendHorizonal, Smile, Sticker, User, X } from "lucide-react";
+import {
+    Image,
+    LoaderCircle, Menu,
+    PanelRight,
+    // Paperclip,
+    // Phone,
+    // Search,
+    SendHorizonal,
+    Smile,
+    Sticker,
+    User,
+    X
+} from "lucide-react";
 import { Message } from "./Message";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -25,6 +35,7 @@ import type { ReceiveMsgGetChatPeoplePayload, ReceiveMsgGetChatRoomPayload } fro
 // upload
 import { useUpload } from "@/hooks/useUpload";
 import { Input } from "@/components/ui/input";
+import { setMenuState } from "@/redux/slices/featureSlice";
 
 //Temp props, just used for display purpose
 export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () => void }) {
@@ -36,7 +47,7 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
     const currentUser = useSelector((state: ReduxState) => state.currentUser.user);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     //upload multiple files
-    const {startMultipleUpload, isUploading} = useUpload();
+    const { startMultipleUpload, isUploading } = useUpload();
     const dispatch = useDispatch();
 
     const getRoomData = useSelector((state: ReduxState): ReceiveMsgGetChatRoomPayload | null => {
@@ -234,21 +245,23 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 />
                 <div className="min-h-4 flex p-2 pt-0">
                     <textarea
-                        className="text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
+                        className="min-w-0 text-md bg-neutral-200/75 rounded-3xl p-2 ps-4 flex-1 resize-none border-none outline-none focus:ring-0 focus:ring-offset-0"
                         onChange={handleInput}
                         ref={textareaRef}
                         value={inputValue}
                         name=""
                         id=""
                         rows={1}
-                        placeholder={`Nhập tin nhắn ${currentTarget ? "tới" + currentTarget.name : "..."}`}>
+                        placeholder="Nhập tin nhắn..."
+                    // placeholder={`Nhập tin nhắn ${currentTarget ? "tới " + currentTarget.name : "..."}`}
+                    >
                     </textarea>
                     <div
                         className="flex items-start px-3 justify-end gap-3"
                     >
                         <div className="flex items-start justify-end gap-3 pt-2">
-                            <Paperclip size={"1.5rem"}
-                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" />
+                            {/* <Paperclip size={"1.5rem"}
+                                className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400" /> */}
                             <Image size={"1.5rem"}
                                 className="cursor-pointer text-gray-700 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400"
                                 onClick={() => !isUploading && fileInputRef.current?.click()} />
@@ -292,8 +305,15 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
 
     if (!currentTarget) {
         return (
-            <div className="overflow-auto flex flex-col h-full items-center justify-center bg-gray-50">
-                <p className="text-xl text-gray-500">Hãy chọn một đoạn chat để bắt đầu</p>
+            <div className="overflow-auto flex flex-col h-full items-center justify-center bg-gray-50 relative">
+                <Menu size={"2.0rem"}
+                    onClick={() => dispatch(setMenuState(true))}
+                    className="absolute top-4 left-4 lg:hidden p-3 bg-appchat-bluesky rounded-full shadow-md text-white active:bg-gray-100 hover:text-indigo-600 transition-colors"
+                />
+                <div className="text-center p-4">
+                    <p className="text-xl font-semibold text-gray-700">Chào mừng đến với LongChat</p>
+                    <p className="text-gray-500 mt-2">Nhấn vào nút Menu góc trái để bắt đầu cuộc trò chuyện.</p>
+                </div>
             </div>
         )
     }
@@ -303,12 +323,16 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
             {/* Header */}
             <div className="flex justify-between items-center p-1 px-3 border border-gray-200 h-16">
                 <div className="flex gap-3 items-center">
+                    <Menu size={"2.5rem"}
+                        onClick={() => dispatch(setMenuState(true))}
+                        className="lg:hidden mr-1 text-gray-600 hover:text-black p-2 rounded-full active:bg-gray-200"
+                    />
                     <div
                         className="w-12 h-12 rounded-full border p-2 border-black bg-gray-150 flex justify-center items-center">
                         <User />
                     </div>
                     <div>
-                        <p className="font-semibold text-xl">{currentTarget.name}</p>
+                        <p className="font-semibold text-lg">{currentTarget.name}</p>
                         <p>
                             {currentTarget.type === 1 && getRoomData?.userList &&
                                 `${getRoomData.userList.length} thành viên`}
@@ -316,10 +340,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                     </div>
                 </div>
                 <div className="flex gap-1">
-                    <Search size={"2.25rem"}
+                    {/* <Search size={"2.25rem"}
                         className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
                     <Phone size={"2.25rem"}
-                        className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" />
+                        className="rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400" /> */}
                     <PanelRight
                         size={"2.25rem"}
                         className={`rounded p-2 cursor-pointer hover:text-neutral-500 dark:hover:text-neutral-400 ${props.closeTabState && "bg-indigo-200 text-indigo-700"}`}
@@ -354,9 +378,10 @@ export function ChatInterface(props: { closeTabState: boolean, onCloseTab: () =>
                 <div ref={messagesEndRef} />
             </div>
             {/* Message */}
-            <ChatToolBar inputRef={textareaRef} />
-            <SendMessageComponent
-            />
+            <div className="mb-16 lg:mb-0">
+                <ChatToolBar inputRef={textareaRef} />
+                <SendMessageComponent />
+            </div>
         </div>
     )
 }

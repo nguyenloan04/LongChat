@@ -39,7 +39,7 @@ export default function MenuUser(props: {text: string}) {
             icon: <HeadsetIcon/>,
             content: "Liên hệ",
             action: () => {
-                navigate("/user/contact");
+                navigate("/comingsoon");
             }
         }
     ]

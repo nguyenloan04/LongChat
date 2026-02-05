@@ -23,6 +23,7 @@ interface ChatState {
     inputValue: string;
     attachmentHistory: Record<string, string[]>
     currentPageRoom: Record<string, {page: number, continue: boolean}>;
+    currentViewAttachment: { state: boolean, index: number }
 }
 
 const initialState: ChatState = {
@@ -33,7 +34,8 @@ const initialState: ChatState = {
     isLoading: false,
     inputValue: "",
     attachmentHistory: {},
-    currentPageRoom: {}
+    currentPageRoom: {},
+    currentViewAttachment: { state: false, index: -1 }
 };
 
 const chatSlice = createSlice({
@@ -82,6 +84,11 @@ const chatSlice = createSlice({
         },
         setPeopleChatHistory: (state, action: PayloadAction<{ targetName: string, messages: ReceiveMsgGetChatPeoplePayload[] }>) => {
             const { targetName, messages } = action.payload;
+            messages.forEach(msg => {
+                if (msg.createAt && !msg.createAt.includes('T')) {
+                    msg.createAt = msg.createAt.replace(" ", "T") + "Z";
+                }
+            });
             const reverseMessages = [...messages].reverse();
             state.chatPeopleHistory[targetName] = reverseMessages
             //Reset to avoid duplicate
@@ -203,6 +210,9 @@ const chatSlice = createSlice({
         setEmojiInputValue: (state, action: PayloadAction<string>) => {
             state.inputValue += action.payload;
         },
+        setViewAttachmentIndex: (state, action: PayloadAction<{ state: boolean, index: number }>) => {
+            state.currentViewAttachment = action.payload
+        },
         receiveOldMessageRoom: (state, action: PayloadAction<ReceiveMsgGetChatRoomPayload>) => {
             const message = action.payload;
             state.roomHistory[message.name].chatData = [
@@ -233,7 +243,8 @@ export const {
     addNewUserToSidebar,
     setInputValue,
     setEmojiInputValue,
-    receiveOldMessageRoom
+    setViewAttachmentIndex,
+    receiveOldMessageRoom,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

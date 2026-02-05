@@ -4,7 +4,7 @@ import { createContext, useContext, useRef, useState } from "react";
 
 //Use Context for display toast without passing it through component
 const ToastContext = createContext({
-    showToast: (_msg: string, _icon?: LucideIcon) => { }
+    showToast: (_msg: string, _icon?: LucideIcon, _duration?: number) => { }
 })
 
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
@@ -12,16 +12,17 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     const [isVisible, setIsVisible] = useState(false);  //Animation
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const showToast = (message: string, icon?: LucideIcon) => {
+    const showToast = (message: string, icon?: LucideIcon, duration: number = 3000) => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
         setToast({ message, icon });
         setIsVisible(true);
-
-        timeoutRef.current = setTimeout(() => {
-            setIsVisible(false);
-            setTimeout(() => setToast(null), 300);
-        }, 3000);
+        if (duration > 0) {
+            timeoutRef.current = setTimeout(() => {
+                setIsVisible(false);
+                setTimeout(() => setToast(null), 300);
+            }, duration);
+        }
     };
     return (
         <ToastContext.Provider value={{ showToast }}>
@@ -29,7 +30,8 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
             {toast && (
                 <div
                     className={
-                        `fixed bottom-5 right-5 z-100 transition-all duration-300 transform 
+                        `fixed bottom-2 lg:right-5 z-100 transition-all duration-300 transform
+                        left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0
                         ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
                         `
                     }

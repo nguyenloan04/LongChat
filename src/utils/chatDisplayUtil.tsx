@@ -77,7 +77,7 @@ const options: MarkdownOptions<React.ReactNode> = {
                     <code className={`px-1.5 py-0.5 rounded font-mono text-[0.875em] 
                             font-medium border transition-colors duration-200 
                             bg-gray-200 text-gray-800 border-gray-200 
-                            dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700`
+                            dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 inline-block`
                     }>
                         {content}
                     </code>

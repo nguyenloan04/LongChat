@@ -5,6 +5,7 @@ import userReducer from "./slices/userSlice"
 import userPageReducer from "./slices/userPageSlice.ts"
 import socketReducer from './slices/socketSlice'
 import editUserReducer from "./slices/editUserFormSlice.ts";
+import featureReducer from "./slices/featureSlice.ts"
 
 import chatReducer from "@/redux/slices/chatSlice.ts";
 
@@ -20,7 +21,7 @@ export const store = configureStore({
         editUserState: editUserReducer,
         chatState: chatReducer,
         chatTriggerSlice: chatTriggerSlice,
-
+        featureSlice: featureReducer
     },
     middleware: (getDefault) => getDefault().concat(socketMiddleware)
 })
